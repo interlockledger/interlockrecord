@@ -27,6 +27,11 @@ the value must be represented using smallest possible way to represent the value
 Invalid encodings:
 	503 = 0xF9 0x00 0xFF
 
+Limitations:
+
+This format allows the representation of numbers up to 2^64 - 1 + 248, this howerver exceeds the maximum
+value of a 64 bit value and thus will not be allowed.
+
 
 Tags:
 

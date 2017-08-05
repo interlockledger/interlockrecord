@@ -24,88 +24,56 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <ilint.h>
+#include "ILIntSizeTest.h"
+#include "ilint.h"
 
-#define ILINT_BASE 0xF8
-
-int ILIntSize(uint64_t v) {
-	
-	if (v < ILINT_BASE) {
-		return 1;
-	} else if (v <= (0xFF + ILINT_BASE)) {
-		return 2;
-	} else if ( v <= (0xFFFF + ILINT_BASE)){
-		return 3;
-	} else if ( v <= (0xFFFFFFl + ILINT_BASE)){
-		return 4;
-	} else if ( v <= (0xFFFFFFFFl + ILINT_BASE)){
-		return 5;
-	} else if ( v <= (0xFFFFFFFFFFl + ILINT_BASE)){
-		return 6;
-	} else if ( v <= (0xFFFFFFFFFFFFl + ILINT_BASE)){
-		return 7;
-	} else if ( v <= (0xFFFFFFFFFFFFFFl + ILINT_BASE)){
-		return 8;
-	} else {
-		return 9;
-	}
+//==============================================================================
+// class ILIntSizeTest
+//------------------------------------------------------------------------------
+ILIntSizeTest::ILIntSizeTest() {
 }
 
-int ILIntEncode(uint64_t v, void * out, int outSize) {
-	int size;
-	uint8_t * p;
-	int i;
-
-	size = ILIntSize(v);
-	if (outSize < size) {
-		return 0;
-	}
-	p = (uint8_t *)out;
-	if (size == 1) {
-		*p = (uint8_t)(v & 0xFF);
-	} else {
-		*p = ILINT_BASE + (size - 2);
-		p++;
-		v = v - ILINT_BASE;
-		for (i = ((size - 2) * 8); i >= 0; i -=8, p++) {
-			*p = (uint8_t)((v >> i) & 0xFF);
-		}
-	}
-	return size;
+//------------------------------------------------------------------------------
+ILIntSizeTest::~ILIntSizeTest() {
 }
 
-int ILIntDecode(const void * inp, int inpSize, uint64_t * v) {
-	const uint8_t * p;
-	const uint8_t * pEnd;
-	int size;
-
-	if (inpSize <= 0) {
-		return 0;
-	}
-	p = (const uint8_t *) inp;
-	size = *p;
-	if (size < ILINT_BASE) {
-		*v = size;
-		return 1;
-	} else {
-		p++;
-		size = size - ILINT_BASE + 1;
-		if (inpSize <= size) {
-			return 0;
-		}
-		pEnd = p + size;
-		*v = 0;
-		for (; p < pEnd; p++) {
-			*v = ((*v) << 8) | ((*p) & 0xFF);
-		}
-		if (*v >= (0xFFFFFFFFFFFFFFFFl - ILINT_BASE)) {
-			return 0;
-		}
-		*v += ILINT_BASE;
-		size++;
-		if (size != ILIntSize(*v))
-
-		return size;
-	}
+//------------------------------------------------------------------------------
+void ILIntSizeTest::SetUp() {
 }
+
+//------------------------------------------------------------------------------
+void ILIntSizeTest::TearDown() {
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILIntSizeTest, Size) {
+
+	ASSERT_EQ(1, ILIntSize(0));
+	ASSERT_EQ(1, ILIntSize(247));
+
+	ASSERT_EQ(2, ILIntSize(248));
+	ASSERT_EQ(2, ILIntSize(0xFF + 248));
+
+	ASSERT_EQ(3, ILIntSize(0xFF + 248 + 1));
+	ASSERT_EQ(3, ILIntSize(0xFFFF + 248));
+
+	ASSERT_EQ(4, ILIntSize(0xFFFF + 248 + 1));
+	ASSERT_EQ(4, ILIntSize(0xFFFFFF + 248));
+
+	ASSERT_EQ(5, ILIntSize(0xFFFFFF + 248 + 1));
+	ASSERT_EQ(5, ILIntSize(0xFFFFFFFFl + 248));
+
+	ASSERT_EQ(6, ILIntSize(0xFFFFFFFFl + 248 + 1));
+	ASSERT_EQ(6, ILIntSize(0xFFFFFFFFFFl + 248));
+
+	ASSERT_EQ(7, ILIntSize(0xFFFFFFFFFFl + 248 + 1));
+	ASSERT_EQ(7, ILIntSize(0xFFFFFFFFFFFFl + 248));
+
+	ASSERT_EQ(8, ILIntSize(0xFFFFFFFFFFFFl + 248 + 1));
+	ASSERT_EQ(8, ILIntSize(0xFFFFFFFFFFFFFFl + 248));
+
+	ASSERT_EQ(9, ILIntSize(0xFFFFFFFFFFFFFFl + 248 + 1));
+	ASSERT_EQ(9, ILIntSize(0xFFFFFFFFFFFFFFFFl));
+}
+//------------------------------------------------------------------------------
 
