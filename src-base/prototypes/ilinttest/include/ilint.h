@@ -51,7 +51,14 @@ int ILIntSize(uint64_t v);
  */
 int ILIntEncode(uint64_t v, void * out, int outSize);
 
-
+/**
+ * Decodes the ILInt values.
+ *
+ * @param[in] inp The value to be decoded.
+ * @param[in] inpSize The size of inp.
+ * @param[out] v The output value.
+ * @return The number of bytes read from inp or 0 in case of failure.
+ */
 int ILIntDecode(const void * inp, int inpSize, uint64_t * v);
 
 #ifdef __cplusplus
