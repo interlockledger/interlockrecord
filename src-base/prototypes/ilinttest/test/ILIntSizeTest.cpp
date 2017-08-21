@@ -75,5 +75,87 @@ TEST_F(ILIntSizeTest, Size) {
 	ASSERT_EQ(9, ILIntSize(0xFFFFFFFFFFFFFFl + 248 + 1));
 	ASSERT_EQ(9, ILIntSize(0xFFFFFFFFFFFFFFFFl));
 }
+
+//------------------------------------------------------------------------------
+TEST_F(ILIntSizeTest, ILIntEncode_1Byte) {
+	uint8_t enc[16];
+	int encSize;
+
+	// 1 byte
+	for (uint64_t v = 0; v < 248; v++) {
+		encSize = ILIntEncode(v, enc, sizeof(enc));
+		ASSERT_EQ(1, encSize);
+		ASSERT_EQ(v & 0xFF, enc[0]);
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILIntSizeTest, ILIntEncode_MultiByte) {
+	uint8_t enc[16];
+	int encSize;
+	int i;
+	uint64_t v;
+	uint64_t addition;
+
+	// Lower bound
+	memset(enc, 0xA5, sizeof(enc));
+	v = 248;
+	encSize = ILIntEncode(v, enc + 1, sizeof(enc) - 1);
+	ASSERT_EQ(2, encSize);
+	ASSERT_EQ(0xA5, enc[0]);
+	ASSERT_EQ(248, enc[1]);
+	ASSERT_EQ(0, enc[2]);
+	ASSERT_EQ(0xA5, enc[3]);
+
+	addition = 0x100;
+	for (int size = 3; size < 10; size++) {
+		v = 248 + addition;
+		memset(enc, 0xA5, sizeof(enc));
+		encSize = ILIntEncode(v, enc + 1, sizeof(enc) - 1);
+		ASSERT_EQ(size, encSize);
+		ASSERT_EQ(0xA5, enc[0]);
+		ASSERT_EQ(248 + (size - 2), enc[1]);
+		ASSERT_EQ(0x1, enc[2]);
+		for (i = 3; i < size + 1; i++) {
+			ASSERT_EQ(0x0, enc[i]);
+		}
+		ASSERT_EQ(0xA5, enc[i]);
+		addition = addition << 8;
+	}
+
+	// Upper bound
+	addition = 0xFFFF;
+	for (int size = 3; size < 9; size++) {
+		v = 248 + addition;
+		memset(enc, 0xA5, sizeof(enc));
+		encSize = ILIntEncode(v, enc + 1, sizeof(enc) - 1);
+		ASSERT_EQ(size, encSize);
+		ASSERT_EQ(0xA5, enc[0]);
+		ASSERT_EQ(248 + (size - 2), enc[1]);
+		for (i = 2; i < size + 1; i++) {
+			ASSERT_EQ(0xFF, enc[i]);
+		}
+		ASSERT_EQ(0xA5, enc[i]);
+		addition = (addition << 8) | 0xFF;
+	}
+
+	// Max value
+	memset(enc, 0xA5, sizeof(enc));
+	v = 0xFFFFFFFFFFFFFFFFl;
+	encSize = ILIntEncode(v, enc + 1, sizeof(enc) - 1);
+	ASSERT_EQ(9, encSize);
+	ASSERT_EQ(0xA5, enc[0]);
+	ASSERT_EQ(248 + 7, enc[1]);
+	ASSERT_EQ(0xFF, enc[2]);
+	ASSERT_EQ(0xFF, enc[3]);
+	ASSERT_EQ(0xFF, enc[4]);
+	ASSERT_EQ(0xFF, enc[5]);
+	ASSERT_EQ(0xFF, enc[6]);
+	ASSERT_EQ(0xFF, enc[7]);
+	ASSERT_EQ(0xFF, enc[8]);
+	ASSERT_EQ(0x07, enc[9]);
+	ASSERT_EQ(0xA5, enc[10]);
+}
+
 //------------------------------------------------------------------------------
 
