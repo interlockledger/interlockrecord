@@ -103,8 +103,6 @@ int ILIntDecode(const void * inp, int inpSize, uint64_t * v) {
 		}
 		*v += ILINT_BASE;
 		size++;
-		if (size != ILIntSize(*v))
-
 		return size;
 	}
 }
