@@ -24,29 +24,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "ILIntSizeTest.h"
+#include "ILIntTest.h"
 #include "ilint.h"
 
 //==============================================================================
-// class ILIntSizeTest
+// class ILIntTest
 //------------------------------------------------------------------------------
-ILIntSizeTest::ILIntSizeTest() {
+ILIntTest::ILIntTest() {
 }
 
 //------------------------------------------------------------------------------
-ILIntSizeTest::~ILIntSizeTest() {
+ILIntTest::~ILIntTest() {
 }
 
 //------------------------------------------------------------------------------
-void ILIntSizeTest::SetUp() {
+void ILIntTest::SetUp() {
 }
 
 //------------------------------------------------------------------------------
-void ILIntSizeTest::TearDown() {
+void ILIntTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILIntSizeTest, Size) {
+TEST_F(ILIntTest, Size) {
 
 	ASSERT_EQ(1, ILIntSize(0));
 	ASSERT_EQ(1, ILIntSize(247));
@@ -77,7 +77,7 @@ TEST_F(ILIntSizeTest, Size) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILIntSizeTest, ILIntEncode_SingleByte) {
+TEST_F(ILIntTest, ILIntEncode_SingleByte) {
 	uint8_t enc[16];
 	int encSize;
 
@@ -97,7 +97,7 @@ TEST_F(ILIntSizeTest, ILIntEncode_SingleByte) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILIntSizeTest, ILIntEncode_MultiByte) {
+TEST_F(ILIntTest, ILIntEncode_MultiByte) {
 	uint8_t enc[16];
 	int encSize;
 	int i;
@@ -165,7 +165,7 @@ TEST_F(ILIntSizeTest, ILIntEncode_MultiByte) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILIntSizeTest, ILIntDecode_SingleByte) {
+TEST_F(ILIntTest, ILIntDecode_SingleByte) {
 	uint8_t enc[16];
 	uint64_t v;
 
@@ -189,12 +189,12 @@ TEST_F(ILIntSizeTest, ILIntDecode_SingleByte) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILIntSizeTest, ILIntDecode_MultiByte) {
+TEST_F(ILIntTest, ILIntDecode_MultiByte) {
 	//TODO Implement it later
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILIntSizeTest, ILIntEncodeDecode) {
+TEST_F(ILIntTest, ILIntEncodeDecode) {
 	uint64_t v;
 	uint64_t vDec;
 	uint8_t enc[16];

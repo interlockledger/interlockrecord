@@ -24,17 +24,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __ILINTSIZETEST_H__
-#define __ILINTSIZETEST_H__
+#ifndef __ILINTTEST_H__
+#define __ILINTTEST_H__
 
 #include <gtest/gtest.h>
 
-class ILIntSizeTest : public testing::Test {
+class ILIntTest : public testing::Test {
 public:
-	ILIntSizeTest();
-	virtual ~ILIntSizeTest();
+	ILIntTest();
+	virtual ~ILIntTest();
 	virtual void SetUp();
 	virtual void TearDown();
 };
-#endif //__ILINTSIZETEST_H__
+#endif //__ILIntTest_H__
 
