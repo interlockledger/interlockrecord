@@ -77,15 +77,22 @@ TEST_F(ILIntSizeTest, Size) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILIntSizeTest, ILIntEncode_1Byte) {
+TEST_F(ILIntSizeTest, ILIntEncode_SingleByte) {
 	uint8_t enc[16];
 	int encSize;
 
-	// 1 byte
 	for (uint64_t v = 0; v < 248; v++) {
-		encSize = ILIntEncode(v, enc, sizeof(enc));
+		memset(enc, 0xFF, sizeof(enc));
+		encSize = ILIntEncode(v, enc + 1, sizeof(enc) - 1);
 		ASSERT_EQ(1, encSize);
-		ASSERT_EQ(v & 0xFF, enc[0]);
+		ASSERT_EQ(0xFF, enc[0]);
+		ASSERT_EQ(v, enc[1]);
+		ASSERT_EQ(0xFF, enc[2]);
+	}
+
+	ASSERT_EQ(0, ILIntEncode(1, enc, 0));
+	for (uint64_t v = 248; v < 256; v++) {
+		ASSERT_EQ(0, ILIntEncode(v, enc, 1));
 	}
 }
 
@@ -157,5 +164,55 @@ TEST_F(ILIntSizeTest, ILIntEncode_MultiByte) {
 	ASSERT_EQ(0xA5, enc[10]);
 }
 
+//------------------------------------------------------------------------------
+TEST_F(ILIntSizeTest, ILIntDecode_SingleByte) {
+	uint8_t enc[16];
+	uint64_t v;
+
+	memset(enc, 0xA5, sizeof(enc));
+	for (int i = 0; i < 248; i++) {
+		memset(enc, 0xFF, sizeof(enc));
+		enc[1] = i;
+		ASSERT_EQ(1, ILIntDecode(enc + 1, 1, &v));
+		ASSERT_EQ(i, v);
+
+	}
+
+	ASSERT_EQ(0, ILIntDecode(enc + 1, 0, &v));
+	for (int i = 248; i < 256; i++) {
+		memset(enc, 0xFF, sizeof(enc));
+		enc[1] = i;
+		ASSERT_EQ(0, ILIntDecode(enc + 1, 1, &v));
+
+	}
+
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILIntSizeTest, ILIntDecode_MultiByte) {
+	//TODO Implement it later
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILIntSizeTest, ILIntEncodeDecode) {
+	uint64_t v;
+	uint64_t vDec;
+	uint8_t enc[16];
+	int encSize;
+
+	for (int i = 0; i < 10000; i++) {
+		v = rand() | ((uint64_t)rand() << 32);
+		// Encode
+		memset(enc, 0xA5, sizeof(enc));
+		encSize = ILIntEncode(v, enc + 1, sizeof(enc) - 1);
+		// Test guard
+		ASSERT_EQ(0xA5, enc[0]);
+		ASSERT_EQ(0xA5, enc[encSize + 1]);
+
+		// Decode
+		ASSERT_EQ(encSize, ILIntDecode(enc + 1, encSize, &vDec));
+		ASSERT_EQ(v, vDec);
+	}
+}
 //------------------------------------------------------------------------------
 
