@@ -11,3 +11,19 @@ add_library(ircommon STATIC
 	${CMAKE_CURRENT_SOURCE_DIR}/src/ilint.cpp
 )
 
+
+# Unit test program
+enable_testing()
+find_package(Threads)
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_executable(ircommon-tests
+	${CMAKE_BINARY_DIR}/test/main.cpp
+	${CMAKE_BINARY_DIR}/test/ILIntTest.cpp)
+target_link_libraries(ircommon-tests
+	${GTEST_LIBRARIES}
+	${CMAKE_THREAD_LIBS_INIT})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_test(tests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ircommon-tests)
+
