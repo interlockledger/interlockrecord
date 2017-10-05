@@ -16,14 +16,16 @@ add_library(ircommon STATIC
 enable_testing()
 find_package(Threads)
 find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(
+	${CMAKE_CURRENT_SOURCE_DIR}/include
+	${GTEST_INCLUDE_DIRS})
 add_executable(ircommon-tests
 	${CMAKE_BINARY_DIR}/test/main.cpp
 	${CMAKE_BINARY_DIR}/test/ILIntTest.cpp)
 target_link_libraries(ircommon-tests
 	${GTEST_LIBRARIES}
-	${CMAKE_THREAD_LIBS_INIT})
+	${CMAKE_THREAD_LIBS_INIT}
+	ircommon)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_test(tests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ircommon-tests)
 

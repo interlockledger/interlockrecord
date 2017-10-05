@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "ILIntTest.h"
-#include "ircommon/ilint.h"
+#include <ircommon/ilint.h>
 
 //==============================================================================
 // class ILIntTest

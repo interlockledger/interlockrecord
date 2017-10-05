@@ -24,8 +24,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __ILCORE_ILINT_H__
-#define __ILCORE_ILINT_H__
+#ifndef __ILCOMMON_ILINT_H__
+#define __ILCOMMON_ILINT_H__
 
 #include <stdint.h>
 
@@ -65,5 +65,5 @@ int ILIntDecode(const void * inp, int inpSize, uint64_t * v);
 } // extern "C"
 #endif //__cplusplus
 
-#endif //__ILCORE_ILINT_H__
+#endif //__ILCOMMON_ILINT_H__
 
