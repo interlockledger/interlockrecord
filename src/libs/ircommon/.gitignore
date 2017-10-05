@@ -1,2 +1,6 @@
-lib
 bin
+lib
+
+# Auto-generated header
+include/ircommon/version.h
+
