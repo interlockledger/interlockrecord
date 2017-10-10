@@ -1,0 +1,29 @@
+<project name="gtest-windows-build">
+		
+	<property name="gtest.url" value="https://github.com/google/googletest/archive/release-1.8.0.zip" />
+	<property name="gtest.file" value="gtest-1.8.0.zip" />
+	<property name="gtest.file.checksum" value="ebbe4110c10dcde30d480273ed05243bfd1bc123057bb86247dab0a1e662bba8ad0d90fc0356a073ea0f197f029844616a18a03c5492d35f85d8c9ddaf885f97" />
+	
+	<property name="devenv.path" value="C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/IDE/devenv.exe" />
+	
+	<target name="download">
+		<get src="${gtest.url}" dest="${gtest.file}" skipexisting="true"/>
+		<condition property="gtest.file.checksum.failed">
+			<not>
+				<checksum file="${gtest.file}" algorithm="SHA-512" property="${gtest.file.checksum}"/>
+			</not>			
+		</condition>
+		<fail if="gtest.file.checksum.failed" message="The SHA-512 of the file ${gtest.file} is not the expected one."/>
+	</target>
+
+	<target name="build" depends="download">
+		<unzip dest="src" src="${gtest.file}"/>
+		<exec executable="cmake" dir="src/googletest-release-1.8.0">
+			<arg value="."/>
+		</exec>
+		<exec executable="${devenv.path}" dir="src/googletest-release-1.8.0">
+			<arg value="googletest-distribution.sln"/>
+		</exec>
+	</target>
+	
+</project>
