@@ -4,3 +4,6 @@ lib
 # Auto-generated header
 include/ircommon/version.h
 
+# CDT project
+.project
+.cproject

@@ -15,6 +15,7 @@ configure_file (
 
 add_library(ircommon STATIC 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/ilint.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/iltag.cpp
 )
 
 
