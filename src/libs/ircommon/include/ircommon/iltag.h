@@ -8,14 +8,16 @@
 #ifndef _IRCOMMON_ILTAG_H_
 #define _IRCOMMON_ILTAG_H_
 
-#include <stdint.h>
+#include <cstdint>
 #include <vector>
+
+namespace ircommon {
 
 class ILTag {
 private:
-	uint64_t _tagID;
+	std::uint64_t _tagID;
 public:
-	ILTag(uint64_t id);
+	ILTag(std::uint64_t id);
 
 	virtual ~ILTag();
 
@@ -23,39 +25,40 @@ public:
 		return this->_tagID;
 	}
 
-	virtual uint64_t getSize() const = 0;
+	virtual std::uint64_t getSize() const = 0;
 
-	virtual uint64_t getSerializedSize() const;
+	virtual std::uint64_t getSerializedSize() const;
 
-	uint64_t serialize(std::vector<uint8_t> & out) const;
+	std::uint64_t serialize(std::vector<std::uint8_t> & out) const;
 };
 
 class ILRawTag: public ILTag {
 protected:
-	uint64_t _size;
+	std::uint64_t _size;
 
-	uint8_t * _data;
+	std::uint8_t * _data;
 
 	bool _secure;
 public:
-	ILRawTag(uint64_t id, uint64_t size, bool secure);
+	ILRawTag(std::uint64_t id, std::uint64_t size, bool secure);
 
 	virtual ~ILRawTag();
 
 	virtual uint64_t getSize() const;
 
-	uint64_t serialize(std::vector<uint8_t> & out) const;
+	uint64_t serialize(std::vector<std::uint8_t> & out) const;
 
-	bool resize(uint64_t newSize);
+	bool resize(std::uint64_t newSize);
 
-	const uint8_t * data() const {
+	const std::uint8_t * data() const {
 		return this->_data;
 	}
 
-	uint8_t * data() {
+	std::uint8_t * data() {
 		return this->_data;
 	}
 };
 
+} //namespace ircommon
 
 #endif /* _IRCOMMON_ILTAG_H_ */

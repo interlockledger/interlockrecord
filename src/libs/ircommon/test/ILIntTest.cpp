@@ -27,6 +27,8 @@
 #include "ILIntTest.h"
 #include <ircommon/ilint.h>
 
+using namespace ircommon;
+
 //==============================================================================
 // class ILIntTest
 //------------------------------------------------------------------------------
@@ -48,32 +50,32 @@ void ILIntTest::TearDown() {
 //------------------------------------------------------------------------------
 TEST_F(ILIntTest, Size) {
 
-	ASSERT_EQ(1, ILIntSize(0));
-	ASSERT_EQ(1, ILIntSize(247));
+	ASSERT_EQ(1, ILInt::size(0));
+	ASSERT_EQ(1, ILInt::size(247));
 
-	ASSERT_EQ(2, ILIntSize(248));
-	ASSERT_EQ(2, ILIntSize(0xFF + 248));
+	ASSERT_EQ(2, ILInt::size(248));
+	ASSERT_EQ(2, ILInt::size(0xFF + 248));
 
-	ASSERT_EQ(3, ILIntSize(0xFF + 248 + 1));
-	ASSERT_EQ(3, ILIntSize(0xFFFF + 248));
+	ASSERT_EQ(3, ILInt::size(0xFF + 248 + 1));
+	ASSERT_EQ(3, ILInt::size(0xFFFF + 248));
 
-	ASSERT_EQ(4, ILIntSize(0xFFFF + 248 + 1));
-	ASSERT_EQ(4, ILIntSize(0xFFFFFF + 248));
+	ASSERT_EQ(4, ILInt::size(0xFFFF + 248 + 1));
+	ASSERT_EQ(4, ILInt::size(0xFFFFFF + 248));
 
-	ASSERT_EQ(5, ILIntSize(0xFFFFFF + 248 + 1));
-	ASSERT_EQ(5, ILIntSize(0xFFFFFFFFl + 248));
+	ASSERT_EQ(5, ILInt::size(0xFFFFFF + 248 + 1));
+	ASSERT_EQ(5, ILInt::size(0xFFFFFFFFl + 248));
 
-	ASSERT_EQ(6, ILIntSize(0xFFFFFFFFl + 248 + 1));
-	ASSERT_EQ(6, ILIntSize(0xFFFFFFFFFFl + 248));
+	ASSERT_EQ(6, ILInt::size(0xFFFFFFFFl + 248 + 1));
+	ASSERT_EQ(6, ILInt::size(0xFFFFFFFFFFl + 248));
 
-	ASSERT_EQ(7, ILIntSize(0xFFFFFFFFFFl + 248 + 1));
-	ASSERT_EQ(7, ILIntSize(0xFFFFFFFFFFFFl + 248));
+	ASSERT_EQ(7, ILInt::size(0xFFFFFFFFFFl + 248 + 1));
+	ASSERT_EQ(7, ILInt::size(0xFFFFFFFFFFFFl + 248));
 
-	ASSERT_EQ(8, ILIntSize(0xFFFFFFFFFFFFl + 248 + 1));
-	ASSERT_EQ(8, ILIntSize(0xFFFFFFFFFFFFFFl + 248));
+	ASSERT_EQ(8, ILInt::size(0xFFFFFFFFFFFFl + 248 + 1));
+	ASSERT_EQ(8, ILInt::size(0xFFFFFFFFFFFFFFl + 248));
 
-	ASSERT_EQ(9, ILIntSize(0xFFFFFFFFFFFFFFl + 248 + 1));
-	ASSERT_EQ(9, ILIntSize(0xFFFFFFFFFFFFFFFFl));
+	ASSERT_EQ(9, ILInt::size(0xFFFFFFFFFFFFFFl + 248 + 1));
+	ASSERT_EQ(9, ILInt::size(0xFFFFFFFFFFFFFFFFl));
 }
 
 //------------------------------------------------------------------------------
@@ -83,16 +85,16 @@ TEST_F(ILIntTest, ILIntEncode_SingleByte) {
 
 	for (uint64_t v = 0; v < 248; v++) {
 		memset(enc, 0xFF, sizeof(enc));
-		encSize = ILIntEncode(v, enc + 1, sizeof(enc) - 1);
+		encSize = ILInt::encode(v, enc + 1, sizeof(enc) - 1);
 		ASSERT_EQ(1, encSize);
 		ASSERT_EQ(0xFF, enc[0]);
 		ASSERT_EQ(v, enc[1]);
 		ASSERT_EQ(0xFF, enc[2]);
 	}
 
-	ASSERT_EQ(0, ILIntEncode(1, enc, 0));
+	ASSERT_EQ(0, ILInt::encode(1, enc, 0));
 	for (uint64_t v = 248; v < 256; v++) {
-		ASSERT_EQ(0, ILIntEncode(v, enc, 1));
+		ASSERT_EQ(0, ILInt::encode(v, enc, 1));
 	}
 }
 
@@ -107,7 +109,7 @@ TEST_F(ILIntTest, ILIntEncode_MultiByte) {
 	// Lower bound
 	memset(enc, 0xA5, sizeof(enc));
 	v = 248;
-	encSize = ILIntEncode(v, enc + 1, sizeof(enc) - 1);
+	encSize = ILInt::encode(v, enc + 1, sizeof(enc) - 1);
 	ASSERT_EQ(2, encSize);
 	ASSERT_EQ(0xA5, enc[0]);
 	ASSERT_EQ(248, enc[1]);
@@ -118,7 +120,7 @@ TEST_F(ILIntTest, ILIntEncode_MultiByte) {
 	for (int size = 3; size < 10; size++) {
 		v = 248 + addition;
 		memset(enc, 0xA5, sizeof(enc));
-		encSize = ILIntEncode(v, enc + 1, sizeof(enc) - 1);
+		encSize = ILInt::encode(v, enc + 1, sizeof(enc) - 1);
 		ASSERT_EQ(size, encSize);
 		ASSERT_EQ(0xA5, enc[0]);
 		ASSERT_EQ(248 + (size - 2), enc[1]);
@@ -135,7 +137,7 @@ TEST_F(ILIntTest, ILIntEncode_MultiByte) {
 	for (int size = 3; size < 9; size++) {
 		v = 248 + addition;
 		memset(enc, 0xA5, sizeof(enc));
-		encSize = ILIntEncode(v, enc + 1, sizeof(enc) - 1);
+		encSize = ILInt::encode(v, enc + 1, sizeof(enc) - 1);
 		ASSERT_EQ(size, encSize);
 		ASSERT_EQ(0xA5, enc[0]);
 		ASSERT_EQ(248 + (size - 2), enc[1]);
@@ -149,7 +151,7 @@ TEST_F(ILIntTest, ILIntEncode_MultiByte) {
 	// Max value
 	memset(enc, 0xA5, sizeof(enc));
 	v = 0xFFFFFFFFFFFFFFFFl;
-	encSize = ILIntEncode(v, enc + 1, sizeof(enc) - 1);
+	encSize = ILInt::encode(v, enc + 1, sizeof(enc) - 1);
 	ASSERT_EQ(9, encSize);
 	ASSERT_EQ(0xA5, enc[0]);
 	ASSERT_EQ(248 + 7, enc[1]);
@@ -173,16 +175,16 @@ TEST_F(ILIntTest, ILIntDecode_SingleByte) {
 	for (int i = 0; i < 248; i++) {
 		memset(enc, 0xFF, sizeof(enc));
 		enc[1] = i;
-		ASSERT_EQ(1, ILIntDecode(enc + 1, 1, &v));
+		ASSERT_EQ(1, ILInt::decode(enc + 1, 1, &v));
 		ASSERT_EQ(i, v);
 
 	}
 
-	ASSERT_EQ(0, ILIntDecode(enc + 1, 0, &v));
+	ASSERT_EQ(0, ILInt::decode(enc + 1, 0, &v));
 	for (int i = 248; i < 256; i++) {
 		memset(enc, 0xFF, sizeof(enc));
 		enc[1] = i;
-		ASSERT_EQ(0, ILIntDecode(enc + 1, 1, &v));
+		ASSERT_EQ(0, ILInt::decode(enc + 1, 1, &v));
 
 	}
 
@@ -204,13 +206,13 @@ TEST_F(ILIntTest, ILIntEncodeDecode) {
 		v = rand() | ((uint64_t)rand() << 32);
 		// Encode
 		memset(enc, 0xA5, sizeof(enc));
-		encSize = ILIntEncode(v, enc + 1, sizeof(enc) - 1);
+		encSize = ILInt::encode(v, enc + 1, sizeof(enc) - 1);
 		// Test guard
 		ASSERT_EQ(0xA5, enc[0]);
 		ASSERT_EQ(0xA5, enc[encSize + 1]);
 
 		// Decode
-		ASSERT_EQ(encSize, ILIntDecode(enc + 1, encSize, &vDec));
+		ASSERT_EQ(encSize, ILInt::decode(enc + 1, encSize, &vDec));
 		ASSERT_EQ(v, vDec);
 	}
 }

@@ -27,43 +27,116 @@
 #ifndef __ILCOMMON_ILINT_H__
 #define __ILCOMMON_ILINT_H__
 
-#include <stdint.h>
+#include <cstdint>
 
-#ifdef __cplusplus
-extern "C" {
-#endif //__cplusplus
+namespace ircommon {
 
 /**
- * Returns the number of bytes required to encode the given value.
+ * This class implements an ILInt value.
  *
- * @param[in] v The value to be encoded.
- * @return The number of bytes required to store the value.
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2017.10.13
  */
-int ILIntSize(uint64_t v);
+class ILInt {
+private:
+	std::uint64_t _value;
+public:
+	enum {
+		/**
+		 * LInt base value. All values larger then or equal to will use more
+		 * than 1 byte to be encoded.
+		 */
+		ILINT_BASE = 0xF8
+	};
 
-/**
- * Encodes the value v into the ILInt value.
- *
- * @param[in] v The value.
- * @param[out] out The output buffer.
- * @param[in] outSize The number of bytes in out.
- * @return The number of bytes used or 0 in case of failure.
- */
-int ILIntEncode(uint64_t v, void * out, int outSize);
+	ILInt(std::uint64_t value);
 
-/**
- * Decodes the ILInt values.
- *
- * @param[in] inp The value to be decoded.
- * @param[in] inpSize The size of inp.
- * @param[out] v The output value.
- * @return The number of bytes read from inp or 0 in case of failure.
- */
-int ILIntDecode(const void * inp, int inpSize, uint64_t * v);
+	ILInt(const ILInt & value);
 
-#ifdef __cplusplus
-} // extern "C"
-#endif //__cplusplus
+	virtual ~ILInt();
+
+	const std::uint64_t value() const {
+		return this->_value;
+	}
+
+	void setValue(std::uint64_t value) {
+		this->_value = value;
+	}
+
+	/**
+	 * Returns the number of bytes required to encode this value.
+	 *
+	 * @return The number of bytes required to store the value.
+	 */
+	int size() const {
+		return size(this->_value);
+	}
+
+	/**
+	 * Returns the number of bytes required to encode the given value.
+	 *
+	 * @param[in] v The value to be encoded.
+	 * @return The number of bytes required to store the value.
+	 */
+	static int size(uint64_t v);
+
+	/**
+	 * Encodes the value v into the ILInt value.
+	 *
+	 * @param[out] out The output buffer.
+	 * @param[in] outSize The number of bytes in out.
+	 * @return The number of bytes used or 0 in case of failure.
+	 */
+	int encode(void * out, int outSize) const {
+		return encode(this->_value, out, outSize);
+	}
+
+	/**
+	 * Encodes the value v into the ILInt value.
+	 *
+	 * @param[in] v The value.
+	 * @param[out] out The output buffer.
+	 * @param[in] outSize The number of bytes in out.
+	 * @return The number of bytes used or 0 in case of failure.
+	 */
+	static int encode(uint64_t v, void * out, int outSize);
+
+	/**
+	 * Decodes the ILInt values.
+	 *
+	 * @param[in] inp The value to be decoded.
+	 * @param[in] inpSize The size of inp.
+	 * @return The number of bytes read from inp or 0 in case of failure.
+	 */
+	int decode(const void * inp, int inpSize);
+
+	/**
+	 * Decodes the ILInt values.
+	 *
+	 * @param[in] inp The value to be decoded.
+	 * @param[in] inpSize The size of inp.
+	 * @param[out] v The output value.
+	 * @return The number of bytes read from inp or 0 in case of failure.
+	 */
+	static int decode(const void * inp, int inpSize, uint64_t * v);
+
+	ILInt & operator=(const ILInt & v) {
+		this->_value = v._value;
+		return *this;
+	}
+
+	ILInt & operator=(std::uint64_t & v) {
+		this->_value = v;
+		return *this;
+	}
+
+	operator std::uint64_t() const {
+		return this->value();
+	}
+
+};
+
+} //namespace ircommon
 
 #endif //__ILCOMMON_ILINT_H__
 

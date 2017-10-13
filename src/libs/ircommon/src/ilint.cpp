@@ -26,87 +26,83 @@
  */
 #include "ircommon/ilint.h"
 
-#define ILINT_BASE 0xF8
+using namespace ircommon;
 
-extern "C" {
+int ILInt::size(uint64_t v) {
 
-	int ILIntSize(uint64_t v) {
+	if (v < ILINT_BASE) {
+		return 1;
+	} else if (v <= (0xFF + ILINT_BASE)) {
+		return 2;
+	} else if ( v <= (0xFFFF + ILINT_BASE)){
+		return 3;
+	} else if ( v <= (0xFFFFFFl + ILINT_BASE)){
+		return 4;
+	} else if ( v <= (0xFFFFFFFFl + ILINT_BASE)){
+		return 5;
+	} else if ( v <= (0xFFFFFFFFFFl + ILINT_BASE)){
+		return 6;
+	} else if ( v <= (0xFFFFFFFFFFFFl + ILINT_BASE)){
+		return 7;
+	} else if ( v <= (0xFFFFFFFFFFFFFFl + ILINT_BASE)){
+		return 8;
+	} else {
+		return 9;
+	}
+}
 
-		if (v < ILINT_BASE) {
-			return 1;
-		} else if (v <= (0xFF + ILINT_BASE)) {
-			return 2;
-		} else if ( v <= (0xFFFF + ILINT_BASE)){
-			return 3;
-		} else if ( v <= (0xFFFFFFl + ILINT_BASE)){
-			return 4;
-		} else if ( v <= (0xFFFFFFFFl + ILINT_BASE)){
-			return 5;
-		} else if ( v <= (0xFFFFFFFFFFl + ILINT_BASE)){
-			return 6;
-		} else if ( v <= (0xFFFFFFFFFFFFl + ILINT_BASE)){
-			return 7;
-		} else if ( v <= (0xFFFFFFFFFFFFFFl + ILINT_BASE)){
-			return 8;
-		} else {
-			return 9;
+int ILInt::encode(uint64_t v, void * out, int outSize) {
+	int size;
+	uint8_t * p;
+	int i;
+
+	size = ILInt::size(v);
+	if (outSize < size) {
+		return 0;
+	}
+	p = (uint8_t *)out;
+	if (size == 1) {
+		*p = (uint8_t)(v & 0xFF);
+	} else {
+		*p = ILINT_BASE + (size - 2);
+		p++;
+		v = v - ILINT_BASE;
+		for (i = ((size - 2) * 8); i >= 0; i -=8, p++) {
+			*p = (uint8_t)((v >> i) & 0xFF);
 		}
 	}
+	return size;
+}
 
-	int ILIntEncode(uint64_t v, void * out, int outSize) {
-		int size;
-		uint8_t * p;
-		int i;
+int ILInt::decode(const void * inp, int inpSize, uint64_t * v) {
+	const uint8_t * p;
+	const uint8_t * pEnd;
+	int size;
 
-		size = ILIntSize(v);
-		if (outSize < size) {
+	if (inpSize <= 0) {
+		return 0;
+	}
+	p = (const uint8_t *) inp;
+	size = *p;
+	if (size < ILINT_BASE) {
+		*v = size;
+		return 1;
+	} else {
+		p++;
+		size = size - ILINT_BASE + 1;
+		if (inpSize <= size) {
 			return 0;
 		}
-		p = (uint8_t *)out;
-		if (size == 1) {
-			*p = (uint8_t)(v & 0xFF);
-		} else {
-			*p = ILINT_BASE + (size - 2);
-			p++;
-			v = v - ILINT_BASE;
-			for (i = ((size - 2) * 8); i >= 0; i -=8, p++) {
-				*p = (uint8_t)((v >> i) & 0xFF);
-			}
+		pEnd = p + size;
+		*v = 0;
+		for (; p < pEnd; p++) {
+			*v = ((*v) << 8) | ((*p) & 0xFF);
 		}
+		if (*v >= (0xFFFFFFFFFFFFFFFFl - ILINT_BASE)) {
+			return 0;
+		}
+		*v += ILINT_BASE;
+		size++;
 		return size;
 	}
-
-	int ILIntDecode(const void * inp, int inpSize, uint64_t * v) {
-		const uint8_t * p;
-		const uint8_t * pEnd;
-		int size;
-
-		if (inpSize <= 0) {
-			return 0;
-		}
-		p = (const uint8_t *) inp;
-		size = *p;
-		if (size < ILINT_BASE) {
-			*v = size;
-			return 1;
-		} else {
-			p++;
-			size = size - ILINT_BASE + 1;
-			if (inpSize <= size) {
-				return 0;
-			}
-			pEnd = p + size;
-			*v = 0;
-			for (; p < pEnd; p++) {
-				*v = ((*v) << 8) | ((*p) & 0xFF);
-			}
-			if (*v >= (0xFFFFFFFFFFFFFFFFl - ILINT_BASE)) {
-				return 0;
-			}
-			*v += ILINT_BASE;
-			size++;
-			return size;
-		}
-	}
-} // extern "C"
-
+}
