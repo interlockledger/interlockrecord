@@ -28,6 +28,9 @@
 
 using namespace ircommon;
 
+//==============================================================================
+// Class ILInt
+//------------------------------------------------------------------------------
 int ILInt::size(uint64_t v) {
 
 	if (v < ILINT_BASE) {
@@ -51,6 +54,7 @@ int ILInt::size(uint64_t v) {
 	}
 }
 
+//------------------------------------------------------------------------------
 int ILInt::encode(uint64_t v, void * out, int outSize) {
 	int size;
 	uint8_t * p;
@@ -74,6 +78,7 @@ int ILInt::encode(uint64_t v, void * out, int outSize) {
 	return size;
 }
 
+//------------------------------------------------------------------------------
 int ILInt::decode(const void * inp, int inpSize, uint64_t * v) {
 	const uint8_t * p;
 	const uint8_t * pEnd;
@@ -106,3 +111,4 @@ int ILInt::decode(const void * inp, int inpSize, uint64_t * v) {
 		return size;
 	}
 }
+//------------------------------------------------------------------------------

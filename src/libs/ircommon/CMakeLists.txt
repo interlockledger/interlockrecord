@@ -27,6 +27,7 @@ configure_file (
 add_library(ircommon STATIC 
 	${CMAKE_SOURCE_DIR}/src/ilint.cpp
 	${CMAKE_SOURCE_DIR}/src/iltag.cpp
+	${CMAKE_SOURCE_DIR}/src/irbuffer.cpp
 )
 
 msvc_set_static ()
