@@ -57,6 +57,8 @@ protected:
 	bool _secure;
 
 	void dispose(std::uint64_t buffSize, std::uint8_t * buff);
+
+	std::uint64_t getReservedSize(std::uint64_t newSize) const;
 public:
 	IRBuffer(std::uint64_t buffSize, const void * buff);
 
@@ -82,6 +84,10 @@ public:
 
 	const std::uint8_t * buffer() const {
 		return this->_robuff;
+	}
+
+	std::uint64_t getBufferSize() const {
+		return this->_buffSize;
 	}
 
 	bool isReadOnly() const {

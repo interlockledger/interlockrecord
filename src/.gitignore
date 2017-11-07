@@ -7,3 +7,4 @@ include/ircommon/version.h
 # CDT project
 .project
 .cproject
+.settings

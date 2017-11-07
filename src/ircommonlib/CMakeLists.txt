@@ -3,9 +3,6 @@ project (ircommonlib
 
 # Building the library
 find_package(OpenSSL REQUIRED)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/include

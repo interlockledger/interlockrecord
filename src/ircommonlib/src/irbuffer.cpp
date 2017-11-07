@@ -183,4 +183,15 @@ void IRBuffer::dispose(std::uint64_t buffSize, std::uint8_t * buff) {
 		delete [] buff;
 	}
 }
+
+//------------------------------------------------------------------------------
+std::uint64_t IRBuffer::getReservedSize(std::uint64_t newSize) const {
+
+	if (this->isReadOnly()) {
+		return 0;
+	} else {
+		return newSize + (this->_inc - (newSize % this->_inc));
+	}
+}
+
 //------------------------------------------------------------------------------
