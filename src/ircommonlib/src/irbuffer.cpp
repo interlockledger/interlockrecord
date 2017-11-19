@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <ircommon/irbuffer.h>
+#include <ircommon/irutils.h>
 #include <cstring>
 #include <algorithm>
 #include <new>
@@ -41,10 +42,10 @@ IRBuffer::IRBuffer(std::uint64_t buffSize, const void * buff):
 }
 
 //------------------------------------------------------------------------------
-IRBuffer::IRBuffer(std::uint64_t initialSize, bool secure, std::uint64_t inc):
+IRBuffer::IRBuffer(std::uint64_t reserved, bool secure, std::uint64_t inc):
 		_secure(secure), _inc(inc), _buff(nullptr), _robuff(nullptr),
 		_size(0), _buffSize(0), _position(0){
-	this->reserve(initialSize);
+	this->reserve(reserved);
 }
 
 //------------------------------------------------------------------------------
@@ -127,7 +128,7 @@ bool IRBuffer::reserve(std::uint64_t newSize) {
 	}
 
 	if (newSize > this->_buffSize) {
-		std::uint64_t newBuffSize =	newSize + (this->_inc - (newSize % this->_inc));
+		std::uint64_t newBuffSize = IRUtils::getPaddedSize(newSize, this->_inc);
 		std::uint8_t * newBuff = new(std::nothrow) std::uint8_t(newBuffSize);
 		if (newBuff) {
 			if (this->_buff) {
@@ -181,16 +182,6 @@ void IRBuffer::dispose(std::uint64_t buffSize, std::uint8_t * buff) {
 			std::memset(buff, buffSize, 0);
 		}
 		delete [] buff;
-	}
-}
-
-//------------------------------------------------------------------------------
-std::uint64_t IRBuffer::getReservedSize(std::uint64_t newSize) const {
-
-	if (this->isReadOnly()) {
-		return 0;
-	} else {
-		return newSize + (this->_inc - (newSize % this->_inc));
 	}
 }
 
