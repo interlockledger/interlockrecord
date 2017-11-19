@@ -12,6 +12,7 @@ add_executable(ircommonlib-tests
 	${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/ILIntTest.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IRBufferTest.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/IRUtilsTest.cpp
 	)
 target_link_libraries(
 	ircommonlib-tests
