@@ -86,6 +86,47 @@ UINT_TYPE  getPaddedSizeBestFit(UINT_TYPE  buffSize, UINT_TYPE  blockSize) {
 	return buffSize + paddingSize;
 }
 
+/**
+ * Converts a big endian value into a integer.
+ *
+ * @param[in] buff The buffer. It must have at least sizeof(v) bytes.
+ * @param[out] v The value read.
+ * @tparam INT_TYPE An integer type.
+ * @since 2017.11.18
+ */
+template < class INT_TYPE >
+void BE2Int(const void * buff, INT_TYPE & v) {
+	const std::uint8_t * p;
+	const std::uint8_t * pEnd;
+
+	p = (const std::uint8_t *)buff;
+	pEnd = p + sizeof(v);
+	v = 0;
+	for (; p < pEnd; p++) {
+		v = (v << 8) | INT_TYPE(*p & 0xFF);
+	}
+}
+
+/**
+ * Converts an integer into a big endian value.
+ *
+ * @param[in] v The value to be converted.
+ * @param[out] buff The buffer that will receive the value. It must have at least sizeof(v) bytes.
+ * @tparam INT_TYPE An integer type.
+ * @since 2017.11.18
+ */
+template < class INT_TYPE >
+void Int2BE(INT_TYPE v, void * buff) {
+	std::uint8_t * pBegin;
+	std::uint8_t * p;
+
+	pBegin = ((std::uint8_t *)buff) - 1;
+	for (p = pBegin + sizeof(INT_TYPE); p > pBegin; p--) {
+		*p = (std::uint8_t)(v & 0xFF);
+		v = v >> 8;
+	}
+}
+
 } // namespace IRUtils
 
 } //namespace ircommon

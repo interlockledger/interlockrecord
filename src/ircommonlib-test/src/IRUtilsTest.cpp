@@ -121,5 +121,131 @@ TEST_F(IRUtilsTest, getPaddedSizeBestFitUInt32) {
 				IRUtils::getPaddedSizeBestFit(v, blockSize));
 	}
 }
+
 //------------------------------------------------------------------------------
+const static std::uint8_t BE_SAMPLE[8] = {
+		0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
+
+TEST_F(IRUtilsTest, BE2Int16) {
+	uint16_t v;
+
+	IRUtils::BE2Int(BE_SAMPLE, v);
+	ASSERT_EQ(0x0123, v);
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRUtilsTest, BE2IntU16) {
+	int16_t v;
+
+	IRUtils::BE2Int(BE_SAMPLE, v);
+	ASSERT_EQ(0x0123, v);
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRUtilsTest, BE2Int32) {
+	uint32_t v;
+
+	IRUtils::BE2Int(BE_SAMPLE, v);
+	ASSERT_EQ(0x01234567, v);
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRUtilsTest, BE2IntU32) {
+	int32_t v;
+
+	IRUtils::BE2Int(BE_SAMPLE, v);
+	ASSERT_EQ(0x01234567, v);
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRUtilsTest, BE2Int64) {
+	uint64_t v;
+
+	IRUtils::BE2Int(BE_SAMPLE, v);
+	ASSERT_EQ(0x0123456789ABCDEFll, v);
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRUtilsTest, BE2IntU64) {
+	int64_t v;
+
+	IRUtils::BE2Int(BE_SAMPLE, v);
+	ASSERT_EQ(0x0123456789ABCDEFll, v);
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRUtilsTest, Int2BE16) {
+	uint8_t * buff;
+	int16_t v;
+
+	v = 0x0123;
+	buff = new uint8_t[sizeof(v)];
+	IRUtils::Int2BE(v, buff);
+	ASSERT_EQ(0, memcmp(buff, BE_SAMPLE, sizeof(v)));
+	delete [] buff;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRUtilsTest, Int2BEU16) {
+	uint8_t * buff;
+	uint16_t v;
+
+	v = 0x0123;
+	buff = new uint8_t[sizeof(v)];
+	IRUtils::Int2BE(v, buff);
+	ASSERT_EQ(0, memcmp(buff, BE_SAMPLE, sizeof(v)));
+	delete [] buff;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRUtilsTest, Int2BE32) {
+	uint8_t * buff;
+	int32_t v;
+
+	v = 0x01234567;
+	buff = new uint8_t[sizeof(v)];
+	IRUtils::Int2BE(v, buff);
+	ASSERT_EQ(0, memcmp(buff, BE_SAMPLE, sizeof(v)));
+	delete [] buff;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRUtilsTest, Int2BEU32) {
+	uint8_t * buff;
+	uint32_t v;
+
+	v = 0x01234567;
+	buff = new uint8_t[sizeof(v)];
+	IRUtils::Int2BE(v, buff);
+	ASSERT_EQ(0, memcmp(buff, BE_SAMPLE, sizeof(v)));
+	delete [] buff;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRUtilsTest, Int2BE64) {
+	uint8_t * buff;
+	int64_t v;
+
+	v = 0x0123456789ABCDEFll;
+	buff = new uint8_t[sizeof(v)];
+	IRUtils::Int2BE(v, buff);
+	ASSERT_EQ(0, memcmp(buff, BE_SAMPLE, sizeof(v)));
+	delete [] buff;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRUtilsTest, Int2BEU64) {
+	uint8_t * buff;
+	uint64_t v;
+
+	v = 0x0123456789ABCDEFll;
+	buff = new uint8_t[sizeof(v)];
+	IRUtils::Int2BE(v, buff);
+	ASSERT_EQ(0, memcmp(buff, BE_SAMPLE, sizeof(v)));
+	delete [] buff;
+}
+
+//------------------------------------------------------------------------------
+
+
 
