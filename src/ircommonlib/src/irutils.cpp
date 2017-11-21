@@ -27,6 +27,9 @@
 #include "ircommon/irutils.h"
 
 #include <cstring>
+#ifdef _WIN32
+#include <windows.h>
+#endif // _WIN32
 
 namespace ircommon {
 namespace IRUtils {
@@ -36,13 +39,17 @@ namespace IRUtils {
 //------------------------------------------------------------------------------
 void clearMemory(std::uint64_t buffSize, void * buff) {
 	if (buff) {
-		// TODO Check if this code remains after heavy optmizations
+#ifdef _WIN32
+		SecureZeroMemory(buff, buffSize);
+#else
+		// This code was tested with GCC (-O4) and CLANG (-O3) and is guaranteed
+		// to remain untouched.
 		volatile std::uint8_t * p = (volatile std::uint8_t *)buff;
 		volatile std::uint8_t * pEnd = p + buffSize;
 		for (;p < pEnd; p++) {
 			(*p) = 0;
 		}
-		// TODO On Windows, use SecureZeroMemory() instead.
+#endif //__WIN32
 	}
 }
 
