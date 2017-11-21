@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.7)
+cmake_minimum_required (VERSION 3.9)
 project (interlockrecord)
 
 macro(msvc_set_static)
