@@ -1,0 +1,58 @@
+<!--
+Copyright (c) 2017, Open Communications Security
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of the copyright holder nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<project name="openssl-windows-build" default="all">
+
+	<property name="openssl.url" value="https://www.openssl.org/source/openssl-1.1.0g.tar.gz" />
+	<property name="openssl.file" value="openssl-1.1.0g.tar.gz" />
+	<property name="openssl.file.checksum" value="6c76f698fc2a4540f3977d97c889e139acf7d3f9eb85f349974175e8a7707b19743ef91c5ce32839310b6ea06ca88a03d9709ee011687b4634c5c50b5814f42a" />
+	<property name="src.dir" value="src/openssl-1.1.0g" />
+	<property name="build.dir" value="bin" />
+	<property name="pack.dir" value="gtest" />
+	
+	<target name="all" depends="download,decompress"/>
+	
+	<target name="download" description="Downloads the source package from github">
+		<get src="${openssl.url}" dest="${openssl.file}" skipexisting="true"/>
+		<condition property="openssl.file.checksum.failed">
+			<not>
+				<checksum file="${openssl.file}" algorithm="SHA-512" property="${openssl.file.checksum}"/>
+			</not>			
+		</condition>
+		<fail if="openssl.file.checksum.failed" message="The SHA-512 of the file ${openssl.file} is not the expected one."/>
+	</target>
+
+	<target name="decompress" depends="clean" description="Builds gtest with VC for Win32 and Win64">
+		<untar dest="src" src="${openssl.file}" compression="gzip"/>
+	</target>
+	
+	<target name="clean" description="">
+		<delete dir="${src.dir}" />
+	</target>	
+</project>
