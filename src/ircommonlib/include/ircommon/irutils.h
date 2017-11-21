@@ -27,6 +27,8 @@
 #ifndef INCLUDE_IRUTILS_IRBUFFER_H_
 #define INCLUDE_IRUTILS_IRBUFFER_H_
 
+#include <cstdint>
+
 namespace ircommon {
 
 /**
@@ -116,7 +118,7 @@ void BE2Int(const void * buff, INT_TYPE & v) {
  * @since 2017.11.18
  */
 template < class INT_TYPE >
-void Int2BE(INT_TYPE v, void * buff) {
+void int2BE(INT_TYPE v, void * buff) {
 	std::uint8_t * pBegin;
 	std::uint8_t * p;
 
@@ -126,6 +128,15 @@ void Int2BE(INT_TYPE v, void * buff) {
 		v = v >> 8;
 	}
 }
+
+/**
+ * Securely fills a memory buffer with zeroes.
+ *
+ * @param[in] buffSize The size of the buffer to be zeroed.
+ * @param[in] buff The buffer to be zeroed. If set to NULL, this method
+ * does nothing.
+ */
+void clearMemory(std::uint64_t buffSize, void * buff);
 
 } // namespace IRUtils
 

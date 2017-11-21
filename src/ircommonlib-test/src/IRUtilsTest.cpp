@@ -180,7 +180,7 @@ TEST_F(IRUtilsTest, Int2BE16) {
 
 	v = 0x0123;
 	buff = new uint8_t[sizeof(v)];
-	IRUtils::Int2BE(v, buff);
+	IRUtils::int2BE(v, buff);
 	ASSERT_EQ(0, memcmp(buff, BE_SAMPLE, sizeof(v)));
 	delete [] buff;
 }
@@ -192,7 +192,7 @@ TEST_F(IRUtilsTest, Int2BEU16) {
 
 	v = 0x0123;
 	buff = new uint8_t[sizeof(v)];
-	IRUtils::Int2BE(v, buff);
+	IRUtils::int2BE(v, buff);
 	ASSERT_EQ(0, memcmp(buff, BE_SAMPLE, sizeof(v)));
 	delete [] buff;
 }
@@ -204,7 +204,7 @@ TEST_F(IRUtilsTest, Int2BE32) {
 
 	v = 0x01234567;
 	buff = new uint8_t[sizeof(v)];
-	IRUtils::Int2BE(v, buff);
+	IRUtils::int2BE(v, buff);
 	ASSERT_EQ(0, memcmp(buff, BE_SAMPLE, sizeof(v)));
 	delete [] buff;
 }
@@ -216,7 +216,7 @@ TEST_F(IRUtilsTest, Int2BEU32) {
 
 	v = 0x01234567;
 	buff = new uint8_t[sizeof(v)];
-	IRUtils::Int2BE(v, buff);
+	IRUtils::int2BE(v, buff);
 	ASSERT_EQ(0, memcmp(buff, BE_SAMPLE, sizeof(v)));
 	delete [] buff;
 }
@@ -228,7 +228,7 @@ TEST_F(IRUtilsTest, Int2BE64) {
 
 	v = 0x0123456789ABCDEFll;
 	buff = new uint8_t[sizeof(v)];
-	IRUtils::Int2BE(v, buff);
+	IRUtils::int2BE(v, buff);
 	ASSERT_EQ(0, memcmp(buff, BE_SAMPLE, sizeof(v)));
 	delete [] buff;
 }
@@ -240,9 +240,28 @@ TEST_F(IRUtilsTest, Int2BEU64) {
 
 	v = 0x0123456789ABCDEFll;
 	buff = new uint8_t[sizeof(v)];
-	IRUtils::Int2BE(v, buff);
+	IRUtils::int2BE(v, buff);
 	ASSERT_EQ(0, memcmp(buff, BE_SAMPLE, sizeof(v)));
 	delete [] buff;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRUtilsTest, clearMemory) {
+	std::uint8_t * buff;
+	int size;
+
+	size = 32;
+	buff = new std::uint8_t[size];
+	for (int i = 0; i < size; i++) {
+		buff[i] = 0xFF;
+	}
+	IRUtils::clearMemory(size, buff);
+	for (int i = 0; i < size; i++) {
+		ASSERT_EQ(0, buff[i]);
+	}
+	delete [] buff;
+	buff = nullptr;
+	IRUtils::clearMemory(size, buff);
 }
 
 //------------------------------------------------------------------------------

@@ -17,6 +17,7 @@ add_library(ircommonlib STATIC
 	${CMAKE_CURRENT_SOURCE_DIR}/src/ilint.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/iltag.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/irbuffer.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/irutils.cpp
 )
 
 msvc_set_static()
