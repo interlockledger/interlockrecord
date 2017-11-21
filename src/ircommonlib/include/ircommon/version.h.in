@@ -31,6 +31,6 @@
  * This macro defines the version of the library.
  * @since 2017.10.05
  */
-#define IRCOMMON_VERSION_STR @ircommon_VERSION@
+#define IRCOMMON_VERSION_STR "@ircommonlib_VERSION@"
 
 #endif //__ILCOMMON_VERSION_H__
