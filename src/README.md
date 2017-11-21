@@ -20,10 +20,12 @@
 
 ### Eclipse
 
-In order to create the **Eclipse CDT** project, run the command:
+In order to create the **Eclipse CDT** project, create a directory called **build** side by side of the
+directory **src**. Go to this directory and run the command:
+
 
 ```
-$ cmake . -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECLIPSE_VERSION=4.7
+$ cmake ../src -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECLIPSE_VERSION=4.7
 ```
 
 ### Microsoft Visual Studio
@@ -31,13 +33,15 @@ $ cmake . -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECL
 In order to create the **Microsoft Visual Studio** project, run the command:
 
 ```
-$ cmake . -G"Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Debug
+$ cmake ../src -G"Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Debug
 ```
 
 ## Release build
 
+
 ```
-cmake --build . --clean-first
+$ cmake ../src -DCMAKE_BUILD_TYPE=Release
+$ cmake --build . --clean-first
 ```
 
 ## External dependencies
