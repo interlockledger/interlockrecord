@@ -1,9 +1,6 @@
 project (ircommonlib
 	VERSION 0.1)
 
-# Find the dependencies
-find_package(OpenSSL REQUIRED)
-
 # Fix the version strings
 configure_file (
                 "${CMAKE_CURRENT_SOURCE_DIR}/include/ircommon/version.h.in"
