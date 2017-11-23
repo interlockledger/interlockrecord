@@ -63,19 +63,19 @@ TEST_F(ILIntTest, Size) {
 	ASSERT_EQ(4, ILInt::size(0xFFFFFF + 248));
 
 	ASSERT_EQ(5, ILInt::size(0xFFFFFF + 248 + 1));
-	ASSERT_EQ(5, ILInt::size(0xFFFFFFFFl + 248));
+	ASSERT_EQ(5, ILInt::size(0xFFFFFFFFll + 248));
 
-	ASSERT_EQ(6, ILInt::size(0xFFFFFFFFl + 248 + 1));
-	ASSERT_EQ(6, ILInt::size(0xFFFFFFFFFFl + 248));
+	ASSERT_EQ(6, ILInt::size(0xFFFFFFFFll + 248 + 1));
+	ASSERT_EQ(6, ILInt::size(0xFFFFFFFFFFll + 248));
 
-	ASSERT_EQ(7, ILInt::size(0xFFFFFFFFFFl + 248 + 1));
-	ASSERT_EQ(7, ILInt::size(0xFFFFFFFFFFFFl + 248));
+	ASSERT_EQ(7, ILInt::size(0xFFFFFFFFFFll + 248 + 1));
+	ASSERT_EQ(7, ILInt::size(0xFFFFFFFFFFFFll + 248));
 
-	ASSERT_EQ(8, ILInt::size(0xFFFFFFFFFFFFl + 248 + 1));
-	ASSERT_EQ(8, ILInt::size(0xFFFFFFFFFFFFFFl + 248));
+	ASSERT_EQ(8, ILInt::size(0xFFFFFFFFFFFFll + 248 + 1));
+	ASSERT_EQ(8, ILInt::size(0xFFFFFFFFFFFFFFll + 248));
 
-	ASSERT_EQ(9, ILInt::size(0xFFFFFFFFFFFFFFl + 248 + 1));
-	ASSERT_EQ(9, ILInt::size(0xFFFFFFFFFFFFFFFFl));
+	ASSERT_EQ(9, ILInt::size(0xFFFFFFFFFFFFFFll + 248 + 1));
+	ASSERT_EQ(9, ILInt::size(0xFFFFFFFFFFFFFFFFll));
 }
 
 //------------------------------------------------------------------------------

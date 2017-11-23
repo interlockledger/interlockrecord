@@ -41,13 +41,13 @@ int ILInt::size(uint64_t v) {
 		return 3;
 	} else if ( v <= (0xFFFFFFl + ILINT_BASE)){
 		return 4;
-	} else if ( v <= (0xFFFFFFFFl + ILINT_BASE)){
+	} else if ( v <= (0xFFFFFFFFll + ILINT_BASE)){
 		return 5;
-	} else if ( v <= (0xFFFFFFFFFFl + ILINT_BASE)){
+	} else if ( v <= (0xFFFFFFFFFFll + ILINT_BASE)){
 		return 6;
-	} else if ( v <= (0xFFFFFFFFFFFFl + ILINT_BASE)){
+	} else if ( v <= (0xFFFFFFFFFFFFll + ILINT_BASE)){
 		return 7;
-	} else if ( v <= (0xFFFFFFFFFFFFFFl + ILINT_BASE)){
+	} else if ( v <= (0xFFFFFFFFFFFFFFll + ILINT_BASE)){
 		return 8;
 	} else {
 		return 9;
