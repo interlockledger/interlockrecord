@@ -8,3 +8,7 @@ include/ircommon/version.h
 .project
 .cproject
 .settings
+
+# Visual Studio
+x64
+
