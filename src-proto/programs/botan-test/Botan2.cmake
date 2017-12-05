@@ -1,17 +1,36 @@
+
 # Locate the Botan components
 if (WIN32)
-	set(_BOTAN_HINTS
-		"c:/botan")
+
+	if(CMAKE_CL_64)
+		set(platform "x64")
+	else()
+		set(platform "x86")
+	endif()
+
+	if(NOT DEFINED MSVC_CRT_FLAG)
+		set(MSVC_CRT_FLAG "MD")
+	endif()
+
+	set(_BOTAN_CANDIDATE_PATHS
+		"c:/botan"
+		"d:/botan"
+		"e:/botan")
 	find_library(BOTAN2_LIB
-		"botan-mt.lib"
-		PATHS ${_BOTAN_HINTS}
-		PATH_SUFFIXES "lib/x64")
+		"botan-${MSVC_CRT_FLAG}.lib"
+		PATHS ${_BOTAN_CANDIDATE_PATHS}
+		PATH_SUFFIXES "lib/${platform}")
+	find_library(BOTAN2D_LIB
+		"botan-${MSVC_CRT_FLAG}d.lib"
+		PATHS ${_BOTAN_CANDIDATE_PATHS}
+		PATH_SUFFIXES "lib/${platform}")
 	find_path(BOTAN2_INCLUDE_DIR
 		"botan/botan.h"
-		PATHS ${_BOTAN_HINTS}
+		PATHS ${_BOTAN_CANDIDATE_PATHS}
 		PATH_SUFFIXES 
 			"include/botan-2"
 			"botan-2")
+	set(BOTAN2_DEP_LIBS "Ws2_32.lib")
 else()
 	find_library(BOTAN2_LIB
 		"libbotan-2.a")
@@ -20,6 +39,7 @@ else()
 	find_path(BOTAN2_INCLUDE_DIR
 		"botan/botan.h"
 		PATH_SUFFIXES "botan-2")
+	set(BOTAN2_DEP_LIBS "")
 endif()
 
 # Extract the Botan version from build.h
