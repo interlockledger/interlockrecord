@@ -23,5 +23,3 @@ target_link_libraries(
 include_directories(${CMAKE_SOURCE_DIR}/ircommonlib/include)
 add_test(tests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ircommon-tests)
 
-msvc_set_static ()
-

@@ -23,6 +23,3 @@ add_library(ircommonlib STATIC
 	${CMAKE_CURRENT_SOURCE_DIR}/src/irutils.cpp
 )
 
-# Force the static build with MSVC
-msvc_set_static()
-
