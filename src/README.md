@@ -1,4 +1,4 @@
-# IRCommonLib
+# InterlockRecord
 
 ## Minimum requirements
 
@@ -15,6 +15,13 @@
 ### Windows
 
    * Microsoft Visual Studio 2017
+
+### External dependencies
+
+      * Botan 2.3.0;
+      * Google Test 1.8.0;
+
+More instructions about those dependencies can be found inside **DEPS.md**.
 
 ## Development environment
 
@@ -33,7 +40,7 @@ $ cmake ../src -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAK
 In order to create the **Microsoft Visual Studio** project, run the command:
 
 ```
-$ cmake ../src -G"Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Debug
+$ cmake ../src -G"Visual Studio 15 2017 Win64"
 ```
 
 ## Release build
@@ -43,5 +50,3 @@ $ cmake ../src -G"Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Debug
 $ cmake ../src -DCMAKE_BUILD_TYPE=Release
 $ cmake --build . --clean-first
 ```
-
-## External dependencies
