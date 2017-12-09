@@ -1,5 +1,5 @@
 
-#include "main.h"
+#include "dlltest.h"
 
 extern "C" {
 

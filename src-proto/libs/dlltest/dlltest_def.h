@@ -1,7 +1,7 @@
 
 
-#ifndef __main_H__
-#define __main_H__
+#ifndef __dlltest_def_H__
+#define __dlltest_def_H__
 
 #if defined(__GNUC__)
 	#define IR_EXPORT_CALL
@@ -15,15 +15,5 @@
 	#define IR_EXPORT_ATTR
 #endif //__GNUC__
 
-#ifdef __cplusplus
-extern "C" {
-#endif //__cplusplus
-
-IR_EXPORT_ATTR int IR_EXPORT_CALL function_a(int a);
-
-#ifdef __cplusplus
-} //extern "C"
-#endif //__cplusplus
-
-#endif //__main_H__
+#endif //__dlltest_def_H__
 
