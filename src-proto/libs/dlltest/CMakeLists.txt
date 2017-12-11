@@ -31,7 +31,7 @@ target_compile_definitions(dlltest
 # Building the loader
 add_executable(dlltestloader
 	dlltestloader.cpp
-	CLibrary.cpp)
+	IRLibrary.cpp)
 
 find_library(DL_LIB "dl")
 message(STATUS ${DL_LIB})

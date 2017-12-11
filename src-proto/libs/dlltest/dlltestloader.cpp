@@ -5,11 +5,11 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
-#include "CLibrary.h"
+#include "IRLibrary.h"
 
 int main(int argc, char ** argv) {
 	char currdir[1024];
-	CLibrary library;
+	IRLibrary library;
 
 	if (getcwd(currdir, sizeof(currdir)) == NULL) {
 		std::cout << "Unable to get the current directory.\n";
@@ -25,7 +25,7 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 
-	function_a_t f = (function_a_t) library.findFunction("function_a");
+	function_a_t f = (function_a_t) library.findSymbol("function_a");
 	if (!f){
 		std::cout << "Unable to find the function function_a.\n";
 		//std::cout << dlerror() << "\n";
