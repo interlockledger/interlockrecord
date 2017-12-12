@@ -1,1 +1,4 @@
 build
+*.rc
+*.res
+x64

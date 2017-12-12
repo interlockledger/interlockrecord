@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.9)
-project(dlltest)
+project(dlltest
+	VERSION 1.2.3.4)
 
 # Sets the visibility to hidden (GCC and Clang)
 if(("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU") OR ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang"))
@@ -12,16 +13,29 @@ endif()
 # Building the DLL
 # Set files used only by a given platform
 if (MSVC)
-	set(dlltest_PLATFORM_FILES 
-		"dlltest.def"
-		"dlltest.rc")
+	# Fix the RC file
+	string(REGEX REPLACE "\\." "," PROJECT_VERSION_COMMA ${PROJECT_VERSION})
+	configure_file(
+			"${CMAKE_CURRENT_SOURCE_DIR}/dlltest.rc.in" 
+			"${CMAKE_CURRENT_SOURCE_DIR}/dlltest.rc")
+		message(STATUS ${PROJECT_VERSION_COMMA})
+
+	set(dlltest_PLATFORM_SRC 
+		"${CMAKE_CURRENT_SOURCE_DIR}/dlltest.def"
+		"${CMAKE_CURRENT_SOURCE_DIR}/dlltest.rc")
+	set(dlltest_PLATFORM_LIBS "")
 else()
-	set(dlltest_PLATFORM_FILES "")
+	set(dlltest_PLATFORM_SRC "")
+
+	find_library(DL_LIB "dl")
+	set(dlltest_PLATFORM_LIBS 
+			${DL_LIB})
 endif()
+
 add_library(dlltest 
 	SHARED
-	dlltest.cpp
-	${dlltest_PLATFORM_FILES})
+	${CMAKE_CURRENT_SOURCE_DIR}/dlltest.cpp
+	${dlltest_PLATFORM_SRC})
 
 target_compile_definitions(dlltest
 	PUBLIC IR_EXPORTS
@@ -30,16 +44,11 @@ target_compile_definitions(dlltest
 #-------------------------------------------------------------------------------
 # Building the loader
 add_executable(dlltestloader
-	dlltestloader.cpp
-	IRLibrary.cpp)
-
-find_library(DL_LIB "dl")
-message(STATUS ${DL_LIB})
-
+	${CMAKE_CURRENT_SOURCE_DIR}/dlltestloader.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/IRLibrary.cpp
+	${dlltest_PLATFORM_SRC})
 target_link_libraries(dlltestloader
-	${DL_LIB})
-
-
+	${dlltest_PLATFORM_LIBS})
 
 #get_cmake_property(_variableNames VARIABLES)
 #foreach (_variableName ${_variableNames})

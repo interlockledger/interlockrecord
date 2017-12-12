@@ -3,9 +3,9 @@
 #define __IRLibrary_H__
 
 #include <string>
-#ifdef __WIN32__
+#ifdef _WIN32
 	#include <windows.h>
-#endif //__WIN32__
+#endif //_WIN32
 
 /**
  * This class implements a basic dynamic library abstraction.
@@ -18,7 +18,7 @@ public:
 	/**
 	 * Type of the library handle. The actual type may vary according to the platform.
 	 */
-	#ifdef __WIN32__
+	#ifdef _WIN32
 	typedef HMODULE handle_t;
 	typedef FARPROC symbol_addr_t;
 	#else
@@ -117,6 +117,8 @@ public:
 	handle_t handle() {
 		return this->_handle;
 	}
+
+	static void getLibraryFile(const char * title, std::string & filename);
 };
 
 #endif //__IRLibrary_H__

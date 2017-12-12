@@ -1,8 +1,8 @@
 
 #include "IRLibrary.h"
-#ifndef __WIN32__
+#ifndef _WIN32
 	#include <dlfcn.h>
-#endif //__WIN32__
+#endif //__WIN32
 #include <cstdio>
 
 //==============================================================================
@@ -28,14 +28,14 @@ bool IRLibrary::postUnload() {
 
 //------------------------------------------------------------------------------
 void IRLibrary::getErrorMessage() {
-#ifdef __WIN32__
+#ifdef _WIN32
 		char tmp[16]; // It will hold a string with at most 11 digits
 		DWORD errorCode = GetLastError();
 		std::snprintf(tmp, sizeof(tmp), "0x%08X", errorCode);
 		this->_error = tmp;
 #else
 		this->_error = dlerror();
-#endif //__WIN32__
+#endif //_WIN32
 }
 
 //------------------------------------------------------------------------------
@@ -46,11 +46,11 @@ bool IRLibrary::load(const char * path) {
 	}
 
 	this->_path = path;
-#ifdef __WIN32__
+#ifdef _WIN32
 	this->_handle = LoadLibrary(path);
 #else
 	this->_handle = dlopen(this->_path.c_str(), RTLD_LAZY);
-#endif //__WIN32__
+#endif //_WIN32
 	if (this->_handle) {
 		return this->postLoad();
 	} else {
@@ -63,11 +63,11 @@ bool IRLibrary::load(const char * path) {
 bool IRLibrary::unload() {
 
 	if (this->isLoaded()) {
-#ifdef __WIN32__
+#ifdef _WIN32
 		bool result = (FreeLibrary(this->_handle) != 0);
 #else
 		bool result = (dlclose(this->_handle) != 0);
-#endif //__WIN32__
+#endif //_WIN32
 		if (result) {
 			this->_handle = NULL;
 			return this->postUnload();
@@ -84,14 +84,31 @@ bool IRLibrary::unload() {
 IRLibrary::symbol_addr_t IRLibrary::findSymbol(const char * name) {
 
 	if (this->isLoaded()) {
-#ifdef __WIN32__
+#ifdef _WIN32
 		return GetProcAddress(this->handle(), name);
 #else
 		return dlsym(this->handle(), name);
-#endif //__WIN32__
+#endif //_WIN32
 	} else {
 		return NULL;
 	}
+}
+
+//------------------------------------------------------------------------------
+void IRLibrary::getLibraryFile(const char * title, std::string & filename) {
+	
+#if defined(_WIN32)
+	filename = title;
+	filename += ".dll";
+#elif defined(__APPLE__)
+	filename = title;
+	filename += title;
+	filename += ".dylib";
+#else
+	filename = "lib";
+	filename += title;
+	filename += ".so";
+#endif //_WIN32
 }
 //------------------------------------------------------------------------------
 
