@@ -17,7 +17,7 @@ CMake's FindGTest module.
 
 A precompiled version of this library can be found at:
 
-*  http://brigadeiro.opencs.com.br/downloads/opensource/googletest/gtest-1.8.0-msvc14.7z
+*  https://otrs.mtrusted.com/downloads/opensource/googletest/gtest-1.8.0-msvc14.7z
 
 The **sha512sum** of this file is:
 

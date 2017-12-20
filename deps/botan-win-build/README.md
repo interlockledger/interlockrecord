@@ -13,7 +13,7 @@ in a way that it could be used to build the InterlockRecord binaries.
 
 A precompiled version of this library can be found at:
 
-* http://brigadeiro.opencs.com.br/downloads/opensource/botan/botan-2.3.0-x64-msvc14.7z
+* https://otrs.mtrusted.com/downloads/opensource/botan/botan-2.3.0-x64-msvc14.7z
 
 The **sha512sum** of this file is:
 
