@@ -28,6 +28,7 @@
 #define __irecord_irecord_H__
 
 #include <irecord/irdll.h>
+#include <irecord/irerr.h>
 
 /**
  * @defgroup irecord_pub Public Functions
@@ -82,9 +83,12 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL  IRContextDispose(IRContext context);
 /**
  * Get the version of the DLL as a string.
  *
- * @param[out] version
- * @param[out] versionSize
+ * @param[out] version The buffer that will receive the version string.
+ * @param[in,out] versionSize On input, the size of version in characters. On output, it
+ * returns the number of characters used without the null terminator.
  * @return IRE_SUCCESS on success or other error code in case of failure.
+ * @note When the function returns IRE_BUFFER_TOO_SHORT, versionSize will hold the
+ * number of characters in the version string.
  */
 IR_EXPORT_ATTR int IR_EXPORT_CALL  IRGetVersion(char * version, int * versionSize);
 

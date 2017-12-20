@@ -24,45 +24,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <irecord/irecord.h>
-#include <irecord/irerr.h>
-#include "version.h"
-#include <cstring>
+#ifndef __IRGETVERSIONTEST_H__
+#define __IRGETVERSIONTEST_H__
 
-//------------------------------------------------------------------------------
-IR_EXPORT_ATTR int IR_EXPORT_CALL  IRGetVersion(char * version, int * versionSize) {
+#include <gtest/gtest.h>
 
-	// Check parameters
-	if (version == nullptr) {
-		return IRE_GET_INVALID_PARAM(0);
-	}
-	if (versionSize == nullptr) {
-		return IRE_GET_INVALID_PARAM(1);
-	}
-
-	int len = std::strlen(IRECORD_VERSION_STR);
-	if ((len + 1) < *versionSize) {
-		std::memcpy(version, IRECORD_VERSION_STR, len + 1);
-		*versionSize = len;
-		return IRE_SUCCESS;
-	} else {
-		*versionSize = len;
-		return IRE_BUFFER_TOO_SHORT;
-	} 
-}
-
-//------------------------------------------------------------------------------
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRGetVersionInt(int * major, int * minor) {
-
-	if (major == nullptr) {
-		return IRE_GET_INVALID_PARAM(0);
-	}
-	if (minor == nullptr) {
-		return IRE_GET_INVALID_PARAM(1);
-	}
-	*major = IRECORD_VERSION_MAJOR;
-	*minor = IRECORD_VERSION_MINOR;
-	return IRE_SUCCESS;
-}
-//------------------------------------------------------------------------------
+class IRGetVersionTest : public testing::Test {
+public:
+	IRGetVersionTest();
+	virtual ~IRGetVersionTest();
+	virtual void SetUp();
+	virtual void TearDown();
+};
+#endif //__IRGETVERSIONTEST_H__
 

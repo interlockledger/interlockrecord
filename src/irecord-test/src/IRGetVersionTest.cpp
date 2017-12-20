@@ -24,45 +24,70 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include "IRGetVersionTest.h"
 #include <irecord/irecord.h>
-#include <irecord/irerr.h>
-#include "version.h"
 #include <cstring>
 
+//==============================================================================
+// class IRGetVersionTest
 //------------------------------------------------------------------------------
-IR_EXPORT_ATTR int IR_EXPORT_CALL  IRGetVersion(char * version, int * versionSize) {
-
-	// Check parameters
-	if (version == nullptr) {
-		return IRE_GET_INVALID_PARAM(0);
-	}
-	if (versionSize == nullptr) {
-		return IRE_GET_INVALID_PARAM(1);
-	}
-
-	int len = std::strlen(IRECORD_VERSION_STR);
-	if ((len + 1) < *versionSize) {
-		std::memcpy(version, IRECORD_VERSION_STR, len + 1);
-		*versionSize = len;
-		return IRE_SUCCESS;
-	} else {
-		*versionSize = len;
-		return IRE_BUFFER_TOO_SHORT;
-	} 
+IRGetVersionTest::IRGetVersionTest() {
 }
 
 //------------------------------------------------------------------------------
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRGetVersionInt(int * major, int * minor) {
+IRGetVersionTest::~IRGetVersionTest() {
+}
 
-	if (major == nullptr) {
-		return IRE_GET_INVALID_PARAM(0);
-	}
-	if (minor == nullptr) {
-		return IRE_GET_INVALID_PARAM(1);
-	}
-	*major = IRECORD_VERSION_MAJOR;
-	*minor = IRECORD_VERSION_MINOR;
-	return IRE_SUCCESS;
+//------------------------------------------------------------------------------
+void IRGetVersionTest::SetUp() {
+}
+
+//------------------------------------------------------------------------------
+void IRGetVersionTest::TearDown() {
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRGetVersionTest,IRGetVersion) {
+	int retval;
+	char version[32];
+	int versionSize;
+
+	retval = IRGetVersion(NULL, NULL);
+	ASSERT_EQ(IRE_GET_INVALID_PARAM(0), retval);
+
+	retval = IRGetVersion(version, NULL);
+	ASSERT_EQ(IRE_GET_INVALID_PARAM(1), retval);
+
+	versionSize = 0;
+	retval = IRGetVersion(version, &versionSize);
+	ASSERT_EQ(IRE_BUFFER_TOO_SHORT, retval);
+	ASSERT_LT(0, versionSize);
+
+	versionSize = sizeof(version);
+	retval = IRGetVersion(version, &versionSize);
+	ASSERT_EQ(IRE_SUCCESS, retval);
+	ASSERT_EQ(std::strlen(version), versionSize);
+	std::cout << "Version: " << version << "\n";
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRGetVersionTest,IRGetVersionInt) {
+	int retval;
+	int major;
+	int minor;
+
+	retval = IRGetVersionInt(NULL, NULL);
+	ASSERT_EQ(IRE_GET_INVALID_PARAM(0), retval);
+
+	retval = IRGetVersionInt(&major, NULL);
+	ASSERT_EQ(IRE_GET_INVALID_PARAM(1), retval);
+
+	major = -1;
+	minor = -1;
+	retval = IRGetVersionInt(&major, &minor);
+	ASSERT_EQ(IRE_SUCCESS, retval);
+	ASSERT_LT(-1, major);
+	ASSERT_LT(-1, minor);
 }
 //------------------------------------------------------------------------------
 
