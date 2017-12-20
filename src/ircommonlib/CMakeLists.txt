@@ -3,23 +3,24 @@ project (ircommonlib
 
 # Fix the version strings
 configure_file (
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/ircommon/version.h.in"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/ircommon/version.h"
+	include/ircommon/version.h.in
+	include/ircommon/version.h
 )
 configure_file (
-                "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in"
-                "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
+	Doxyfile.in
+        Doxyfile
 )
-
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}/include
-	${OPENSSL_INCLUDE_DIR})
 
 # Sources
 add_library(ircommonlib STATIC 
-	${CMAKE_CURRENT_SOURCE_DIR}/src/ilint.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/iltag.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/irbuffer.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/irutils.cpp
+	src/ilint.cpp
+	src/iltag.cpp
+	src/irbuffer.cpp
+	src/irutils.cpp
 )
+target_include_directories(ircommonlib PUBLIC
+	include
+	${OPENSSL_INCLUDE_DIR}
+)
+
 

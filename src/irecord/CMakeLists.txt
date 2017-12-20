@@ -4,23 +4,20 @@ project (irecord
 
 # Fix the version strings
 configure_file (
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/version.h"
+	src/version.h.in
+	src/version.h
 )
 configure_file (
-                "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in"
-                "${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile"
-)
-
-set(irecord_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/include")
-
-include_directories(
-	"${irecord_INCLUDE}"
+	Doxyfile.in
+	Doxyfile
 )
 
 # Sources
 add_library(irecord SHARED
-	${CMAKE_CURRENT_SOURCE_DIR}/src/IRGetVersion.cpp
+	src/IRGetVersion.cpp
+)
+target_include_directories(irecord PUBLIC 
+	include
 )
 target_compile_definitions(irecord
 	PUBLIC IR_EXPORTS
