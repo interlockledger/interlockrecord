@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.9)
 project (irecordcore
 	VERSION 0.1)
 
@@ -12,10 +13,10 @@ configure_file (
 )
 
 # Sources
-#add_library(irecordcore STATIC)
-#target_include_directories(irecordcore PUBLIC
-#	include
-#	ircommonlib
-#	${OPENSSL_INCLUDE_DIR}
-#)
+add_library(irecordcore STATIC
+	src/IRCHandle.cpp)
+target_include_directories(irecordcore PUBLIC
+	include
+	ircommonlib
+)
 

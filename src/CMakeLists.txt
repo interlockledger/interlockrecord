@@ -14,6 +14,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # Subprojects
 add_subdirectory(ircommonlib)
 add_subdirectory(ircommonlib-test)
+add_subdirectory(irecordcore)
+add_subdirectory(irecordcore-test)
 add_subdirectory(irecord)
 add_subdirectory(irecord-test)
 
