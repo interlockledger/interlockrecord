@@ -24,102 +24,103 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __irecord_irerr_H__
-#define __irecord_irerr_H__
-
-// Please declare erros sorted by value in order to avoid accidental duplications
+#ifndef __irecord_const_H__
+#define __irecord_const_H__
 
 /**
- * @defgroup irerr Error codes
+ * @defgroup irconst Constants
  */
-/** @addtogroup irerr
+/** @addtogroup irconst
  *  @{
  */
 
-/**
- * Unknown error.
- */
-#define IRE_UNKNOWN_ERROR -1
-
-/**
- * Success of the operation.
- */
-#define IRE_SUCCESS 0
-
-/**
- * Invalid context.
- */
-#define IRE_INVALID_CONTEXT 1 
-
-/**
- * Invalid state. It happens when a given operation cannot be executed due to
- * an invalid state.
- */
-#define IRE_INVALID_STATE 2
-
-/**
- * The buffer is too short to hold the information.
- */
-#define IRE_BUFFER_TOO_SHORT 3
-
-/**
- * Function not implemented.
- */
-#define IRE_NOT_IMPLEMENTED 4
-
-/**
- * Library not initialized.
- */
-#define IRE_NOT_INITIALIZED 5
-
-/**
- * Invalid handle.
- */
-#define IRE_INVALID_HANDLE 5
-
+//==============================================================================
+// Hash algorithms
 //------------------------------------------------------------------------------
 /**
- * @defgroup irerr_param Invalid parameter error codes.
+ * @defgroup irconst Hash algorithms
  */
-/** @addtogroup irerr_param
+/** @addtogroup irconst_hash
  *  @{
  */
 /**
- * Base value for an invalid parameter.
- * @internal
+ * Secure hash with 160 bits defined by FIPS PUB 180.
+ * @note This algorithm should not be used unless the inner hardware does not
+ * support more robust algorithms.
  */
-#define IRE_INVALID_PARAM_BASE 0x7FFFFFF0
+#define IRH_SHA_1 0
 
 /**
- * Maximum value for an invalid parameter error.
- * @internal
+ * Secure hash with 256 bits defined by FIPS PUB 180-2.
  */
-#define IRE_INVALID_PARAM_MAX (IRE_INVALID_PARAM_BASE + 15)
+#define IRH_SHA_256 1
 
 /**
- * Generates the error code for the invalid parameter error.
- *
- * @param[in] x The parameter. Must be a value from 0 to 15.
+ * Secure hash with 512 bits defined by FIPS PUB 180-2.
  */
-#define IRE_INVALID_PARAM_DEF(x) (IRE_INVALID_PARAM_BASE + (x))
+#define IRH_SHA_512 2
 
 /**
- * Verifies if a given error code is indeed a invalid parameter error.
- *
- * @param[in] x The error code.
+ * Secure hash with 256 bits defined by FIPS PUB 202.
  */
-#define IRE_IS_INVALID_PARAM(x) \
-	(((x) >= IRE_INVALID_PARAM_BASE) && ((x) <= IRE_INVALID_PARAM_MAX))
+#define IRH_SHA3_256 3
 
 /**
- * Verifies if a given error code is indeed a invalid parameter error.
- *
- * @param[in] x The error code.
+ * Secure hash with 512 bits defined by FIPS PUB 202.
  */
-#define IRE_GET_INVALID_PARAM(x) ((x) - IRE_INVALID_PARAM_BASE)
-/** @}*/ //addtogroup irerr_param
+#define IRH_SHA3_512 4
 
-/** @}*/ //addtogroup irerr
+/**
+ * Secure hash with 256 bits defined by FIPS PUB 202.
+ */
+#define IRH_COPY 0xFFFF
 
-#endif //__irecord_irdll_H__
+/** @}*/ //addtogroup irconst_hash
+
+//==============================================================================
+// Hash algorithms
+//------------------------------------------------------------------------------
+/**
+ * @defgroup irconst_sign Signing algorithms
+ */
+/** @addtogroup irconst_sign
+ *  @{
+ */
+
+/**
+ * Signing algorithm defined by PKCS #1.
+ */
+#define IRS_RSA_PSS 0 
+
+/**
+ * Signing algorithm defined by PKCS #1 1.5.
+ */
+#define IRS_RSA_PKCS_1_5 1
+
+/**
+ * Signing algorithm defined by NIST FIPS 186-4.
+ */
+#define IRS_DSA 2
+
+/**
+ * Signing algorithm created by ElGamal.
+ */
+#define IRS_ELGAMAL 3
+
+/**
+ * Signing algorithm using an elliptic curve defined in FIPS PUB 186-4.
+ */
+#define IRS_ECDSA 4
+
+/**
+ * Signing algorithm using Edwards-curves proposed by Daniel J. Bernstein, 
+ * Niels Duif, Tanja Lange, Peter Schwabe, and Bo-Yin Yang. This constant
+ */
+#define IRS_EDDSA_ED25519 5
+
+/** @}*/ //irconst_sign
+
+/** @}*/ //irconst
+
+#endif //__irecord_const_H__
 

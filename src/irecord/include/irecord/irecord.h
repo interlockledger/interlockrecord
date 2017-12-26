@@ -37,11 +37,26 @@
  *  @{
  */
 
+//==============================================================================
+// Data types
+//------------------------------------------------------------------------------
 /**
- * Type of the InterlockRecord context. It should always be threated as an
- * opaque value.
+ * @defgroup irecord_pub_types Data types
  */
-typedef void * IRContext;
+/** @addtogroup irecord_pub_types
+ *  @{
+ */
+/**
+ * Type of the InterlockRecord's context.
+ */
+typedef int IRContext;
+
+/**
+ * Type of the InterlockRecord's object ID.
+ */
+typedef int IRObjectID;
+
+/** @} */ //irecord_pub_types
 
 //==============================================================================
 // Initialization/Deinitialization
@@ -52,12 +67,38 @@ typedef void * IRContext;
 /** @addtogroup irecord_pub_init
  *  @{
  */
+
+/**
+ * Initializes the library. It is used to prepare the library for the first use.
+ *
+ * <p>It must be called only once after the library is loaded and before the first
+ * use of the library.</p>
+ *
+ * @return IRE_SUCCESS on success or other error code in case of failure.
+ * @note This function is not thread safe.
+ * @see IRDeinitialize()
+ */
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRInitialize();
+
+/**
+ * Deinitializes the library. It releases all resources associated with it (all
+ * internal objects will be destroyed).
+ *
+ * <p>It must be called before unload the library.</p>
+ *
+ * @return IRE_SUCCESS on success or other error code in case of failure.
+ * @note This function is not thread safe.
+ * @see IRInitialize()
+ */
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRDeinitialize();
+
 /**
  * Creates a new IRContext. Each context will be kept
  *
  * @param[in] configFile Path to the configuration file.
  * @param[out] context The new context.
  * @return IRE_SUCCESS on success or other error code in case of failure.
+ * @note This function is thread safe.
  */
 IR_EXPORT_ATTR int IR_EXPORT_CALL IRContextCreate(const char * configFile,
 	IRContext * context);
@@ -67,6 +108,7 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRContextCreate(const char * configFile,
  *
  * @param[in] context The new context.
  * @return IRE_SUCCESS on success or other error code in case of failure.
+ * @note This function is thread safe.
  */
 IR_EXPORT_ATTR int IR_EXPORT_CALL  IRContextDispose(IRContext context);
 /** @}*/ //addtogroup irecord_pub_init
