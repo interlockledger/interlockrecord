@@ -30,6 +30,13 @@ More instructions about those dependencies can be found inside **DEPS.md**.
 In order to create the **Eclipse CDT** project, create a directory called **build** side by side of the
 directory **src**. Go to this directory and run the command:
 
+For Neon:
+
+```
+$ cmake ../src -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECLIPSE_VERSION=4.6
+```
+
+For Oxygen:
 
 ```
 $ cmake ../src -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECLIPSE_VERSION=4.7

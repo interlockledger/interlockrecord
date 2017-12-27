@@ -1,4 +1,4 @@
-project (ircommonlib
+project (ircommon
 	VERSION 0.1)
 
 # Fix the version strings
@@ -12,7 +12,7 @@ configure_file (
 )
 
 # Sources
-add_library(ircommonlib STATIC 
+add_library(ircommon STATIC 
 	src/ilint.cpp
 	src/iltag.cpp
 	src/irbuffer.cpp
@@ -21,7 +21,7 @@ add_library(ircommonlib STATIC
 	src/irsemaph.cpp
 	src/irrwlock.cpp
 )
-target_include_directories(ircommonlib PUBLIC
+target_include_directories(ircommon PUBLIC
 	include
 	${OPENSSL_INCLUDE_DIR}
 )
