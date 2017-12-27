@@ -117,6 +117,87 @@
  * @param[in] x The error code.
  */
 #define IRE_GET_INVALID_PARAM(x) ((x) - IRE_INVALID_PARAM_BASE)
+
+/**
+ * Invalid parameter 0.
+ */
+#define IRE_INVALID_PARAM_00 IRE_INVALID_PARAM_DEF(0)
+
+/**
+ * Invalid parameter 1.
+ */
+#define IRE_INVALID_PARAM_01 IRE_INVALID_PARAM_DEF(1)
+
+/**
+ * Invalid parameter 2.
+ */
+#define IRE_INVALID_PARAM_02 IRE_INVALID_PARAM_DEF(2)
+
+/**
+ * Invalid parameter 3.
+ */
+#define IRE_INVALID_PARAM_03 IRE_INVALID_PARAM_DEF(3)
+
+/**
+ * Invalid parameter 4.
+ */
+#define IRE_INVALID_PARAM_04 IRE_INVALID_PARAM_DEF(4)
+
+/**
+ * Invalid parameter 5.
+ */
+#define IRE_INVALID_PARAM_05 IRE_INVALID_PARAM_DEF(5)
+
+/**
+ * Invalid parameter 6.
+ */
+#define IRE_INVALID_PARAM_06 IRE_INVALID_PARAM_DEF(6)
+
+/**
+ * Invalid parameter 7.
+ */
+#define IRE_INVALID_PARAM_07 IRE_INVALID_PARAM_DEF(7)
+
+/**
+ * Invalid parameter 8.
+ */
+#define IRE_INVALID_PARAM_08 IRE_INVALID_PARAM_DEF(8)
+
+/**
+ * Invalid parameter 9.
+ */
+#define IRE_INVALID_PARAM_09 IRE_INVALID_PARAM_DEF(9)
+
+/**
+ * Invalid parameter 10.
+ */
+#define IRE_INVALID_PARAM_10 IRE_INVALID_PARAM_DEF(10)
+
+/**
+ * Invalid parameter 11.
+ */
+#define IRE_INVALID_PARAM_11 IRE_INVALID_PARAM_DEF(11)
+
+/**
+ * Invalid parameter 12
+ */
+#define IRE_INVALID_PARAM_12 IRE_INVALID_PARAM_DEF(12)
+
+/**
+ * Invalid parameter 13.
+ */
+#define IRE_INVALID_PARAM_13 IRE_INVALID_PARAM_DEF(13)
+
+/**
+ * Invalid parameter 14.
+ */
+#define IRE_INVALID_PARAM_14 IRE_INVALID_PARAM_DEF(14)
+
+/**
+ * Invalid parameter 15.
+ */
+#define IRE_INVALID_PARAM_15 IRE_INVALID_PARAM_DEF(15)
+
 /** @}*/ //addtogroup irerr_param
 
 /** @}*/ //addtogroup irerr
