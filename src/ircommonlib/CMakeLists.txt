@@ -17,6 +17,9 @@ add_library(ircommonlib STATIC
 	src/iltag.cpp
 	src/irbuffer.cpp
 	src/irutils.cpp
+	src/i32obfus.cpp
+	src/irsemaph.cpp
+	src/irrwlock.cpp
 )
 target_include_directories(ircommonlib PUBLIC
 	include
