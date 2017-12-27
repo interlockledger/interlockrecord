@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.9)
 project(rwlock-test
 	VERSION 1.2.3.4)
 
-if (DEFINED MSVC)	
-	set(THREAD_LIB "")
-else()
-	set(THREAD_LIB "pthread")
+find_package(Threads)
+if (CMAKE_USE_PTHREADS_INIT)
+	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 endif()
 	
 #-------------------------------------------------------------------------------
@@ -14,8 +14,4 @@ add_executable(rwlock-test
 	main.cpp
 	IRRWLock.cpp
 	IRSemaphore.cpp)
-message(STATUS ${THREAD_LIB})
-target_link_libraries(rwlock-test
-	${THREAD_LIB})
-
 
