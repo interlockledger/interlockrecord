@@ -17,7 +17,7 @@ void readerMain(int a) {
 		std::cout << "Reader " << a << " started. Val=" << val << "\n";
 		ioLock.unlock();
 
-		std::this_thread::sleep_for(std::chrono::seconds(2));
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 
 		ioLock.lock();
 		std::cout << "Reader " << a << " ended. Val=" << val << "\n";
@@ -25,6 +25,9 @@ void readerMain(int a) {
 
 		rwLock.unlockRead();
 	} while (running);
+	ioLock.lock();
+	std::cout << "Reader " << a << " terminated.\n";
+	ioLock.unlock();
 }
 
 void writerMain(int a) {
@@ -36,7 +39,7 @@ void writerMain(int a) {
 		ioLock.unlock();
 
 		val++;
-		std::this_thread::sleep_for(std::chrono::seconds(2));
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 
 		ioLock.lock();
 		std::cout << "Writer " << a << " ended. Val=" << val << "\n";
@@ -44,6 +47,9 @@ void writerMain(int a) {
 
 		rwLock.unlockWrite();
 	} while (running);
+	ioLock.lock();
+	std::cout << "Writer " << a << " terminated.\n";
+	ioLock.unlock();
 }
 
 int main(int argc, char ** argv) {

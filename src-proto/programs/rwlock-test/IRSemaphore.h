@@ -14,8 +14,7 @@ private:
 #ifdef _WIN32
 	typedef HANDLE Handle_t;
 #else
-	typedef sem_t * Handle_t;
-	sem_t _handle_concrete;
+	typedef sem_t Handle_t;
 #endif //_WIN32
 	
 	Handle_t _handle;
