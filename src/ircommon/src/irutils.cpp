@@ -37,7 +37,7 @@ namespace IRUtils {
 //==============================================================================
 // IRUtils
 //------------------------------------------------------------------------------
-void clearMemory(std::uint64_t buffSize, void * buff) {
+void clearMemory(void * buff, std::uint64_t buffSize) {
 	if (buff) {
 #ifdef _WIN32
 		SecureZeroMemory(buff, buffSize);

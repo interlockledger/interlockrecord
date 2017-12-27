@@ -255,13 +255,13 @@ TEST_F(IRUtilsTest, clearMemory) {
 	for (int i = 0; i < size; i++) {
 		buff[i] = 0xFF;
 	}
-	IRUtils::clearMemory(size, buff);
+	IRUtils::clearMemory(buff, size);
 	for (int i = 0; i < size; i++) {
 		ASSERT_EQ(0, buff[i]);
 	}
 	delete [] buff;
 	buff = nullptr;
-	IRUtils::clearMemory(size, buff);
+	IRUtils::clearMemory(buff, size);
 }
 
 //------------------------------------------------------------------------------

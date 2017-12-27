@@ -133,12 +133,12 @@ void int2BE(INT_TYPE v, void * buff) {
  * Securely fills a memory buffer with zeroes. It is guaranteed to be
  * executed regardless of the optimizations.
  *
- * @param[in] buffSize The size of the buffer to be zeroed.
  * @param[in] buff The buffer to be zeroed. If set to NULL, this method
  * does nothing.
+ * @param[in] buffSize The size of the buffer to be zeroed.
  * @since 2017.11.20
  */
-void clearMemory(std::uint64_t buffSize, void * buff);
+void clearMemory(void * buff, std::uint64_t buffSize);
 
 } // namespace IRUtils
 

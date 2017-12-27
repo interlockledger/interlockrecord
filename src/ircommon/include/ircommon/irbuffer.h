@@ -39,36 +39,65 @@ namespace ircommon {
  *
  * @since 2017.10.09
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is not thread safe.
  */
 class IRBuffer {
 protected:
+	/**
+	 * The read/write buffer.
+	 */
 	std::uint8_t * _buff;
 
+	/**
+	 * Pointer to the read only buffer.
+	 */
 	const std::uint8_t * _robuff;
 
+	/**
+	 * Size of the data. It is always smaller than the actual size of the
+	 * buffer.
+	 */
 	std::uint64_t _size;
 
+	/**
+	 * Actual size of the buffer.
+	 */
 	std::uint64_t _buffSize;
 
+	/**
+	 * Current read/write position.
+	 */
 	std::uint64_t _position;
 
+	/**
+	 * Size of the increment.
+	 */
 	std::uint64_t _inc;
 
+	/**
+	 * Flag that indicates if this buffer must be considered critical or not.
+	 */
 	bool _secure;
 
-	void dispose(std::uint64_t buffSize, std::uint8_t * buff);
+	/**
+	 * Disposes the buffer.
+	 *
+	 * @param[in] buff The buffer to be disposed.
+	 * @param[in] buffSize The size of the buffer.
+	 */
+	void dispose(std::uint8_t * buff, std::uint64_t buffSize);
 public:
 	/**
-	 * Creates a new instance of this class. It wraps the constant byte array buff. The
-	 * resulting instance will be read-only.
+	 * Creates a new instance of this class. It wraps the constant byte array
+	 * pointed by buff. The resulting instance will be read-only.
 	 *
-	 * @param[in] buffSize The size of the buffer.
 	 * @param[in] buff The buffer to be wrapped.
+	 * @param[in] buffSize The size of the buffer.
 	 * @note The buffer pointed by buff will be used directly so it must exist
 	 * during the lifetime of this instance. Furthermore, this buffer will not
 	 * be disposed by this instance.
 	 */
-	IRBuffer(std::uint64_t buffSize, const void * buff);
+	IRBuffer(const void * buff, std::uint64_t buffSize);
 
 	/**
 	 * Creates a new instance of this class.
@@ -201,20 +230,20 @@ public:
 	/**
 	 * Writes a certain number of bytes into the buffer.
 	 *
-	 * @param[in] buffSize Size of the buffer.
 	 * @param[in] buff The buffer.
+	 * @param[in] buffSize Size of the buffer.
 	 * @return true on success or false otherwise.
 	 */
-	bool write(std::uint64_t buffSize, const void * buff);
+	bool write(const void * buff, std::uint64_t buffSize);
 
 	/**
 	 * Reads bytes.
 	 *
-	 * @param[in] buffSize The number of bytes to read.
 	 * @param[out] buff The buffer that will hold the bytes read.
+	 * @param[in] buffSize The number of bytes to read.
 	 * @return The actual number of bytes read.
 	 */
-	std::uint64_t read(std::uint64_t buffSize, void * buff);
+	std::uint64_t read(void * buff, std::uint64_t buffSize);
 };
 
 } //namespace ircommon

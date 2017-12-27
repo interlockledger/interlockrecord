@@ -35,7 +35,7 @@ using namespace ircommon;
 //==============================================================================
 // Class IRBuffer
 //------------------------------------------------------------------------------
-IRBuffer::IRBuffer(std::uint64_t buffSize, const void * buff):
+IRBuffer::IRBuffer(const void * buff, std::uint64_t buffSize):
 		_secure(false), _inc(0), _buff(nullptr),
 		_robuff((const std::uint8_t *)buff),
 		_size(buffSize), _buffSize(buffSize), _position(0) {
@@ -51,7 +51,7 @@ IRBuffer::IRBuffer(std::uint64_t reserved, bool secure, std::uint64_t inc):
 //------------------------------------------------------------------------------
 IRBuffer::~IRBuffer() {
 	if (!this->isReadOnly()) {
-		this->dispose(this->_buffSize, this->_buff);
+		this->dispose(this->_buff, this->_buffSize);
 	}
 }
 
@@ -133,7 +133,7 @@ bool IRBuffer::reserve(std::uint64_t newSize) {
 		if (newBuff) {
 			if (this->_buff) {
 				std::memcpy(newBuff, this->_buff, this->_buffSize);
-				this->dispose(this->_buffSize, this->_buff);
+				this->dispose(this->_buff, this->_buffSize);
 			}
 			this->_buff = newBuff;
 			this->_buffSize = newBuffSize;
@@ -147,7 +147,7 @@ bool IRBuffer::reserve(std::uint64_t newSize) {
 }
 
 //------------------------------------------------------------------------------
-bool IRBuffer::write(std::uint64_t buffSize, const void * buff) {
+bool IRBuffer::write(const void * buff, std::uint64_t buffSize) {
 	std::uint64_t w;
 
 	if (this->isReadOnly()) {
@@ -164,7 +164,7 @@ bool IRBuffer::write(std::uint64_t buffSize, const void * buff) {
 }
 
 //------------------------------------------------------------------------------
-std::uint64_t IRBuffer::read(std::uint64_t buffSize, void * buff) {
+std::uint64_t IRBuffer::read(void * buff, std::uint64_t buffSize) {
 	std::uint64_t r;
 
 	r = std::min(this->available(), buffSize);
@@ -174,12 +174,11 @@ std::uint64_t IRBuffer::read(std::uint64_t buffSize, void * buff) {
 }
 
 //------------------------------------------------------------------------------
-void IRBuffer::dispose(std::uint64_t buffSize, std::uint8_t * buff) {
+void IRBuffer::dispose(std::uint8_t * buff, std::uint64_t buffSize) {
 
 	if (buff) {
 		if (this->_secure) {
-			// TODO Replace it with a proper zero-mem function.
-			std::memset(buff, buffSize, 0);
+			IRUtils::clearMemory(buff, buffSize);
 		}
 		delete [] buff;
 	}
