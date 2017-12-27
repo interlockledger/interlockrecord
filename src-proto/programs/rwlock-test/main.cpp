@@ -6,7 +6,7 @@
 
 IRRWLock rwLock;
 volatile int val = 0;
-
+volatile bool running = true;
 std::mutex ioLock;
 
 void readerMain(int a) {
@@ -24,7 +24,7 @@ void readerMain(int a) {
 		ioLock.unlock();
 
 		rwLock.unlockRead();
-	} while (true);
+	} while (running);
 }
 
 void writerMain(int a) {
@@ -43,19 +43,27 @@ void writerMain(int a) {
 		ioLock.unlock();
 
 		rwLock.unlockWrite();
-	} while (true);
+	} while (running);
 }
 
 int main(int argc, char ** argv) {
+	std::thread * readers[5];
+	std::thread * writers[3];
 	
 	for(int i = 0; i < 5; i++) {
-		std::thread * t;
-		t = new std::thread(readerMain, i);
+		readers[i] = new std::thread(readerMain, i);
 	}
 	for(int i = 0; i < 3; i++) {
-		std::thread * t;
-		t = new std::thread(writerMain, i);
+		writers[i] = new std::thread(writerMain, i);
 	}
 	std::this_thread::sleep_for(std::chrono::seconds(30));
+	running = false;
+	for(int i = 0; i < 5; i++) {
+		readers[i]->join();
+	}
+	for(int i = 0; i < 3; i++) {
+		writers[i]->join();
+	}
+	
 	return 0;
 }

@@ -15,7 +15,7 @@ void IRRWLock::lockRead() {
 	this->_readLock.lock();
 	this->_readerCount++;
 	if (this->_readerCount == 1) {
-		this->_writeLock.lock();
+		this->_writeLock.wait();
 	}
 	this->_readLock.unlock();
 }
@@ -25,7 +25,7 @@ void IRRWLock::unlockRead() {
 	this->_readLock.lock();
 	this->_readerCount--;
 	if (this->_readerCount == 0) {
-		this->_writeLock.unlock();
+		this->_writeLock.release();
 	}
 	this->_readLock.unlock();
 }
@@ -33,12 +33,10 @@ void IRRWLock::unlockRead() {
 void IRRWLock::lockWrite() {
 
 	this->_writeReq.lock();
-	this->_writeLock.lock();
+	this->_writeLock.wait();
 	this->_writeReq.unlock();
 }
 
 void IRRWLock::unlockWrite() {
-	this->_writeLock.unlock();
+	this->_writeLock.release();
 }
-
-

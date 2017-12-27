@@ -2,6 +2,7 @@
 #define __IRRWLock_H__
 
 #include <mutex>
+#include "IRSemaphore.h"
 
 /**
  * This class implements a read/write lock that allows multiple simultaneous
@@ -19,7 +20,7 @@ private:
 	/**
 	 * Mutex that prevents concurrent writers.
 	 */
-	std::mutex _writeLock;
+	IRSemaphore _writeLock;
 	/**
 	 * Mutex that prevents new readers after the first write lock request.
 	 */
