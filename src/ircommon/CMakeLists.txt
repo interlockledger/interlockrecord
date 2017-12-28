@@ -15,6 +15,7 @@ configure_file (
 add_library(ircommon STATIC 
 	src/ilint.cpp
 	src/iltag.cpp
+	src/iralphab.cpp
 	src/irbuffer.cpp
 	src/irutils.cpp
 	src/i32obfus.cpp
