@@ -137,33 +137,36 @@ public:
 	}
 };
 
-class IRBase2NCodec {
+/**
+ * This class implements a Base 2^n codec. It can encode/decode data using any
+ * 2^n base such as binary, hexadecimal and other encodings schemes described in
+ * RFC4648 such as Base 32 and Base 64.
+ *
+ * @note In order to determine if a given character is a space or not, this
+ * class calls the function isspace() from STL using std::locale::classic() as
+ * locale.
+ *
+ * @since 2017.12.28
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ */
+class IRBase2NCodec : public IRCodec {
 private:
 	IRAlphabet * _alphabet;
+	int _blockSize;
+	int _paddingChar;
+	int _clearMask;
+	int _charSize;
+	bool _ignoreSpaces;
 protected:
-	/**
-	 * Implements the actual encoding. This method is called if and only if
-	 * all parameters are valid.
-	 *
-	 * @param[in] src The source data. It will never be NULL.
-	 * @param[in] srcSize The size of source.
-	 */
 	virtual void encodeCore(const std::uint8_t * src, int srcSize,
 			std::string & dst) const;
 
-	/**
-	 * Implements the actual decoder. This method is called if and only if
-	 * all parameters are valid.
-	 *
-	 * @param[in] src The source data. It will never be NULL.
-	 * @param[in] srcSize The size of src.
-	 * @param[out] dst The destination buffer. Its size will always be equal or
-	 * greater than getDecodedSize(srcSize).
-	 * @param[out] dstSize The actual size of the output.
-	 * @return true on success or false otherwise.
-	 */
 	virtual bool decodeCore(const char * src, int srcSize,
 			std::uint8_t * dst, int & dstSize) const;
+
+	virtual int removePadding(const char * src, int srcSize) const;
+
+	virtual void addPadding(std::string & dst, int encodedSize) const;
 
 	/**
 	 * Verifies if a given character must be ignored or not.
@@ -174,21 +177,77 @@ protected:
 	virtual bool isIgnored(int c) const;
 public:
 	/**
-	 * Creates a new instance of this class.
+	 * Creates a new instance of this class. This class will only accept
+	 * alphabets with 2, 4, 8, 16, 32, 64 or 128 characters.
 	 *
 	 * @param[in] alphabet the alphabet to be used. This contructor will claim
 	 * the ownership of this instance.
-	 * @param[in] blockSize The size of the padding block. use zero to disable
+	 * @param[in] blockSize The size of the padding block. Use zero to disable
 	 * the padding.
+	 * @param[in] paddingChar Character that should be used as padding.
+	 * @param[in] ignoreSpaces Flag that determines if this instance will ignore
+	 * space characters while decoding.
+	 * @exception std::invalid_argument If the alphabet size is not valid.
 	 */
-	IRBase2NCodec(IRAlphabet * alphabet, int blockSize = 0, int paddingChar = 0);
+	IRBase2NCodec(IRAlphabet * alphabet, int blockSize = 0,
+			int paddingChar = '=', bool ignoreSpaces = false);
 
+	/**
+	 * Disposes this instance and releases all associated resources. The
+	 * instance of alphabet used by this class will also be disposed.
+	 */
 	virtual ~IRBase2NCodec();
 
-	virtual int getEncodedSize(int srcSize) const = 0;
+	virtual int getEncodedSize(int srcSize) const;
 
-	virtual int getDecodedSize(int srcSize) const = 0;
+	virtual int getDecodedSize(int srcSize) const;
 
+	/**
+	 * The size of the padding block. Zero or negative values indicates that the
+	 * padding should not be used.
+	 */
+	int blockSize() const {
+		return this->_blockSize;
+	}
+
+	/**
+	 * Size of the characters in bits.
+	 */
+	int characterSize() const {
+		return this->_charSize;
+	}
+
+	/**
+	 * The padding character.
+	 */
+	int paddingCharacter() const {
+		return this->_paddingChar;
+	}
+
+	/**
+	 * Verifies if this instance ignores space characters. It is false by
+	 * default.
+	 *
+	 * @return true if the spaces are ignored or false otherwise.
+	 */
+	bool ignoreSpaces() const {
+		return this->_ignoreSpaces;
+	}
+
+	/**
+	 * The value of the clear mask. It always have the least characterSize()
+	 * bits set to 1.
+	 */
+	int clearMask() const {
+		return this->_clearMask;
+	}
+
+	/**
+	 * The alphabet used by this instance.
+	 */
+	const IRAlphabet & alphabet() const {
+		return *(this->_alphabet);
+	}
 };
 
 } //namespace ircommon
