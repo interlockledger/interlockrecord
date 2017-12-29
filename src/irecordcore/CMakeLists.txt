@@ -4,12 +4,12 @@ project (irecordcore
 
 # Fix the version strings
 configure_file (
-	include/irecordcore/version.h.in
-	include/irecordcore/version.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/irecordcore/version.h.in
+	${CMAKE_CURRENT_SOURCE_DIR}/include/irecordcore/version.h
 )
 configure_file (
-	Doxyfile.in
-        Doxyfile
+	${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+	${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
 )
 
 # Sources

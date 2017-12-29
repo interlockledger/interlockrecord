@@ -3,11 +3,11 @@ project (ircommon
 
 # Fix the version strings
 configure_file (
-	include/ircommon/version.h.in
+	${CMAKE_CURRENT_SOURCE_DIR}/include/ircommon/version.h.in
 	${CMAKE_CURRENT_SOURCE_DIR}/include/ircommon/version.h
 )
 configure_file (
-	Doxyfile.in
+	${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
 	${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
 )
 

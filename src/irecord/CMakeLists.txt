@@ -4,12 +4,12 @@ project (irecord
 
 # Fix the version strings
 configure_file (
-	src/version.h.in
-	src/version.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in
+	${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
 )
 configure_file (
-	Doxyfile.in
-	Doxyfile
+	${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+	${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
 )
 
 # Sources
