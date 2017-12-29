@@ -31,10 +31,6 @@
 
 namespace ircommon {
 
-/**
- * @namespace ircommon::IRUtils
- * Utility functions used by this library.
- */
 namespace IRUtils {
 
 /**
