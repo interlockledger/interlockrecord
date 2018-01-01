@@ -37,6 +37,10 @@ namespace ircommon {
  * This class implements the interface of an alphabet suitable to be used by
  * text-to-binary codecs.
  *
+ * <p>By contract, this class is expected to be immutable once created.
+ * Furthermore, all methods with the exception of the constructor and the
+ * destructor must be thread safe.</p>
+ *
  * @since 2017.12.28
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
@@ -54,7 +58,7 @@ public:
 	/**
 	 * Disposes this instance and releases all associated resources.
 	 */
-	virtual ~IRAlphabet();
+	virtual ~IRAlphabet() = default;
 
 	/**
 	 * Returns the size of this alphabet.
