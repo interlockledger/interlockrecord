@@ -34,15 +34,6 @@ using namespace ircommon;
 //==============================================================================
 // Class IRCodec
 //------------------------------------------------------------------------------
-IRCodec::IRCodec() {
-}
-
-//------------------------------------------------------------------------------
-IRCodec::~IRCodec() {
-
-}
-
-//------------------------------------------------------------------------------
 int IRCodec::removePadding(const char * src, int srcSize) const {
 	return srcSize;
 }
@@ -92,7 +83,7 @@ bool IRCodec::decode(const std::string & src, int srcStart, int srcSize,
 //==============================================================================
 // Class IRBase2NCodec
 //------------------------------------------------------------------------------
-IRBase2NCodec::IRBase2NCodec(IRAlphabet * alphabet, int blockSize,
+IRBase2NCodec::IRBase2NCodec(std::shared_ptr<IRAlphabet> & alphabet, int blockSize,
 		int paddingChar, bool ignoreSpaces):
 		IRCodec(), _blockSize(blockSize), _paddingChar(paddingChar),
 		_alphabet(alphabet), _ignoreSpaces(ignoreSpaces) {
@@ -111,9 +102,6 @@ IRBase2NCodec::IRBase2NCodec(IRAlphabet * alphabet, int blockSize,
 
 //------------------------------------------------------------------------------
 IRBase2NCodec::~IRBase2NCodec() {
-	if (this->_alphabet) {
-		delete this->_alphabet;
-	}
 }
 
 //------------------------------------------------------------------------------

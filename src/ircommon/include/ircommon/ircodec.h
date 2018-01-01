@@ -29,6 +29,7 @@
 
 #include <ircommon/iralphab.h>
 #include <string>
+#include <memory>
 #include <cstdint>
 
 namespace ircommon {
@@ -88,9 +89,9 @@ protected:
 	 */
 	virtual void addPadding(std::string & dst, int encodedSize) const;
 public:
-	IRCodec();
+	IRCodec() = default;
 
-	virtual ~IRCodec();
+	virtual ~IRCodec() = default;
 
 	virtual int getEncodedSize(int srcSize) const = 0;
 
@@ -151,7 +152,7 @@ public:
  */
 class IRBase2NCodec : public IRCodec {
 private:
-	IRAlphabet * _alphabet;
+	std::shared_ptr<IRAlphabet> _alphabet;
 	int _blockSize;
 	int _paddingChar;
 	int _clearMask;
@@ -180,8 +181,9 @@ public:
 	 * Creates a new instance of this class. This class will only accept
 	 * alphabets with 2, 4, 8, 16, 32, 64 or 128 characters.
 	 *
-	 * @param[in] alphabet the alphabet to be used. This contructor will claim
-	 * the ownership of this instance.
+	 * @param[in] alphabet the alphabet to be used. It must be passed as a
+	 * std::shared_ptr in order to allow the sharing of this instance among
+	 * multiple instances.
 	 * @param[in] blockSize The size of the padding block. Use zero to disable
 	 * the padding.
 	 * @param[in] paddingChar Character that should be used as padding.
@@ -189,7 +191,7 @@ public:
 	 * space characters while decoding.
 	 * @exception std::invalid_argument If the alphabet size is not valid.
 	 */
-	IRBase2NCodec(IRAlphabet * alphabet, int blockSize = 0,
+	IRBase2NCodec(std::shared_ptr<IRAlphabet> & alphabet, int blockSize = 0,
 			int paddingChar = '=', bool ignoreSpaces = false);
 
 	/**
