@@ -27,14 +27,16 @@
 MY_HOME=$(dirname "$0")
 pushd "$MY_HOME" > /dev/null
 MY_HOME=$(pwd)
+cd ..
+BUILD_DIR="$(pwd)/build"
 popd > /dev/null
 
-BUILD_DIR="$MY_HOME/build"
+
 if [ -d "$BUILD_DIR" ]; then
 	echo "'$BUILD_DIR' already exists."
 	exit 1
 fi
-
+echo "Creating $BUILD_DIR..."
 mkdir "$BUILD_DIR"
 pushd "$BUILD_DIR" >/dev/null
 cmake ../src -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECLIPSE_VERSION=4.6
