@@ -1,0 +1,4 @@
+LIBRARY DLLTEST
+EXPORTS
+	IRGetVersion
+	IRGetVersionInt
