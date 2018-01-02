@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Open Communications Security
+ * Copyright (c) 2017-2018, Open Communications Security
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
