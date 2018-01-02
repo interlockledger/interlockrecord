@@ -30,10 +30,19 @@
 if(__WINDOWS_MSVCCRT)
   return()
 endif()
+
 set(__WINDOWS_MSVCCRT 1)
 
+# Debug onlyt
+#get_cmake_property(_variableNames VARIABLES)
+#foreach (_variableName ${_variableNames})
+#    message(STATUS "${_variableName}=${${_variableName}}")
+#endforeach()
+
 if (MSVC)
-	option(MSVC_STATIC_CRT "Instructs the compiler to use the static CRT instead of the dynamic one.")
+	if( NOT DEFINED MSVC_STATIC_CRT)
+		option(MSVC_STATIC_CRT "Instructs the compiler to use the static CRT instead of the dynamic one." 0)
+	endif()
 	if (MSVC_STATIC_CRT)
 		set(MSVC_CRT_FLAG "MT")
 		foreach(lang C CXX)
@@ -43,7 +52,12 @@ if (MSVC)
 					CMAKE_${lang}_FLAGS_DEBUG_INIT
 					CMAKE_${lang}_FLAGS_INIT
 					CMAKE_${lang}_FLAGS_MINSIZEREL
-					CMAKE_${lang}_FLAGS_MINSIZEREL_INIT)
+					CMAKE_${lang}_FLAGS_MINSIZEREL_INIT
+					CMAKE_${lang}_FLAGS_RELEASE
+					CMAKE_${lang}_FLAGS_RELEASE_INIT
+					CMAKE_${lang}_FLAGS_RELWITHDEBINFO
+					CMAKE_${lang}_FLAGS_RELWITHDEBINFO_INIT
+					)
 				string(REPLACE "/MDd " "/MTd " ${flag_var} "${${flag_var}}")
 				string(REPLACE "/MD " "/MT " ${flag_var} "${${flag_var}}")
 			endforeach()
