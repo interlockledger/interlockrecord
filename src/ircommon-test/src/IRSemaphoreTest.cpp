@@ -45,9 +45,11 @@ void IRSemaphoreTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRSemaphoreTest,Test1) {
+TEST_F(IRSemaphoreTest,Constructor) {
 
-	ASSERT_FALSE(0 == 0);
+	//TODO Implementation required!
+	std::cout << "Implementation required!";
+
 }
 //------------------------------------------------------------------------------
 

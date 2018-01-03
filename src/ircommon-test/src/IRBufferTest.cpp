@@ -45,9 +45,10 @@ void IRBufferTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRBufferTest,Test1) {
+TEST_F(IRBufferTest, Constructor) {
 
-	//ASSERT_FALSE(0 == 0);
+	//TODO Implementation required!
+	std::cout << "Implementation required!";
 }
 //------------------------------------------------------------------------------
 

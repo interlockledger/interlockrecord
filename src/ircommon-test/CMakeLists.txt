@@ -9,13 +9,17 @@ add_executable(ircommon-test
 	src/I32FeistelObfuscatorTest.cpp
 	src/I32ObfuscatorTest.cpp
 	src/IRAlphabetTest.cpp
+	src/IRBase2NCodecTest.cpp
 	src/IRBase32AlphabetTest.cpp
 	src/IRBase64AlphabetTest.cpp
 	src/IRBinaryAlphabetTest.cpp
+	src/IRBufferTest.cpp
+	src/IRCodecTest.cpp
 	src/IRGenericAlphabetTest.cpp
 	src/IRHexAlphabetTest.cpp
 	src/ILIntTest.cpp
-	src/IRBufferTest.cpp
+	src/IRRWLockTest.cpp
+	src/IRSemaphoreTest.cpp
 	src/IRUtilsTest.cpp)
 
 target_include_directories(ircommon-test PUBLIC

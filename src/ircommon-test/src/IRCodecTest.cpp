@@ -45,9 +45,10 @@ void IRCodecTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRCodecTest,Test1) {
+TEST_F(IRCodecTest, Constructor) {
 
-	ASSERT_FALSE(0 == 0);
+	//TODO Implementation required!
+	std::cout << "Implementation required!";
 }
 //------------------------------------------------------------------------------
 

@@ -45,9 +45,10 @@ void IRBase2NCodecTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRBase2NCodecTest,Test1) {
+TEST_F(IRBase2NCodecTest, Constructor) {
 
-	ASSERT_FALSE(0 == 0);
+	//TODO Implementation required!
+	std::cout << "Implementation required!";
 }
 //------------------------------------------------------------------------------
 
