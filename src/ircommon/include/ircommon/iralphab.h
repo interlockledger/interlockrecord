@@ -27,6 +27,8 @@
 #ifndef __IRCOMMON_IRALPHAB_H__
 #define __IRCOMMON_IRALPHAB_H__
 
+#include <stdexcept>
+
 namespace ircommon {
 
 // This implementation is loosely based on the original code from
@@ -51,7 +53,8 @@ public:
 	/**
 	 * Creates a new instance of this class with a given size.
 	 *
-	 * @param[in] size The size of the alphabet.
+	 * @param[in] size The size of the alphabet. It must be greater than 1.
+	 * @except std::invalid_argument If size is invalid
 	 */
 	IRAlphabet(int size);
 
@@ -151,13 +154,14 @@ public:
 	 *
 	 * @param[in] f Character for false.
 	 * @param[in] t Character for true.
+	 * @except std::invalid_argument If f is equal to t.
 	 */
 	IRBinaryAlphabet(char f = '0', char t = '1');
 
 	/**
 	 * Disposes this instance and releases all associated resources.
 	 */
-	virtual ~IRBinaryAlphabet();
+	virtual ~IRBinaryAlphabet() = default;
 
 	/**
 	 * Returns the value of the character.

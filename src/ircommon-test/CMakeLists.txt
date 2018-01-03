@@ -8,6 +8,12 @@ add_executable(ircommon-test
 	src/main.cpp
 	src/I32FeistelObfuscatorTest.cpp
 	src/I32ObfuscatorTest.cpp
+	src/IRAlphabetTest.cpp
+	src/IRBase32AlphabetTest.cpp
+	src/IRBase64AlphabetTest.cpp
+	src/IRBinaryAlphabetTest.cpp
+	src/IRGenericAlphabetTest.cpp
+	src/IRHexAlphabetTest.cpp
 	src/ILIntTest.cpp
 	src/IRBufferTest.cpp
 	src/IRUtilsTest.cpp)

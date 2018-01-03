@@ -37,6 +37,10 @@ using namespace ircommon;
 // Class IRAlphabet
 //------------------------------------------------------------------------------
 IRAlphabet::IRAlphabet(int size):_size(size){
+
+	if (size < 2) {
+		throw std::invalid_argument("Invalid size.");
+	}
 }
 
 //==============================================================================
@@ -75,12 +79,12 @@ int IRGenericAlphabet::getChar(int v) const {
 // Class IRBinaryAlphabet
 //------------------------------------------------------------------------------
 IRBinaryAlphabet::IRBinaryAlphabet(char f, char t): IRAlphabet(2) {
+
+	if (t == f) {
+		throw std::invalid_argument("f cannot be equal to t.");
+	}
 	this->_map[0] = f;
 	this->_map[1] = t;
-}
-
-//------------------------------------------------------------------------------
-IRBinaryAlphabet::~IRBinaryAlphabet() {
 }
 
 //------------------------------------------------------------------------------
