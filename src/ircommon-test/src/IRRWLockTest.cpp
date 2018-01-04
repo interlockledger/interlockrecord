@@ -29,6 +29,8 @@
 #include <vector>
 #include <thread>
 #include <memory>
+#include <algorithm>
+#include <chrono>
 using namespace ircommon;
 
 //==============================================================================
@@ -57,11 +59,20 @@ TEST_F(IRRWLockTest, Constructor) {
 	delete l;
 }
 
+typedef struct _IRRWLockTest_SyncLog{
+	int value;
+	std::chrono::high_resolution_clock::time_point tstamp;
+	_IRRWLockTest_SyncLog(int value, std::chrono::high_resolution_clock::time_point tstamp){
+		this->value = value;
+		this->tstamp = tstamp;
+	}
+} IRRWLockTest_SyncLog;
+
 //------------------------------------------------------------------------------
 TEST_F(IRRWLockTest, Sync) {
 	IRRWLock lock;
 	std::mutex logMutex;
-	std::vector<int> log;
+	std::vector<IRRWLockTest_SyncLog> log;
 	std::vector< std::shared_ptr<std::thread> > threads;
 	volatile int shared;
 
@@ -78,7 +89,7 @@ TEST_F(IRRWLockTest, Sync) {
 	 * Anything different than that will mark the wrong behavior of the IRRWLock.
 	 */
 	shared = 0;
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 4; i++) {
 		threads.push_back(std::make_shared<std::thread>([&shared, &log, & logMutex, &lock](){
 			int i;
 
@@ -86,9 +97,9 @@ TEST_F(IRRWLockTest, Sync) {
 				lock.lockRead();
 				logMutex.lock();
 				i = shared;
-				log.push_back(i);
+				log.push_back(IRRWLockTest_SyncLog(i,  std::chrono::high_resolution_clock::now()));
 				logMutex.unlock();
-				std::this_thread::sleep_for(std::chrono::microseconds(1));
+				std::this_thread::sleep_for(std::chrono::milliseconds(10));
 				lock.unlockRead();
 			} while (i < 2);
 		}));
@@ -102,9 +113,9 @@ TEST_F(IRRWLockTest, Sync) {
 				shared++;
 				logMutex.lock();
 				i = shared;
-				log.push_back(-i);
+				log.push_back(IRRWLockTest_SyncLog(-i, std::chrono::high_resolution_clock::now()));
 				logMutex.unlock();
-				std::this_thread::sleep_for(std::chrono::microseconds(1));
+				std::this_thread::sleep_for(std::chrono::milliseconds(10));
 				lock.unlockWrite();
 			} while (i < 2);
 		}));
@@ -114,15 +125,22 @@ TEST_F(IRRWLockTest, Sync) {
 		threads[i]->join();
 	}
 
-	int last = 0;
+	int last = log[0].value;
+	auto lastTStamp =
+			std::chrono::high_resolution_clock::time_point(std::chrono::high_resolution_clock::duration(0));
+	std::uint64_t mDuration = UINT64_MAX;
 	for (int i = 0; i < log.size(); i++) {
-		//std::cout << log[i] << "\n";
-		if (log[i] < 0) {
-			last = abs(log[i]);
+		auto timing = std::chrono::duration_cast<std::chrono::milliseconds>(log[i].tstamp - lastTStamp);
+		//std::cout << log[i].value << " " << timing.count() << "\n";
+		if (log[i].value < 0) {
+			last = abs(log[i].value);
 		} else {
-			ASSERT_EQ(last, log[i]);
+			mDuration = std::min(std::uint64_t(timing.count()), mDuration);
+			ASSERT_EQ(last, log[i].value);
 		}
+		lastTStamp = log[i].tstamp;
 	}
+	ASSERT_GT(10, mDuration);
 }
 //------------------------------------------------------------------------------
 
