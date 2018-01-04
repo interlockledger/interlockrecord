@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRSemaphoreTest.h"
+#include <ircommon/irsemaph.h>
+#include <memory>
+#include <thread>
+using namespace ircommon;
 
 //==============================================================================
 // class IRSemaphoreTest
@@ -46,10 +50,66 @@ void IRSemaphoreTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRSemaphoreTest,Constructor) {
+	IRSemaphore * s;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	s  = new IRSemaphore();
+	delete s;
+}
 
+//------------------------------------------------------------------------------
+TEST_F(IRSemaphoreTest, Sync) {
+	IRSemaphore sem(0);
+	volatile int shared = -1;
+	int readRet;
+
+	// The reader will wait until the writer sets shared to some value...
+	std::thread reader([&readRet, &sem, &shared]() {
+		if (!sem.wait()) {
+			readRet = -2;
+		} else {
+			readRet = shared;
+		}
+	});
+	ASSERT_EQ(-1, shared); // Ensure that it remains as is...
+
+	// Start the writer that should set shared to 1.
+	std::thread writer([&sem, &shared]() {
+		shared = 1;
+		sem.release();
+	});
+
+	writer.join();
+	reader.join();
+	ASSERT_EQ(1, readRet);
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRSemaphoreTest, SyncFail) {
+	IRSemaphore sem(0);
+	volatile int shared = -1;
+	int readRet;
+
+	// The reader will wait until the writer sets shared to some value... It must
+	// fail because of the delay of the writer
+	std::thread reader([&readRet, &sem, &shared]() {
+		if (!sem.tryWait(5)) {
+			readRet = -2;
+		} else {
+			readRet = shared;
+		}
+	});
+	ASSERT_EQ(-1, shared); // Ensure that it remains as is...
+
+	// Start the writer that should set shared to 1.
+	std::thread writer([&sem, &shared]() {
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		shared = 1;
+		sem.release();
+	});
+
+	writer.join();
+	reader.join();
+	ASSERT_EQ(-2, readRet);
 }
 //------------------------------------------------------------------------------
 
