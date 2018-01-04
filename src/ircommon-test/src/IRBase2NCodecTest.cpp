@@ -28,6 +28,7 @@
 #include <ircommon/ircodec.h>
 #include <algorithm>
 #include <cstring>
+#include <locale>
 
 using namespace ircommon;
 
