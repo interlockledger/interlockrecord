@@ -49,6 +49,7 @@ protected:
 	 *
 	 * @param[in] src The source data. It will never be NULL.
 	 * @param[in] srcSize The size of source.
+	 * @note This method should not handle the padding, just the encoding.
 	 */
 	virtual void encodeCore(const std::uint8_t * src, int srcSize,
 			std::string & dst) const = 0;
@@ -63,12 +64,15 @@ protected:
 	 * greater than getDecodedSize(srcSize).
 	 * @param[out] dstSize The actual size of the output.
 	 * @return true on success or false otherwise.
+	 * @note This method should not handle the padding, just the decoding.
 	 */
 	virtual bool decodeCore(const char * src, int srcSize,
 			std::uint8_t * dst, int & dstSize) const = 0;
 
 	/**
-	 * Computes the size of the encoded data without the padding.
+	 * Computes the size of the encoded data without the padding. It is called
+	 * by IRCodec::decode(const std::string&,int,int,void*,int&) in order to
+	 * determine the actual size of the data without the padding.
 	 *
 	 * @param[in] src The encoded data.
 	 * @param[in] srcSize The size of the encoded data.
@@ -80,8 +84,8 @@ protected:
 
 	/**
 	 * Adds the padding if necessary. This method is called by
-	 * encode(const void *,int,std::string&) in order to add the padding to the
-	 * end of the encoded data.
+	 * IRCodec::encode(const void *,int,std::string&) in order to add the
+	 * padding to the end of the encoded data.
 	 *
 	 * @param[in,out] dst The encoded data.
 	 * @param[in] encodedSize The number of characters already in the output.
@@ -124,7 +128,8 @@ public:
 			void * dst, int & dstSize) const;
 
 	/**
-	 * Decodes the binary value.
+	 * Decodes the binary value. It is a convenience method that calls
+	 * IRCodec::decode(const std::string&,int,int,void*,int&).
 	 *
 	 * @param[in] src The encoded data.
 	 * @param[out] dst The buffer that will receive the data. It must have at
@@ -191,14 +196,14 @@ public:
 	 * space characters while decoding.
 	 * @exception std::invalid_argument If the alphabet size is not valid.
 	 */
-	IRBase2NCodec(std::shared_ptr<IRAlphabet> & alphabet, int blockSize = 0,
+	IRBase2NCodec(const std::shared_ptr<IRAlphabet> & alphabet, int blockSize = 0,
 			int paddingChar = '=', bool ignoreSpaces = false);
 
 	/**
 	 * Disposes this instance and releases all associated resources. The
 	 * instance of alphabet used by this class will also be disposed.
 	 */
-	virtual ~IRBase2NCodec();
+	virtual ~IRBase2NCodec() = default;
 
 	virtual int getEncodedSize(int srcSize) const;
 
@@ -249,6 +254,13 @@ public:
 	 */
 	const IRAlphabet & alphabet() const {
 		return *(this->_alphabet);
+	}
+
+	/**
+	 * Allow access to the shared pointer to the inner alphabet.
+	 */
+	const std::shared_ptr<IRAlphabet> & sharedAlphabet() const {
+		return this->_alphabet;
 	}
 };
 

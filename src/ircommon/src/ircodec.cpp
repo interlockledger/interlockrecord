@@ -83,7 +83,7 @@ bool IRCodec::decode(const std::string & src, int srcStart, int srcSize,
 //==============================================================================
 // Class IRBase2NCodec
 //------------------------------------------------------------------------------
-IRBase2NCodec::IRBase2NCodec(std::shared_ptr<IRAlphabet> & alphabet, int blockSize,
+IRBase2NCodec::IRBase2NCodec(const std::shared_ptr<IRAlphabet> & alphabet, int blockSize,
 		int paddingChar, bool ignoreSpaces):
 		IRCodec(), _blockSize(blockSize), _paddingChar(paddingChar),
 		_alphabet(alphabet), _ignoreSpaces(ignoreSpaces) {
@@ -98,10 +98,6 @@ IRBase2NCodec::IRBase2NCodec(std::shared_ptr<IRAlphabet> & alphabet, int blockSi
 
 	this->_charSize = charSize;
 	this->_clearMask = (0x1 << this->_charSize) - 1;
-}
-
-//------------------------------------------------------------------------------
-IRBase2NCodec::~IRBase2NCodec() {
 }
 
 //------------------------------------------------------------------------------
@@ -146,6 +142,7 @@ bool IRBase2NCodec::decodeCore(const char * src, int srcSize,
 
 	bitBuffer = 0;
 	bitBufferSize = 0;
+	p = dst;
 	pEnd = dst + dstSize;
 	srcEnd = src + srcSize;
 	while (src < srcEnd) {
@@ -209,9 +206,7 @@ void IRBase2NCodec::addPadding(std::string & dst, int encodedSize) const {
 		int extra;
 		extra = encodedSize % this->blockSize();
 		if (extra) {
-			for (; extra < this->blockSize(); extra++){
-				dst.push_back(this->paddingCharacter());
-			}
+			dst.append(this->blockSize() - extra, this->paddingCharacter());
 		}
 	}
 }
@@ -220,7 +215,7 @@ void IRBase2NCodec::addPadding(std::string & dst, int encodedSize) const {
 bool IRBase2NCodec::isIgnored(int c) const {
 
 	if (this->ignoreSpaces()) {
-		return std::isspace(c, std::locale::classic());
+		return std::isspace(char(c), std::locale::classic());
 	} else {
 		return false;
 	}
