@@ -91,6 +91,16 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRInitialize();
  * @see IRInitialize()
  */
 IR_EXPORT_ATTR int IR_EXPORT_CALL IRDeinitialize();
+/** @}*/ //addtogroup irecord_pub_init
+//==============================================================================
+// Context Initialization/Dispose
+//------------------------------------------------------------------------------
+/**
+* @defgroup irecord_pub_context Initialization/Dispose
+*/
+/** @addtogroup irecord_pub_context
+*  @{
+*/
 
 /**
  * Creates a new IRContext. Each context will be kept
@@ -111,7 +121,7 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRContextCreate(const char * configFile,
  * @note This function is thread safe.
  */
 IR_EXPORT_ATTR int IR_EXPORT_CALL  IRContextDispose(IRContext context);
-/** @}*/ //addtogroup irecord_pub_init
+/** @}*/ //addtogroup irecord_pub_context
 
 //==============================================================================
 // Version information
@@ -143,6 +153,20 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL  IRGetVersion(char * version, int * versionSiz
  */
 IR_EXPORT_ATTR int IR_EXPORT_CALL IRGetVersionInt(int * major, int * minor);
 /** @}*/ //addtogroup irecord_pub_version
+
+
+//==============================================================================
+// Emergency key
+//------------------------------------------------------------------------------
+/**
+* @defgroup irecord_pub_emergency_key Emergency key
+*/
+/** @addtogroup irecord_pub_emergency_key
+*  @{
+*/
+
+
+/** @}*/ //addtogroup irecord_pub_emergency_key
 
 /** @}*/ //addtogroup irecord_pub
 #endif // __irecord_irecord_H__
