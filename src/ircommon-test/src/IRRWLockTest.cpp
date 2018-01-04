@@ -25,6 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRRWLockTest.h"
+#include <ircommon/irrwlock.h>
+#include <vector>
+#include <thread>
+#include <memory>
+using namespace ircommon;
 
 //==============================================================================
 // class IRRWLockTest
@@ -46,9 +51,78 @@ void IRRWLockTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRRWLockTest, Constructor) {
+	IRRWLock * l;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	l = new IRRWLock();
+	delete l;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRRWLockTest, Sync) {
+	IRRWLock lock;
+	std::mutex logMutex;
+	std::vector<int> log;
+	std::vector< std::shared_ptr<std::thread> > threads;
+	volatile int shared;
+
+	// TODO Check if this code is indeed enough to test the read/write lock. It appears to be so.
+	/*
+	 * This code works by creating a set of readers that will log the current value
+	 * of shared and a set of writers that will increment its value by one but will log
+	 * it as its negative value.
+	 *
+	 * This menas that the expected value for the sequence will be something like
+	 * the following regular expression:
+	 * 		'0'*'-1''1'*'-2''2'*'-3''3'*
+	 *
+	 * Anything different than that will mark the wrong behavior of the IRRWLock.
+	 */
+	shared = 0;
+	for (int i = 0; i < 3; i++) {
+		threads.push_back(std::make_shared<std::thread>([&shared, &log, & logMutex, &lock](){
+			int i;
+
+			do {
+				lock.lockRead();
+				logMutex.lock();
+				i = shared;
+				log.push_back(i);
+				logMutex.unlock();
+				std::this_thread::sleep_for(std::chrono::microseconds(1));
+				lock.unlockRead();
+			} while (i < 2);
+		}));
+	}
+	for (int i = 0; i < 2; i++) {
+		threads.push_back(std::make_shared<std::thread>([&shared, &log, & logMutex, &lock](){
+			int i;
+
+			do {
+				lock.lockWrite();
+				shared++;
+				logMutex.lock();
+				i = shared;
+				log.push_back(-i);
+				logMutex.unlock();
+				std::this_thread::sleep_for(std::chrono::microseconds(1));
+				lock.unlockWrite();
+			} while (i < 2);
+		}));
+	}
+
+	for (int i = 0; i < threads.size(); i++) {
+		threads[i]->join();
+	}
+
+	int last = 0;
+	for (int i = 0; i < log.size(); i++) {
+		//std::cout << log[i] << "\n";
+		if (log[i] < 0) {
+			last = abs(log[i]);
+		} else {
+			ASSERT_EQ(last, log[i]);
+		}
+	}
 }
 //------------------------------------------------------------------------------
 
