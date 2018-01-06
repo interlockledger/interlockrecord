@@ -19,12 +19,23 @@ int main(){
 	p = std::make_shared<IRJsonDecimal>(10.1);
 	o.set(std::string("decimal"), p);
 
+	std::shared_ptr<IRJsonObject> p2 = std::make_shared<IRJsonObject>();
+	p = p2;
+	o.set(std::string("obj"), p);
+
+	p = std::make_shared<IRJsonString>("str\t");
+	p2->set(std::string("obj"), p);
+
+	p = std::make_shared<IRJsonBoolean>(true);
+	o.set(std::string("zbool"), p);
+
 	std::string out;
-	IRJsonSerializer s(false);
+	IRJsonSerializer s(true);
 	s.serialize(out, o);
 
 	std::cout << out << "\n";
 
+	std::cout << "\xE2\x82\xAC\n";
 
 	return 0;
 }

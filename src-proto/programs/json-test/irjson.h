@@ -329,12 +329,6 @@ protected:
 	void levelDown();
 	void beginLine(std::string & out);
 	void endLine(std::string & out);
-public:
-	IRJsonSerializer(bool indent = false): _indent(indent), _level(0) {}
-
-	virtual ~IRJsonSerializer() = default;
-
-	void serialize(std::string & out, const IRJsonBase & v);
 	void serializeNull(std::string & out);
 	void serializeString(std::string & out, const IRJsonString & v);
 	void serializeString(std::string & out, const std::string & v);
@@ -343,6 +337,12 @@ public:
 	void serializeBoolean(std::string & out, const IRJsonBoolean & v);
 	void serializeObject(std::string & out, const IRJsonObject & v);
 	void serializeArray(std::string & out, const IRJsonArray & v);
+public:
+	IRJsonSerializer(bool indent = false): _indent(indent), _level(0) {}
+
+	virtual ~IRJsonSerializer() = default;
+
+	void serialize(std::string & out, const IRJsonBase & v);
 };
 
 /**

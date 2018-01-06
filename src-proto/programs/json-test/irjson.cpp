@@ -1,6 +1,7 @@
 #include "irjson.h"
 
 #include <stdexcept>
+#include <cstdio>
 
 using namespace  ircommon::json;
 
@@ -119,10 +120,47 @@ void IRJsonSerializer::serializeString(std::string & out, const IRJsonString & v
 }
 
 void IRJsonSerializer::serializeString(std::string & out, const std::string & v) {
+	char tmp[8];
 
+	// TODO escaped unicode is not supported yet.
 	out.append(1, '\"');
-	// TODO Create the escaped string later.
-	out.append(v);
+	for (int i = 0; i < v.size(); i++) {
+		int c = v[i];
+		switch (c) {
+		case '\"':
+			out.append("\\\"");
+			break;
+		case '\\':
+			out.append("\\\\");
+			break;
+		case '\b':
+			out.append("\\b");
+			break;
+		case '\f':
+			out.append("\\f");
+			break;
+		case '\n':
+			out.append("\\n");
+			break;
+		case '\r':
+			out.append("\\r");
+			break;
+		case '\t':
+			out.append("\\t");
+			break;
+		default:
+			if (c > 0x21) {
+				// Literal
+				out.append(1, c);
+			} else {
+				// Use \uXXXX
+				out.append("\\u");
+				std::snprintf(tmp, sizeof(tmp), "%04X", c);
+				out.append(tmp);
+			}
+			break;
+		}
+	}
 	out.append(1, '\"');
 }
 
@@ -147,7 +185,7 @@ void IRJsonSerializer::serializeObject(std::string & out, const IRJsonObject & v
 	std::vector<std::string> attr;
 
 	v.getAttributeNames(attr);
-	this->beginLine(out);
+	//this->beginLine(out);
 	out.append(1, '{');
 	this->endLine(out);
 	this->levelUp();
@@ -155,7 +193,13 @@ void IRJsonSerializer::serializeObject(std::string & out, const IRJsonObject & v
 		this->beginLine(out);
 		this->serializeString(out, attr[i]);
 		out.append(1, ':');
+		if (v[attr[i]]->isObject() || v[attr[i]]->isArray()) {
+			this->levelUp();
+		}
 		this->serialize(out, *v[attr[i]]);
+		if (v[attr[i]]->isObject() || v[attr[i]]->isArray()) {
+			this->levelDown();
+		}
 		if (i < (attr.size() - 1)) {
 			out.append(1, ',');
 		}
@@ -164,7 +208,7 @@ void IRJsonSerializer::serializeObject(std::string & out, const IRJsonObject & v
 	this->levelDown();
 	this->beginLine(out);
 	out.append(1, '}');
-	this->endLine(out);
+	//this->endLine(out);
 }
 
 void IRJsonSerializer::serializeArray(std::string & out, const IRJsonArray & v) {
