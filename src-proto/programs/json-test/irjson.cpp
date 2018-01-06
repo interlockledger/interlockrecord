@@ -151,7 +151,7 @@ void IRJsonSerializer::serializeString(std::string & out, const std::string & v)
 	// TODO escaped unicode is not supported yet.
 	out.push_back('\"');
 	for (int i = 0; i < v.size(); i++) {
-		int c = v[i];
+		int c = v[i] & 0xFF;
 		switch (c) {
 		case '\"':
 			out.append("\\\"");
@@ -407,6 +407,9 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractString() {
 		case ST_ESCAPED:
 			int literal;
 			switch (c) {
+			case '\"':
+				literal = '\"';
+				break;
 			case '\\':
 				literal = '\\';
 				break;
@@ -464,7 +467,6 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric() {
 		ST_FRAC,
 		ST_EXP_FIRST,
 		ST_EXP,
-		ST_CLEANUP,
 		ST_END} state;
 	int c;
 	bool decimal;
@@ -503,7 +505,9 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric() {
 				break;
 			default:
 				if (!IRJsonTokenizer::isDigit(c)) {
-					state = ST_CLEANUP;
+					this->ungetc();
+					this->_token.pop_back();
+					state = ST_END;
 				}
 			}
 			break;
@@ -520,7 +524,9 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric() {
 			} else if ((c == 'e') || (c == 'E')) {
 				state = ST_EXP_FIRST;
 			} else if (!IRJsonTokenizer::isDigit(c)) {
-				state = ST_CLEANUP;
+				this->ungetc();
+				this->_token.pop_back();
+				state = ST_END;
 			}
 			break;
 		case ST_EXP_FIRST:
@@ -535,13 +541,10 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric() {
 			if (c == -1) {
 				state = ST_END;
 			} else if (!IRJsonTokenizer::isDigit(c)) {
-				state = ST_CLEANUP;
+				this->ungetc();
+				this->_token.pop_back();
+				state = ST_END;
 			}
-			break;
-		case ST_CLEANUP:
-			this->ungetc();
-			this->_token.pop_back();
-			state = ST_END;
 			break;
 		}
 	} while (state != ST_END);
@@ -568,6 +571,15 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractKeyword() {
 		}
 	} while (c != -1);
 
+	if (this->_token == "true") {
+		return IRJsonTokenizer::VAL_TRUE;
+	} else if (this->_token == "false") {
+		return IRJsonTokenizer::VAL_FALSE;
+	} else if (this->_token == "null") {
+		return IRJsonTokenizer::VAL_NULL;
+	} else {
+		return IRJsonTokenizer::INVALID;
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -630,6 +642,43 @@ void IRJsonTokenizer::unicodeToUTF8(std::string & out, int c) {
 		out.push_back(char(0b10000000 | ((c >> 12) & 0b00111111)));
 		out.push_back(char(0b10000000 | ((c >> 6) & 0b00111111)));
 		out.push_back(char(0b10000000 | (c & 0b00111111)));
+	}
+}
+
+//------------------------------------------------------------------------------
+std::string IRJsonTokenizer::tokenToName(IRJsonTokenizer::TokenType token) {
+
+	switch (token) {
+	case OBJ_BEGIN:
+		return "OBJ_BEGIN";
+	case OBJ_END:
+		return "OBJ_END";
+	case ARRAY_BEGIN:
+		return "ARRAY_BEGIN";
+	case ARRAY_END:
+		return "ARRAY_END";
+	case NAME_SEP:
+		return "NAME_SEP";
+	case VALUE_SEP:
+		return "VALUE_SEP";
+	case VAL_STRING:
+		return "VAL_STRING";
+	case VAL_TRUE:
+		return "VAL_TRUE";
+	case VAL_FALSE:
+		return "VAL_FALSE";
+	case VAL_INT:
+		return "VAL_INT";
+	case VAL_DEC:
+		return "VAL_DEC";
+	case VAL_NULL:
+		return "VAL_NULL";
+	case INVALID:
+		return "INVALID";
+	case INPUT_END:
+		return "INPUT_END";
+	default:
+		return "????";
 	}
 }
 

@@ -23,7 +23,8 @@ int main(){
 	p = p2;
 	o.set(std::string("obj"), p);
 
-	p = std::make_shared<IRJsonString>("str\t");
+	std::string tmp = "str\xE2\x82\xAC\t";
+	p = std::make_shared<IRJsonString>(tmp);
 	p2->set(std::string("obj"), p);
 
 	p = std::make_shared<IRJsonBoolean>(true);
@@ -35,12 +36,15 @@ int main(){
 
 	std::cout << out << "\n";
 
-	std::string utf;
+	out = "\"\\\"\\u20ACFF \\/\"";
+	IRJsonTokenizer tokenizer(out);
+	IRJsonTokenizer::TokenType token;
+	do {
+		token = tokenizer.next();
+		std::cout <<  IRJsonTokenizer::tokenToName(token) << " " << tokenizer.value() <<"\n";
+	} while (token != IRJsonTokenizer::INPUT_END);
 
-	IRJsonTokenizer::unicodeToUTF8(utf, 0xA2);
-	IRJsonTokenizer::unicodeToUTF8(utf, 0x20AC);
-	IRJsonTokenizer::unicodeToUTF8(utf, 0x10348);
-	std::cout << utf << "\n";
+
 
 	return 0;
 }

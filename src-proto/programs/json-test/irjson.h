@@ -424,7 +424,12 @@ public:
 	 * @param[in] c The unicode point from U+0000 to U+10FFFF.
 	 */
 	static void unicodeToUTF8(std::string & out, int c);
+
+	static std::string tokenToName(TokenType token);
 };
+
+
+
 
 } //namespace json
 } // namespace ircommon
