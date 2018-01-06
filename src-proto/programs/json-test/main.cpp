@@ -35,7 +35,12 @@ int main(){
 
 	std::cout << out << "\n";
 
-	std::cout << "\xE2\x82\xAC\n";
+	std::string utf;
+
+	IRJsonTokenizer::unicodeToUTF8(utf, 0xA2);
+	IRJsonTokenizer::unicodeToUTF8(utf, 0x20AC);
+	IRJsonTokenizer::unicodeToUTF8(utf, 0x10348);
+	std::cout << utf << "\n";
 
 	return 0;
 }

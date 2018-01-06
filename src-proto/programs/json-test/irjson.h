@@ -360,13 +360,14 @@ public:
 		ARRAY_END,
 		NAME_SEP,
 		VALUE_SEP,
-		STRING,
-		VAL_BOOL,
+		VAL_STRING,
+		VAL_TRUE,
+		VAL_FALSE,
 		VAL_INT,
 		VAL_DEC,
 		VAL_NULL,
-		UNKNOWN,
-		DATA_END
+		INVALID,
+		INPUT_END
 	} TokenType;
 private:
 	std::string _token;
@@ -374,25 +375,55 @@ private:
 	int _pos;
 
 	int getc();
-	int ungetc();
+	void ungetc();
+
+	static bool isSpace(int c);
+
+	static bool isHex(int c);
+
+	static bool isDigit(int c);
+
+	static bool isKeywordChar(int c);
 
 	bool ignoreComment();
 
-	bool ignoreCommentML();
+	void ignoreSpaces();
 
-	bool ignoreSpaces();
+	TokenType extractString();
+
+	TokenType extractNumeric();
+
+	TokenType extractKeyword();
 public:
 	IRJsonTokenizer(const std::string & in);
+
+	IRJsonTokenizer(const char * in);
+
+	IRJsonTokenizer(const char * in, int size);
 
 	IRJsonTokenizer(const std::string & in, int start, int size);
 
 	virtual ~IRJsonTokenizer() = default;
 
+	int position() const {
+		return this->_pos;
+	}
+
 	void reset();
 
 	TokenType next();
 
-	const std::string value() const;
+	const std::string value() const {
+		return this->_token;
+	}
+
+	/**
+	 * Converts a unicode point into its UTF-8 representation.
+	 *
+	 * @param[out] out The output string.
+	 * @param[in] c The unicode point from U+0000 to U+10FFFF.
+	 */
+	static void unicodeToUTF8(std::string & out, int c);
 };
 
 } //namespace json
