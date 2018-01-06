@@ -107,29 +107,29 @@ void IRJsonSerializer::endLine(std::string & out) {
 }
 
 //------------------------------------------------------------------------------
-void IRJsonSerializer::serialize(std::string & out, const IRJsonBase & v) {
+void IRJsonSerializer::serialize(const IRJsonBase & v, std::string & out) {
 
 	switch(v.type()) {
 	case IRJsonBase::ARRAY:
-		this->serializeArray(out, static_cast<const IRJsonArray &>(v));
+		this->serializeArray(static_cast<const IRJsonArray &>(v), out);
 		break;
 	case IRJsonBase::BOOLEAN:
-		this->serializeBoolean(out, static_cast<const IRJsonBoolean &>(v));
+		this->serializeBoolean(static_cast<const IRJsonBoolean &>(v), out);
 		break;
 	case IRJsonBase::DECIMAL:
-		this->serializeDecimal(out, static_cast<const IRJsonDecimal &>(v));
+		this->serializeDecimal(static_cast<const IRJsonDecimal &>(v), out);
 		break;
 	case IRJsonBase::INTEGER:
-		this->serializeInteger(out, static_cast<const IRJsonInteger &>(v));
+		this->serializeInteger(static_cast<const IRJsonInteger &>(v), out);
 		break;
 	case IRJsonBase::NULL_VALUE:
 		this->serializeNull(out);
 		break;
 	case IRJsonBase::OBJECT:
-		this->serializeObject(out, static_cast<const IRJsonObject &>(v));
+		this->serializeObject(static_cast<const IRJsonObject &>(v), out);
 		break;
 	case IRJsonBase::STRING:
-		this->serializeString(out, static_cast<const IRJsonString &>(v));
+		this->serializeString(static_cast<const IRJsonString &>(v), out);
 		break;
 	}
 }
@@ -140,12 +140,12 @@ void IRJsonSerializer::serializeNull(std::string & out) {
 }
 
 //------------------------------------------------------------------------------
-void IRJsonSerializer::serializeString(std::string & out, const IRJsonString & v) {
-	this->serializeString(out, v.get());
+void IRJsonSerializer::serializeString(const IRJsonString & v, std::string & out) {
+	this->serializeString(v.get(), out);
 }
 
 //------------------------------------------------------------------------------
-void IRJsonSerializer::serializeString(std::string & out, const std::string & v) {
+void IRJsonSerializer::serializeString(const std::string & v, std::string & out) {
 	char tmp[8];
 
 	// TODO escaped unicode is not supported yet.
@@ -191,17 +191,17 @@ void IRJsonSerializer::serializeString(std::string & out, const std::string & v)
 }
 
 //------------------------------------------------------------------------------
-void IRJsonSerializer::serializeInteger(std::string & out, const IRJsonInteger & v) {
+void IRJsonSerializer::serializeInteger(const IRJsonInteger & v, std::string & out) {
 	out.append(std::to_string(v.get()));
 }
 
 //------------------------------------------------------------------------------
-void IRJsonSerializer::serializeDecimal(std::string & out, const IRJsonDecimal & v) {
+void IRJsonSerializer::serializeDecimal(const IRJsonDecimal & v, std::string & out) {
 	out.append(std::to_string(v.get()));
 }
 
 //------------------------------------------------------------------------------
-void IRJsonSerializer::serializeBoolean(std::string & out, const IRJsonBoolean & v) {
+void IRJsonSerializer::serializeBoolean(const IRJsonBoolean & v, std::string & out) {
 	if (v.get()) {
 		out.append("true");
 	} else {
@@ -210,7 +210,7 @@ void IRJsonSerializer::serializeBoolean(std::string & out, const IRJsonBoolean &
 }
 
 //------------------------------------------------------------------------------
-void IRJsonSerializer::serializeObject(std::string & out, const IRJsonObject & v) {
+void IRJsonSerializer::serializeObject(const IRJsonObject & v, std::string & out) {
 	std::vector<std::string> attr;
 
 	v.getAttributeNames(attr);
@@ -220,12 +220,12 @@ void IRJsonSerializer::serializeObject(std::string & out, const IRJsonObject & v
 	this->levelUp();
 	for (int i = 0; i < attr.size(); i++) {
 		this->beginLine(out);
-		this->serializeString(out, attr[i]);
+		this->serializeString(attr[i], out);
 		out.push_back(':');
 		if (v[attr[i]]->isObject() || v[attr[i]]->isArray()) {
 			this->levelUp();
 		}
-		this->serialize(out, *v[attr[i]]);
+		this->serialize(*v[attr[i]], out);
 		if (v[attr[i]]->isObject() || v[attr[i]]->isArray()) {
 			this->levelDown();
 		}
@@ -241,7 +241,7 @@ void IRJsonSerializer::serializeObject(std::string & out, const IRJsonObject & v
 }
 
 //------------------------------------------------------------------------------
-void IRJsonSerializer::serializeArray(std::string & out, const IRJsonArray & v) {
+void IRJsonSerializer::serializeArray(const IRJsonArray & v, std::string & out) {
 
 	this->beginLine(out);
 	out.push_back('[');
@@ -249,7 +249,7 @@ void IRJsonSerializer::serializeArray(std::string & out, const IRJsonArray & v) 
 	this->levelUp();
 	for (int i = 0; i < v.size(); i++) {
 		this->beginLine(out);
-		this->serialize(out, *(v[i]));
+		this->serialize(*(v[i]), out);
 		if (i < (v.size() - 1)) {
 			out.append(1, ',');
 		}
@@ -446,7 +446,7 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractString() {
 			if (IRJsonTokenizer::isHex(c)) {
 				hex.push_back(c);
 				if (hex.size() == 4) {
-					this->unicodeToUTF8(this->_token, std::stoi(hex, 0, 16));
+					this->unicodeToUTF8(std::stoi(hex, 0, 16), this->_token);
 					state = ST_LITERAL;
 				}
 			} else {
@@ -626,7 +626,7 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::next() {
 }
 
 //------------------------------------------------------------------------------
-void IRJsonTokenizer::unicodeToUTF8(std::string & out, int c) {
+void IRJsonTokenizer::unicodeToUTF8(int c, std::string & out) {
 
 	if ((c >= 0) && (c <= 0x7F)) {
 		out.push_back(c);

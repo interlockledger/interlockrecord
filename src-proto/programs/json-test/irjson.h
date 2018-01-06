@@ -319,6 +319,12 @@ public:
 	void append(const std::shared_ptr<IRJsonBase> & value);
 };
 
+/**
+ * JSON serializer. It follows the JSON syntax defined by RFC8259.
+ *
+ * @since 2018.01.04
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ */
 class IRJsonSerializer {
 protected:
 	bool _indent;
@@ -330,23 +336,35 @@ protected:
 	void beginLine(std::string & out);
 	void endLine(std::string & out);
 	void serializeNull(std::string & out);
-	void serializeString(std::string & out, const IRJsonString & v);
-	void serializeString(std::string & out, const std::string & v);
-	void serializeInteger(std::string & out, const IRJsonInteger & v);
-	void serializeDecimal(std::string & out, const IRJsonDecimal & v);
-	void serializeBoolean(std::string & out, const IRJsonBoolean & v);
-	void serializeObject(std::string & out, const IRJsonObject & v);
-	void serializeArray(std::string & out, const IRJsonArray & v);
+	void serializeString(const IRJsonString & v, std::string & out);
+	void serializeString(const std::string & v, std::string & out);
+	void serializeInteger(const IRJsonInteger & v, std::string & out);
+	void serializeDecimal(const IRJsonDecimal & v, std::string & out);
+	void serializeBoolean(const IRJsonBoolean & v, std::string & out);
+	void serializeObject(const IRJsonObject & v, std::string & out);
+	void serializeArray(const IRJsonArray & v, std::string & out);
 public:
+	/**
+	 * Creates a new instance of this class.
+	 */
 	IRJsonSerializer(bool indent = false): _indent(indent), _level(0) {}
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRJsonSerializer() = default;
 
-	void serialize(std::string & out, const IRJsonBase & v);
+	/**
+	 * Serializes a given JSON object.
+	 * @param[in] v The JSON object.
+	 * @param[out] out The string that will hold the output.
+	 */
+	void serialize(const IRJsonBase & v, std::string & out);
 };
 
 /**
- * JSON tokenizer.
+ * JSON tokenizer. It tokenizes a string using the JSON syntax defined by
+ * RFC8259.
  *
  * @since 2018.01.04
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
@@ -354,19 +372,61 @@ public:
 class IRJsonTokenizer {
 public:
 	typedef enum {
+		/**
+		 * Token '{'.
+		 */
 		OBJ_BEGIN,
+		/**
+		 * Token '}'.
+		 */
 		OBJ_END,
+		/**
+		 * Token '['.
+		 */
 		ARRAY_BEGIN,
+		/**
+		 * Token ']'.
+		 */
 		ARRAY_END,
+		/**
+		 * Token ':'.
+		 */
 		NAME_SEP,
+		/**
+		 * Token ','.
+		 */
 		VALUE_SEP,
+		/**
+		 * Token string value.
+		 */
 		VAL_STRING,
+		/**
+		 * Token "true".
+		 */
 		VAL_TRUE,
+		/**
+		 * Token "false".
+		 */
 		VAL_FALSE,
+		/**
+		 * Token integer value.
+		 */
 		VAL_INT,
+		/**
+		 * Token decimal value.
+		 */
 		VAL_DEC,
+		/**
+		 * Token "null".
+		 */
 		VAL_NULL,
+		/**
+		 * Invalid token. It marks a parser error.
+		 */
 		INVALID,
+		/**
+		 * Token that marks the end of the data.
+		 */
 		INPUT_END
 	} TokenType;
 private:
@@ -423,7 +483,7 @@ public:
 	 * @param[out] out The output string.
 	 * @param[in] c The unicode point from U+0000 to U+10FFFF.
 	 */
-	static void unicodeToUTF8(std::string & out, int c);
+	static void unicodeToUTF8(int c, std::string & out);
 
 	static std::string tokenToName(TokenType token);
 };

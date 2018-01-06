@@ -32,11 +32,11 @@ int main(){
 
 	std::string out;
 	IRJsonSerializer s(true);
-	s.serialize(out, o);
+	s.serialize(o, out);
 
 	std::cout << out << "\n";
 
-	out = "\"\\\"\\u20ACFF \\/\"";
+	out = "/* oi */  \"\\\"\\u20ACFF \\/\" /* rerwerw \n";
 	IRJsonTokenizer tokenizer(out);
 	IRJsonTokenizer::TokenType token;
 	do {
