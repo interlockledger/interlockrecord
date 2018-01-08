@@ -10,7 +10,7 @@ using namespace  ircommon::json;
 //==============================================================================
 // Class IRJsonObject
 //------------------------------------------------------------------------------
-void IRJsonObject::set(const std::string & name, std::shared_ptr<IRJsonBase> & value) {
+void IRJsonObject::set(const std::string & name, std::shared_ptr<IRJsonBase> value) {
 	this->_map[name] = value;
 }
 
@@ -71,12 +71,12 @@ void IRJsonArray::remove(int idx) {
 }
 
 //------------------------------------------------------------------------------
-void IRJsonArray::insert(int idx, const std::shared_ptr<IRJsonBase> & value) {
+void IRJsonArray::insert(int idx, const std::shared_ptr<IRJsonBase> value) {
 	this->_values.insert(this->_values.begin() + idx, value);
 }
 
 //------------------------------------------------------------------------------
-void IRJsonArray::append(const std::shared_ptr<IRJsonBase> & value) {
+void IRJsonArray::append(const std::shared_ptr<IRJsonBase> value) {
 	this->_values.push_back(value);
 }
 
@@ -214,7 +214,6 @@ void IRJsonSerializer::serializeObject(const IRJsonObject & v, std::string & out
 	std::vector<std::string> attr;
 
 	v.getAttributeNames(attr);
-	//this->beginLine(out);
 	out.push_back('{');
 	this->endLine(out);
 	this->levelUp();
@@ -237,13 +236,11 @@ void IRJsonSerializer::serializeObject(const IRJsonObject & v, std::string & out
 	this->levelDown();
 	this->beginLine(out);
 	out.push_back('}');
-	//this->endLine(out);
 }
 
 //------------------------------------------------------------------------------
 void IRJsonSerializer::serializeArray(const IRJsonArray & v, std::string & out) {
 
-	this->beginLine(out);
 	out.push_back('[');
 	this->endLine(out);
 	this->levelUp();
@@ -258,7 +255,6 @@ void IRJsonSerializer::serializeArray(const IRJsonArray & v, std::string & out) 
 	this->levelDown();
 	this->beginLine(out);
 	out.push_back(']');
-	this->endLine(out);
 }
 
 //==============================================================================
