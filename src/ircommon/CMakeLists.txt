@@ -13,6 +13,7 @@ configure_file (
 
 # Sources
 add_library(ircommon STATIC 
+	src/irjson.cpp
 	src/ilint.cpp
 	src/iltag.cpp
 	src/iralphab.cpp
