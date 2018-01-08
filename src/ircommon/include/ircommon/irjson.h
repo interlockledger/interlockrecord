@@ -54,6 +54,11 @@ public:
 		OBJECT,
 		ARRAY
 	} JsonType;
+
+	/**
+	 * Alias for the type std::shared_ptr<IRJsonBase>.
+	 */
+	typedef std::shared_ptr<IRJsonBase> SharedPointer;
 private:
 	/**
 	 * Type ID.
@@ -314,6 +319,11 @@ private:
 	std::map<std::string, std::shared_ptr<IRJsonBase>> _map;
 public:
 	/**
+	 * Alias for the type std::vector<std::string>.
+	 */
+	typedef std::vector<std::string> AttributeList;
+
+	/**
 	 * Creates a new instance of this class.
 	 */
 	IRJsonObject():IRJsonBase(IRJsonBase::OBJECT){}
@@ -329,7 +339,7 @@ public:
 	 * @param[in] name The name of the attribute.
 	 * @param[in] value The value.
 	 */
-	void set(const std::string & name, std::shared_ptr<IRJsonBase> value);
+	void set(const std::string & name, SharedPointer value);
 
 	/**
 	 * Verifies if a given attribute exists.
@@ -355,7 +365,7 @@ public:
 	 * @return a shared_ptr to the attribute.
 	 * @except std::invalid_argument If the name is not present.
 	 */
-	std::shared_ptr<IRJsonBase> & operator[](const std::string & name);
+	SharedPointer & operator[](const std::string & name);
 
 	/**
 	 * Grants read access to a given attribute.
@@ -364,7 +374,7 @@ public:
 	 * @return a shared_ptr to the attribute.
 	 * @except std::invalid_argument If the name is not present.
 	 */
-	const std::shared_ptr<IRJsonBase> & operator[](const std::string & name) const;
+	const SharedPointer & operator[](const std::string & name) const;
 
 	/**
 	 * Removes the attribute with a given name.
@@ -379,7 +389,7 @@ public:
 	 * @param[out] attr The list of attribute names.
 	 * @note The list of attributes are inserted into attr.
 	 */
-	void getAttributeNames(std::vector<std::string> & attr) const;
+	void getAttributeNames(AttributeList & attr) const;
 
 	virtual bool equals(const IRJsonBase & v) const;
 };
@@ -394,7 +404,7 @@ public:
  */
 class IRJsonArray: public IRJsonBase {
 private:
-	std::vector<std::shared_ptr<IRJsonBase>> _values;
+	std::vector<SharedPointer> _values;
 public:
 	/**
 	 * Creates a new instance of this class.
@@ -420,7 +430,7 @@ public:
 	 * @param[in] idx The index of the element.
 	 * @return A reference to the given element.
 	 */
-	std::shared_ptr<IRJsonBase> & operator[](int idx);
+	SharedPointer & operator[](int idx);
 
 	/**
 	 * Allows read-only access to the elements of this array.
@@ -428,7 +438,7 @@ public:
 	 * @param[in] idx The index of the element.
 	 * @return A read-only reference to the given element.
 	 */
-	const std::shared_ptr<IRJsonBase> & operator[](int idx) const;
+	const SharedPointer & operator[](int idx) const;
 
 	/**
 	 * Removes the element at a given index.
@@ -443,14 +453,14 @@ public:
 	 * @param[in] idx The index of the element.
 	 * @param[in] value The value to be added.
 	 */
-	void insert(int idx, const std::shared_ptr<IRJsonBase> value);
+	void insert(int idx, const SharedPointer value);
 
 	/**
 	 * Inserts a new element into the end of the array.
 	 *
 	 * @param[in] value The value to be added.
 	 */
-	void append(const std::shared_ptr<IRJsonBase> value);
+	void append(const SharedPointer value);
 
 	virtual bool equals(const IRJsonBase & v) const;
 };

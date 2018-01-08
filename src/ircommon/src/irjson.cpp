@@ -42,7 +42,7 @@ bool IRJsonBase::equals(const IRJsonBase & v) const {
 //==============================================================================
 // Class IRJsonObject
 //------------------------------------------------------------------------------
-void IRJsonObject::set(const std::string & name, std::shared_ptr<IRJsonBase> value) {
+void IRJsonObject::set(const std::string & name, SharedPointer value) {
 	this->_map[name] = value;
 }
 
@@ -52,7 +52,7 @@ bool IRJsonObject::contains(const std::string & name) const {
 }
 
 //------------------------------------------------------------------------------
-std::shared_ptr<IRJsonBase> & IRJsonObject::operator[](const std::string & name) {
+IRJsonBase::SharedPointer & IRJsonObject::operator[](const std::string & name) {
 
 	auto found = this->_map.find(name);
 	if (found != this->_map.end()) {
@@ -63,7 +63,7 @@ std::shared_ptr<IRJsonBase> & IRJsonObject::operator[](const std::string & name)
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<IRJsonBase> & IRJsonObject::operator[](const std::string & name) const {
+const IRJsonBase::SharedPointer & IRJsonObject::operator[](const std::string & name) const {
 
 	auto found = this->_map.find(name);
 	if (found != this->_map.end()) {
@@ -79,7 +79,7 @@ void IRJsonObject::remove(const std::string & name) {
 }
 
 //------------------------------------------------------------------------------
-void IRJsonObject::getAttributeNames(std::vector<std::string> & attr) const {
+void IRJsonObject::getAttributeNames(AttributeList & attr) const {
 	for (auto pair = this->_map.begin(); pair != this->_map.end(); pair++) {
 		attr.push_back(pair->first);
 	}
@@ -98,7 +98,7 @@ bool IRJsonObject::equals(const IRJsonBase & v) const {
 	}
 
 	// Retrieve the keys
-	std::vector<std::string> attr;
+	AttributeList attr;
 	this->getAttributeNames(attr);
 
 	// Compare the elements
@@ -118,12 +118,12 @@ bool IRJsonObject::equals(const IRJsonBase & v) const {
 //==============================================================================
 // Class IRJsonArray
 //------------------------------------------------------------------------------
-std::shared_ptr<IRJsonBase> & IRJsonArray::operator[](int idx) {
+IRJsonBase::SharedPointer & IRJsonArray::operator[](int idx) {
 	return this->_values[idx];
 }
 
 //------------------------------------------------------------------------------
-const std::shared_ptr<IRJsonBase> & IRJsonArray::operator[](int idx) const {
+const IRJsonBase::SharedPointer & IRJsonArray::operator[](int idx) const {
 	return this->_values[idx];
 }
 
@@ -133,12 +133,12 @@ void IRJsonArray::remove(int idx) {
 }
 
 //------------------------------------------------------------------------------
-void IRJsonArray::insert(int idx, const std::shared_ptr<IRJsonBase> value) {
+void IRJsonArray::insert(int idx, const SharedPointer value) {
 	this->_values.insert(this->_values.begin() + idx, value);
 }
 
 //------------------------------------------------------------------------------
-void IRJsonArray::append(const std::shared_ptr<IRJsonBase> value) {
+void IRJsonArray::append(const SharedPointer value) {
 	this->_values.push_back(value);
 }
 
@@ -193,25 +193,25 @@ void IRJsonSerializer::serialize(const IRJsonBase & v, std::string & out) {
 
 	switch(v.type()) {
 	case IRJsonBase::ARRAY:
-		this->serializeArray(static_cast<const IRJsonArray &>(v), out);
+		this->serializeArray(IRJSonAsArray(v), out);
 		break;
 	case IRJsonBase::BOOLEAN:
-		this->serializeBoolean(static_cast<const IRJsonBoolean &>(v), out);
+		this->serializeBoolean(IRJSonAsBoolean(v), out);
 		break;
 	case IRJsonBase::DECIMAL:
-		this->serializeDecimal(static_cast<const IRJsonDecimal &>(v), out);
+		this->serializeDecimal(IRJSonAsDecimal(v), out);
 		break;
 	case IRJsonBase::INTEGER:
-		this->serializeInteger(static_cast<const IRJsonInteger &>(v), out);
+		this->serializeInteger(IRJSonAsInteger(v), out);
 		break;
 	case IRJsonBase::NULL_VALUE:
 		this->serializeNull(out);
 		break;
 	case IRJsonBase::OBJECT:
-		this->serializeObject(static_cast<const IRJsonObject &>(v), out);
+		this->serializeObject(IRJSonAsObject(v), out);
 		break;
 	case IRJsonBase::STRING:
-		this->serializeString(static_cast<const IRJsonString &>(v), out);
+		this->serializeString(IRJSonAsString(v), out);
 		break;
 	}
 }
@@ -293,7 +293,7 @@ void IRJsonSerializer::serializeBoolean(const IRJsonBoolean & v, std::string & o
 
 //------------------------------------------------------------------------------
 void IRJsonSerializer::serializeObject(const IRJsonObject & v, std::string & out) {
-	std::vector<std::string> attr;
+	IRJsonObject::AttributeList attr;
 
 	v.getAttributeNames(attr);
 	out.push_back('{');
