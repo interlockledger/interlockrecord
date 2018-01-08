@@ -29,11 +29,13 @@
 #include <algorithm>
 #include <cstring>
 #include <locale>
+#include <stdlib.h>
 
 using namespace ircommon;
 
 // Samples from https://tools.ietf.org/html/rfc4648
-static const char * IRBase2NCodecTest_RFC4648_BASE64_NP[7 * 2] = {
+#define IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE (7 * 2)
+static const char * IRBase2NCodecTest_RFC4648_BASE64_NP[IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE] = {
 		"", 		"",
 		"f", 		"Zg",
 		"fo", 		"Zm8",
@@ -42,7 +44,8 @@ static const char * IRBase2NCodecTest_RFC4648_BASE64_NP[7 * 2] = {
 		"fooba", 	"Zm9vYmE",
 		"foobar",	"Zm9vYmFy"};
 
-static const char * IRBase2NCodecTest_RFC4648_BASE64[7 * 2] = {
+#define IRBase2NCodecTest_RFC4648_BASE64_SIZE (7 * 2)
+static const char * IRBase2NCodecTest_RFC4648_BASE64[IRBase2NCodecTest_RFC4648_BASE64_SIZE] = {
 		"", 		"",
 		"f", 		"Zg==",
 		"fo", 		"Zm8=",
@@ -56,7 +59,7 @@ static const char * IRBase2NCodecTest_RFC4648_BASE64[7 * 2] = {
 //------------------------------------------------------------------------------
 class IRDummyBase2NCodec: public IRBase2NCodec {
 public:
-	IRDummyBase2NCodec(const std::shared_ptr<IRAlphabet> & alphabet, int blockSize = 0,
+	IRDummyBase2NCodec(std::shared_ptr<IRAlphabet> alphabet, int blockSize = 0,
 			int paddingChar = '=', bool ignoreSpaces = false);
 
 	virtual ~IRDummyBase2NCodec() = default;
@@ -83,9 +86,10 @@ public:
 		return this->isIgnored(c);
 	}
 };
+
 //------------------------------------------------------------------------------
 IRDummyBase2NCodec::IRDummyBase2NCodec(
-		const std::shared_ptr<IRAlphabet> & alphabet, int blockSize,
+		std::shared_ptr<IRAlphabet> alphabet, int blockSize,
 		int paddingChar, bool ignoreSpaces): IRBase2NCodec(alphabet, blockSize,
 				paddingChar, ignoreSpaces) {
 }
@@ -221,7 +225,8 @@ TEST_F(IRBase2NCodecTest, getDecodedSize) {
 	delete c;
 
 	// Padding should make not difference
-	c = new IRBase2NCodec(std::make_shared<IRBase64Alphabet>(), 4, '=');
+	c = new IRBase2NCodec(std::make_shared<IRBase64Alphabet>(),
+			IRBase64Alphabet::DEFAULT_PADDING, IRBase64Alphabet::DEFAULT_PADDING_CHAR);
 	ASSERT_EQ(0, c->getDecodedSize(1));
 	ASSERT_EQ(1, c->getDecodedSize(2));
 	ASSERT_EQ(2, c->getDecodedSize(3));
@@ -249,7 +254,8 @@ TEST_F(IRBase2NCodecTest, getEncodedSize) {
 	delete c;
 
 	// Padding should make not difference
-	c = new IRBase2NCodec(std::make_shared<IRBase64Alphabet>(), 4, '=');
+	c = new IRBase2NCodec(std::make_shared<IRBase64Alphabet>(),
+			IRBase64Alphabet::DEFAULT_PADDING, IRBase64Alphabet::DEFAULT_PADDING_CHAR);
 	ASSERT_EQ(0, c->getEncodedSize(0));
 	ASSERT_EQ(4, c->getEncodedSize(1));
 	ASSERT_EQ(4, c->getEncodedSize(2));
@@ -271,13 +277,13 @@ TEST_F(IRBase2NCodecTest, isIgnored) {
 	}
 	delete c;
 
-	c = new IRDummyBase2NCodec(std::make_shared<IRBinaryAlphabet>(), 0, '=', false);
+	c = new IRDummyBase2NCodec(std::make_shared<IRBinaryAlphabet>(), 0, '0', false);
 	for (int i = 0; i < 256; i++) {
 		ASSERT_FALSE(c->isIgnoredEx(i));
 	}
 	delete c;
 
-	c = new IRDummyBase2NCodec(std::make_shared<IRBinaryAlphabet>(), 0, '=', true);
+	c = new IRDummyBase2NCodec(std::make_shared<IRBinaryAlphabet>(), 0, '0', true);
 	for (int i = 0; i < 256; i++) {
 		if (std::isspace(char(i), std::locale::classic())) {
 			ASSERT_TRUE(c->isIgnoredEx(i));
@@ -293,7 +299,8 @@ TEST_F(IRBase2NCodecTest, addPadding) {
 	IRDummyBase2NCodec * c;
 	std::string dst;
 
-	c = new IRDummyBase2NCodec(std::make_shared<IRBase64Alphabet>(), 0, '=');
+	c = new IRDummyBase2NCodec(std::make_shared<IRBase64Alphabet>(),
+			0, IRBase64Alphabet::DEFAULT_PADDING_CHAR);
 	dst = "";
 	for (int i = 0; i < 10; i++) {
 		c->addPaddingEx(dst, i);
@@ -301,7 +308,8 @@ TEST_F(IRBase2NCodecTest, addPadding) {
 	}
 	delete c;
 
-	c = new IRDummyBase2NCodec(std::make_shared<IRBase64Alphabet>(), 4, '=');
+	c = new IRDummyBase2NCodec(std::make_shared<IRBase64Alphabet>(),
+			IRBase64Alphabet::DEFAULT_PADDING, IRBase64Alphabet::DEFAULT_PADDING_CHAR);
 	dst = "";
 	c->addPaddingEx(dst, 0);
 	ASSERT_STREQ("", dst.c_str());
@@ -325,7 +333,8 @@ TEST_F(IRBase2NCodecTest, removePadding) {
 	IRDummyBase2NCodec * c;
 	std::string src;
 
-	c = new IRDummyBase2NCodec(std::make_shared<IRBase64Alphabet>(), 0, '=');
+	c = new IRDummyBase2NCodec(std::make_shared<IRBase64Alphabet>(),
+			0, IRBase64Alphabet::DEFAULT_PADDING_CHAR);
 
 	for (int i = 0; i < 10; i++) {
 		src = "";
@@ -334,7 +343,10 @@ TEST_F(IRBase2NCodecTest, removePadding) {
 	}
 	delete c;
 
-	c = new IRDummyBase2NCodec(std::make_shared<IRBase64Alphabet>(), 4, '=');
+	c = new IRDummyBase2NCodec(std::make_shared<IRBase64Alphabet>(),
+			IRBase64Alphabet::DEFAULT_PADDING, IRBase64Alphabet::DEFAULT_PADDING_CHAR);
+	src = "";
+	ASSERT_EQ(0, c->removePaddingEx(src.c_str(), src.size()));
 	src = "abcd";
 	ASSERT_EQ(4, c->removePaddingEx(src.c_str(), src.size()));
 	src = "abc=";
@@ -359,7 +371,7 @@ TEST_F(IRBase2NCodecTest, decodeCore) {
 	std::string exp;
 
 	c = new IRDummyBase2NCodec(std::make_shared<IRBase64Alphabet>());
-	for (int i = 0; i < 14; i += 2) {
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE; i += 2) {
 		exp = IRBase2NCodecTest_RFC4648_BASE64_NP[i];
 		src = IRBase2NCodecTest_RFC4648_BASE64_NP[i + 1];
 		std::memset(dst, 0xFF, sizeof(dst));
@@ -370,7 +382,7 @@ TEST_F(IRBase2NCodecTest, decodeCore) {
 		ASSERT_STREQ(exp.c_str(), (const char *)dst);
 	}
 	// Add invalid
-	for (int i = 2; i < 14; i += 2) {
+	for (int i = 2; i < IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE; i += 2) {
 		exp = IRBase2NCodecTest_RFC4648_BASE64_NP[i];
 		src = IRBase2NCodecTest_RFC4648_BASE64_NP[i + 1];
 		src[0] = '!';
@@ -378,7 +390,7 @@ TEST_F(IRBase2NCodecTest, decodeCore) {
 		dstSize = sizeof(dst);
 		ASSERT_FALSE(c->decodeCoreEx(src.c_str(), src.size(), dst, dstSize));
 	}
-	for (int i = 0; i < 14; i += 2) {
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE; i += 2) {
 		exp = IRBase2NCodecTest_RFC4648_BASE64_NP[i];
 		src = IRBase2NCodecTest_RFC4648_BASE64_NP[i + 1];
 		src.insert(src.begin(), ' '); // Add an space
@@ -388,8 +400,9 @@ TEST_F(IRBase2NCodecTest, decodeCore) {
 	}
 	delete c;
 
-	c = new IRDummyBase2NCodec(std::make_shared<IRBase64Alphabet>(), 0, '=', true);
-	for (int i = 0; i < 14; i += 2) {
+	c = new IRDummyBase2NCodec(std::make_shared<IRBase64Alphabet>(), 0,
+			IRBase64Alphabet::DEFAULT_PADDING_CHAR, true);
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE; i += 2) {
 		exp = IRBase2NCodecTest_RFC4648_BASE64_NP[i];
 		src = IRBase2NCodecTest_RFC4648_BASE64_NP[i + 1];
 		std::memset(dst, 0xFF, sizeof(dst));
@@ -399,7 +412,7 @@ TEST_F(IRBase2NCodecTest, decodeCore) {
 		dst[dstSize] = 0;
 		ASSERT_STREQ(exp.c_str(), (const char *)dst);
 	}
-	for (int i = 0; i < 14; i += 2) {
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE; i += 2) {
 		exp = IRBase2NCodecTest_RFC4648_BASE64_NP[i];
 		src = IRBase2NCodecTest_RFC4648_BASE64_NP[i + 1];
 		src.insert(src.begin(), ' '); // Add an space
@@ -421,7 +434,7 @@ TEST_F(IRBase2NCodecTest, encodeCore) {
 	std::string exp;
 
 	c = new IRDummyBase2NCodec(std::make_shared<IRBase64Alphabet>());
-	for (int i = 0; i < 14; i += 2) {
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE; i += 2) {
 		dst = "";
 		src = IRBase2NCodecTest_RFC4648_BASE64_NP[i];
 		exp = IRBase2NCodecTest_RFC4648_BASE64_NP[i + 1];
@@ -429,7 +442,7 @@ TEST_F(IRBase2NCodecTest, encodeCore) {
 		ASSERT_EQ(exp.size(), dst.size());
 		ASSERT_STREQ(exp.c_str(), dst.c_str());
 	}
-	for (int i = 0; i < 14; i += 2) {
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE; i += 2) {
 		dst = "-";
 		src = IRBase2NCodecTest_RFC4648_BASE64_NP[i];
 		exp = IRBase2NCodecTest_RFC4648_BASE64_NP[i + 1];
@@ -441,9 +454,224 @@ TEST_F(IRBase2NCodecTest, encodeCore) {
 	delete c;
 }
 
+//------------------------------------------------------------------------------
+TEST_F(IRBase2NCodecTest, encode64NoPadding) {
+	IRBase2NCodec c(std::make_shared<IRBase64Alphabet>());
+	std::string dst;
+	std::string src;
+	std::string exp;
+	int dstSize;
 
+	// Basic tests
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE; i += 2) {
+		exp = IRBase2NCodecTest_RFC4648_BASE64_NP[i + 1];
+		src = IRBase2NCodecTest_RFC4648_BASE64_NP[i];
+		dst.clear();
+		dstSize = sizeof(dst);
+		dstSize = c.encode(src.c_str(), src.size(), dst);
+		ASSERT_EQ(exp.size(), dstSize);
+		ASSERT_STREQ(exp.c_str(), dst.c_str());
+	}
+}
 
-// TODO Add tests for other alphabets as well
+//------------------------------------------------------------------------------
+TEST_F(IRBase2NCodecTest, encode64Padding) {
+	IRBase2NCodec c(std::make_shared<IRBase64Alphabet>(), IRBase64Alphabet::DEFAULT_PADDING);
+	std::string dst;
+	std::string src;
+	std::string exp;
+	int dstSize;
 
+	// Basic tests
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_SIZE; i += 2) {
+		exp = IRBase2NCodecTest_RFC4648_BASE64[i + 1];
+		src = IRBase2NCodecTest_RFC4648_BASE64[i];
+		dst.clear();
+		dstSize = sizeof(dst);
+		dstSize = c.encode(src.c_str(), src.size(), dst);
+		ASSERT_EQ(exp.size(), dstSize);
+		ASSERT_STREQ(exp.c_str(), dst.c_str());
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBase2NCodecTest, decode64NoPadding) {
+	IRBase2NCodec c(std::make_shared<IRBase64Alphabet>());
+	std::string src;
+	std::string exp;
+	char dst[64];
+	int dstSize;
+
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE; i += 2) {
+		exp = IRBase2NCodecTest_RFC4648_BASE64_NP[i];
+		src = IRBase2NCodecTest_RFC4648_BASE64_NP[i+1];
+		std::memset(dst, 0xFF, sizeof(dst));
+		dstSize = sizeof(dst) - 1;
+		ASSERT_TRUE(c.decode(src.c_str(), dst + 1, dstSize));
+		ASSERT_EQ(exp.size(), dstSize);
+		ASSERT_EQ(char(0xFF), dst[0]);
+		ASSERT_EQ(char(0xFF), dst[dstSize + 1]);
+		dst[dstSize + 1] = 0;
+		ASSERT_STREQ(exp.c_str(), (dst + 1));
+	}
+
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE; i += 2) {
+		exp = IRBase2NCodecTest_RFC4648_BASE64_NP[i];
+		src = IRBase2NCodecTest_RFC4648_BASE64_NP[i+1];
+		std::memset(dst, 0xFF, sizeof(dst));
+		dstSize = sizeof(dst) - 1;
+		ASSERT_TRUE(c.decode(src, dst + 1, dstSize));
+		ASSERT_EQ(exp.size(), dstSize);
+		ASSERT_EQ(char(0xFF), dst[0]);
+		ASSERT_EQ(char(0xFF), dst[dstSize + 1]);
+		dst[dstSize + 1] = 0;
+		ASSERT_STREQ(exp.c_str(), (dst + 1));
+	}
+
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE; i += 2) {
+		exp = IRBase2NCodecTest_RFC4648_BASE64_NP[i];
+		src = IRBase2NCodecTest_RFC4648_BASE64_NP[i+1];
+		src.insert(src.begin(), '@');
+		src.push_back('@');
+		std::memset(dst, 0xFF, sizeof(dst));
+		dstSize = sizeof(dst) - 1;
+		ASSERT_TRUE(c.decode(src, 1, src.size() - 2, dst + 1, dstSize));
+		ASSERT_EQ(exp.size(), dstSize);
+		ASSERT_EQ(char(0xFF), dst[0]);
+		ASSERT_EQ(char(0xFF), dst[dstSize + 1]);
+		dst[dstSize + 1] = 0;
+		ASSERT_STREQ(exp.c_str(), (dst + 1));
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBase2NCodecTest, decode64Padding) {
+	IRBase2NCodec c(std::make_shared<IRBase64Alphabet>(), IRBase64Alphabet::DEFAULT_PADDING);
+	std::string src;
+	std::string exp;
+	char dst[64];
+	int dstSize;
+
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_SIZE; i += 2) {
+		exp = IRBase2NCodecTest_RFC4648_BASE64[i];
+		src = IRBase2NCodecTest_RFC4648_BASE64[i+1];
+		std::memset(dst, 0xFF, sizeof(dst));
+		dstSize = sizeof(dst) - 1;
+		ASSERT_TRUE(c.decode(src.c_str(), dst + 1, dstSize));
+		ASSERT_EQ(exp.size(), dstSize);
+		ASSERT_EQ(char(0xFF), dst[0]);
+		ASSERT_EQ(char(0xFF), dst[dstSize + 1]);
+		dst[dstSize + 1] = 0;
+		ASSERT_STREQ(exp.c_str(), (dst + 1));
+	}
+
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_SIZE; i += 2) {
+		exp = IRBase2NCodecTest_RFC4648_BASE64[i];
+		src = IRBase2NCodecTest_RFC4648_BASE64[i+1];
+		std::memset(dst, 0xFF, sizeof(dst));
+		dstSize = sizeof(dst) - 1;
+		ASSERT_TRUE(c.decode(src, dst + 1, dstSize));
+		ASSERT_EQ(exp.size(), dstSize);
+		ASSERT_EQ(char(0xFF), dst[0]);
+		ASSERT_EQ(char(0xFF), dst[dstSize + 1]);
+		dst[dstSize + 1] = 0;
+		ASSERT_STREQ(exp.c_str(), (dst + 1));
+	}
+
+	for (int i = 0; i < IRBase2NCodecTest_RFC4648_BASE64_SIZE; i += 2) {
+		exp = IRBase2NCodecTest_RFC4648_BASE64[i];
+		src = IRBase2NCodecTest_RFC4648_BASE64[i+1];
+		src.insert(src.begin(), '@');
+		src.push_back('@');
+		std::memset(dst, 0xFF, sizeof(dst));
+		dstSize = sizeof(dst) - 1;
+		ASSERT_TRUE(c.decode(src, 1, src.size() - 2, dst + 1, dstSize));
+		ASSERT_EQ(exp.size(), dstSize);
+		ASSERT_EQ(char(0xFF), dst[0]);
+		ASSERT_EQ(char(0xFF), dst[dstSize + 1]);
+		dst[dstSize + 1] = 0;
+		ASSERT_STREQ(exp.c_str(), (dst + 1));
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBase2NCodecTest, encodeDecode64NoPadding) {
+	IRBase2NCodec c(std::make_shared<IRBase64Alphabet>());
+	std::uint8_t src[1024];
+	std::uint8_t dec[2048];
+	int decSize;
+	std::string enc;
+
+	int dstSize;
+	for (int srcSize = 0; srcSize <= 1024; srcSize++) {
+		std::generate_n(src, srcSize, rand);
+		enc.clear();
+		c.encode(src, srcSize, enc);
+		decSize = sizeof(dec);
+		ASSERT_TRUE(c.decode(enc, dec, decSize));
+		ASSERT_EQ(srcSize, decSize);
+		ASSERT_EQ(0, memcmp(src, dec, srcSize));
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBase2NCodecTest, encodeDecode64Padding) {
+	IRBase2NCodec c(std::make_shared<IRBase64Alphabet>(), IRBase64Alphabet::DEFAULT_PADDING);
+	std::uint8_t src[1024];
+	std::uint8_t dec[2048];
+	int decSize;
+	std::string enc;
+
+	int dstSize;
+	for (int srcSize = 0; srcSize <= 1024; srcSize++) {
+		std::generate_n(src, srcSize, rand);
+		enc.clear();
+		c.encode(src, srcSize, enc);
+		decSize = sizeof(dec);
+		ASSERT_TRUE(c.decode(enc, dec, decSize));
+		ASSERT_EQ(srcSize, decSize);
+		ASSERT_EQ(0, memcmp(src, dec, srcSize));
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBase2NCodecTest, encodeDecode32NoPadding) {
+	IRBase2NCodec c(std::make_shared<IRBase32Alphabet>());
+	std::uint8_t src[1024];
+	std::uint8_t dec[2048];
+	int decSize;
+	std::string enc;
+
+	int dstSize;
+	for (int srcSize = 0; srcSize <= 1024; srcSize++) {
+		std::generate_n(src, srcSize, rand);
+		enc.clear();
+		c.encode(src, srcSize, enc);
+		decSize = sizeof(dec);
+		ASSERT_TRUE(c.decode(enc, dec, decSize));
+		ASSERT_EQ(srcSize, decSize);
+		ASSERT_EQ(0, memcmp(src, dec, srcSize));
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBase2NCodecTest, encodeDecode32Padding) {
+	IRBase2NCodec c(std::make_shared<IRBase32Alphabet>(), IRBase32Alphabet::DEFAULT_PADDING);
+	std::uint8_t src[1024];
+	std::uint8_t dec[2048];
+	int decSize;
+	std::string enc;
+
+	int dstSize;
+	for (int srcSize = 0; srcSize <= 1024; srcSize++) {
+		std::generate_n(src, srcSize, rand);
+		enc.clear();
+		c.encode(src, srcSize, enc);
+		decSize = sizeof(dec);
+		ASSERT_TRUE(c.decode(enc, dec, decSize));
+		ASSERT_EQ(srcSize, decSize);
+		ASSERT_EQ(0, memcmp(src, dec, srcSize));
+	}
+}
 //------------------------------------------------------------------------------
 
