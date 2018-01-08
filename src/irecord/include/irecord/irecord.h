@@ -279,14 +279,6 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRRootTemplateSetEmergencyKey(IRContext contex
 */
 IR_EXPORT_ATTR int IR_EXPORT_CALL IRRootTemplateSetNetwork(IRContext context, int hTemplate, uint64_t networkID);
 
-/**
-* Disposes a root record template.
-*
-* @param[in] context The new context.
-* @param[out] hTemplate The disposed root record template.
-* @return IRE_SUCCESS on success or other error code in case of failure.
-*/
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRRootTemplateDispose(IRContext context, int * hTemplate);
 
 /** @}*/ //addtogroup irecord_pub_root_record_template
 
