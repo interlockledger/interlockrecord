@@ -32,7 +32,7 @@ IRJsonObject * createJsonObject(){
 void testTokenizer(){
 
 	std::string out ("/* oi */  \"\\\"\\u20ACFF \\/\" /* rerwerw \n");
-	IRJsonTokenizer tokenizer(out);
+	IRJsonStringTokenizer tokenizer(out);
 	IRJsonTokenizer::TokenType token;
 	do {
 		token = tokenizer.next();
@@ -52,7 +52,7 @@ int main(){
 
 	std::cout << out << "\n";
 
-	IRJsonTokenizer tokenizer(out);
+	IRJsonStringTokenizer tokenizer(out);
 		IRJsonTokenizer::TokenType token;
 		do {
 			token = tokenizer.next();

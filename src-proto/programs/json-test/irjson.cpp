@@ -260,43 +260,6 @@ void IRJsonSerializer::serializeArray(const IRJsonArray & v, std::string & out) 
 //==============================================================================
 // Class IRJsonTokenizer
 //------------------------------------------------------------------------------
-IRJsonTokenizer::IRJsonTokenizer(const std::string & in):
-		IRJsonTokenizer(in, 0, in.size()){
-}
-
-//------------------------------------------------------------------------------
-IRJsonTokenizer::IRJsonTokenizer(const std::string & in, int start, int size):
-		_in(in, start, size), _pos(0) {
-}
-
-//------------------------------------------------------------------------------
-IRJsonTokenizer::IRJsonTokenizer(const char * in): _in(in), _pos(0) {
-}
-
-//------------------------------------------------------------------------------
-IRJsonTokenizer::IRJsonTokenizer(const char * in, int size):
-		_in(in, size), _pos(0) {
-}
-
-//------------------------------------------------------------------------------
-int IRJsonTokenizer::getc() {
-
-	if (this->_pos < this->_in.size()) {
-		return this->_in[this->_pos++];
-	} else {
-		return -1;
-	}
-}
-
-//------------------------------------------------------------------------------
-void IRJsonTokenizer::ungetc() {
-
-	if (this->_pos > 0) {
-		this->_pos--;
-	}
-}
-
-//------------------------------------------------------------------------------
 bool IRJsonTokenizer::isSpace(int c) {
 
 	return (c == 0x20) || (c == 0x09) || (c == 0x0A) || (c == 0x0D);
@@ -367,9 +330,9 @@ void IRJsonTokenizer::ignoreSpaces() {
 }
 
 //------------------------------------------------------------------------------
-void IRJsonTokenizer::reset() {
-	this->_pos = 0;
+bool IRJsonTokenizer::reset() {
 	this->_token.clear();
+	return false;
 }
 
 //------------------------------------------------------------------------------
@@ -455,7 +418,7 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractString() {
 }
 
 //------------------------------------------------------------------------------
-IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric() {
+IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric(int initialChar) {
 	enum {
 		ST_INT_FIRST,
 		ST_INT,
@@ -467,8 +430,10 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric() {
 	int c;
 	bool decimal;
 
+	this->_token.push_back(initialChar);
+
 	decimal = false;
-	if ((this->_token[0] == '-') || (this->_token[0] == '+')) {
+	if ((initialChar == '-') || (initialChar == '+')) {
 		state = ST_INT_FIRST;
 	} else {
 		state = ST_INT;
@@ -553,9 +518,10 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric() {
 }
 
 //------------------------------------------------------------------------------
-IRJsonTokenizer::TokenType IRJsonTokenizer::extractKeyword() {
+IRJsonTokenizer::TokenType IRJsonTokenizer::extractKeyword(int initialChar) {
 	int c;
 
+	this->_token.push_back(initialChar);
 	do {
 		c = this->getc();
 		if (isKeywordChar(c)) {
@@ -609,11 +575,10 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::next() {
 		case '"':
 			return this->extractString();
 		default:
-			this->_token.push_back(c);
 			if ((c == '-') || (c == '+') || std::isdigit(c)) {
-				return this->extractNumeric();
+				return this->extractNumeric(c);
 			} else if (isKeywordChar(c)) {
-				return this->extractKeyword();
+				return this->extractKeyword(c);
 			}
 			return IRJsonTokenizer::INVALID;
 		}
@@ -678,6 +643,57 @@ std::string IRJsonTokenizer::tokenToName(IRJsonTokenizer::TokenType token) {
 }
 
 //==============================================================================
+// Class IRJsonTokenizer
+//------------------------------------------------------------------------------
+IRJsonStringTokenizer::IRJsonStringTokenizer(const std::string & in):
+		IRJsonStringTokenizer(in, 0, in.size()){
+}
+
+//------------------------------------------------------------------------------
+IRJsonStringTokenizer::IRJsonStringTokenizer(const std::string & in, int start, int size):
+		_in(in, start, size), _pos(0) {
+}
+
+//------------------------------------------------------------------------------
+IRJsonStringTokenizer::IRJsonStringTokenizer(const char * in): _in(in), _pos(0) {
+}
+
+//------------------------------------------------------------------------------
+IRJsonStringTokenizer::IRJsonStringTokenizer(const char * in, int size):
+		_in(in, size), _pos(0) {
+}
+
+//------------------------------------------------------------------------------
+bool IRJsonStringTokenizer::reset() {
+	IRJsonTokenizer::reset(); // Force the cleanup of the token string
+	this->_pos = 0;
+	return true;
+}
+
+//------------------------------------------------------------------------------
+int IRJsonStringTokenizer::getc() {
+
+	if (this->_pos < this->_in.size()) {
+		return this->_in[this->_pos++];
+	} else {
+		return -1;
+	}
+}
+
+//------------------------------------------------------------------------------
+void IRJsonStringTokenizer::ungetc() {
+
+	if (this->_pos > 0) {
+		this->_pos--;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRJsonStringTokenizer::hasMore() const {
+	return (this->_pos == this->_in.size());
+}
+
+//==============================================================================
 // Class IRJsonParser
 //------------------------------------------------------------------------------
 IRJsonParser::IRJsonParser(IRJsonTokenizer * tokenizer): _tokenizer(tokenizer) {
@@ -686,7 +702,7 @@ IRJsonParser::IRJsonParser(IRJsonTokenizer * tokenizer): _tokenizer(tokenizer) {
 
 //------------------------------------------------------------------------------
 IRJsonParser::IRJsonParser(const std::string & in):
-		_tokenizer(new IRJsonTokenizer(in)) {
+		_tokenizer(new IRJsonStringTokenizer(in)) {
 }
 
 //------------------------------------------------------------------------------

@@ -17,6 +17,7 @@ namespace json {
  *
  * @since 2018.01.04
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is not thread-safe.
  */
 class IRJsonBase {
 public:
@@ -113,6 +114,7 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @tparam ValueType The basic type of the value.
  * @tparam TypeID ID of the type.
+ * @note This class is not thread-safe.
  */
 template <class ValueType, IRJsonBase::JsonType TypeID>
 class IRJsonValue: public IRJsonBase {
@@ -172,6 +174,7 @@ public:
  *
  * @since 2018.01.04
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is not thread-safe.
  */
 typedef IRJsonValue<std::string, IRJsonBase::STRING> IRJsonString;
 
@@ -180,6 +183,7 @@ typedef IRJsonValue<std::string, IRJsonBase::STRING> IRJsonString;
  *
  * @since 2018.01.04
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is not thread-safe.
  */
 typedef IRJsonValue<std::int64_t, IRJsonBase::INTEGER> IRJsonInteger;
 
@@ -188,6 +192,7 @@ typedef IRJsonValue<std::int64_t, IRJsonBase::INTEGER> IRJsonInteger;
  *
  * @since 2018.01.04
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is not thread-safe.
  */
 typedef IRJsonValue<double, IRJsonBase::DECIMAL> IRJsonDecimal;
 
@@ -196,6 +201,7 @@ typedef IRJsonValue<double, IRJsonBase::DECIMAL> IRJsonDecimal;
  *
  * @since 2018.01.04
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is not thread-safe.
  */
 typedef IRJsonValue<bool, IRJsonBase::BOOLEAN> IRJsonBoolean;
 
@@ -204,6 +210,7 @@ typedef IRJsonValue<bool, IRJsonBase::BOOLEAN> IRJsonBoolean;
  *
  * @since 2018.01.04
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is not thread-safe.
  */
 class IRJsonNull : public IRJsonBase {
 public:
@@ -224,6 +231,7 @@ public:
  *
  * @since 2018.01.04
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is not thread-safe.
  */
 class IRJsonObject: public IRJsonBase {
 private:
@@ -295,6 +303,7 @@ public:
  *
  * @since 2018.01.04
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is not thread-safe.
  */
 class IRJsonArray: public IRJsonBase {
 private:
@@ -362,6 +371,7 @@ public:
  *
  * @since 2018.01.04
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is not thread-safe.
  */
 class IRJsonSerializer {
 protected:
@@ -401,11 +411,13 @@ public:
 };
 
 /**
- * JSON tokenizer. It tokenizes a string using the JSON syntax defined by
+ * JSON abstract tokenizer. Subclasses of this class must be able to parse a
+ * character source and split it to tokens it using the JSON syntax defined by
  * RFC8259.
  *
  * @since 2018.01.04
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is not thread-safe.
  */
 class IRJsonTokenizer {
 public:
@@ -468,60 +480,72 @@ public:
 		INPUT_END
 	} TokenType;
 private:
+	/**
+	 * The token value.
+	 */
 	std::string _token;
-	std::string _in;
-	int _pos;
 
-	int getc();
-	void ungetc();
-
-	static bool isSpace(int c);
-
-	static bool isHex(int c);
-
-	static bool isDigit(int c);
-
-	static bool isKeywordChar(int c);
-
+	/**
+	 * Consumes the comments.
+	 *
+	 * @return true on success or false it the comment is corrupted.
+	 */
 	bool ignoreComment();
 
+	/**
+	 * Consumes the spaces between tokens.
+	 */
 	void ignoreSpaces();
 
+	/**
+	 * Extracts a string value from the input. The initial '"' must be already
+	 * consumed from the input.
+	 *
+	 * @return VAL_STRING on success or INVALID if the string is indeed invalid.
+	 * @note The actual value of the string is added to the field _token.
+	 */
 	TokenType extractString();
 
-	TokenType extractNumeric();
+	/**
+	 * Extracts a numeric value from the input. The initial numeric character
+	 * must be already consumed from the input.
+	 *
+	 * @return VAL_INT or VAL_DEC on success or INVALID if the numeric value is
+	 * invalid.
+	 * @note The actual value of the token will be added to the field _token.
+	 */
+	TokenType extractNumeric(int initialChar);
 
-	TokenType extractKeyword();
+	/**
+	 * Extracts a keyword value from the input. The initial character must be
+	 * already consumed from the input.
+	 *
+	 * @return VAL_NULL, VAL_TRUE or VAL_FALSE on success or INVALID if the
+	 * keyword is invalid.
+	 * @note The actual value of the token will be added to the field _token.
+	 */
+	TokenType extractKeyword(int initialChar);
+protected:
+	/**
+	 * Reads the next character from the input.
+	 *
+	 * @return The character read or -1 if the end of data is reached.
+	 */
+	virtual int getc() = 0;
+	/**
+	 * Returns the last character read from the input back into it. Only the
+	 * last character read from the input with getc() is supposed to be
+	 * returned.
+	 *
+	 * <p>The behavior of this method in undefined if getc() was not called at
+	 * least once before it.</p>
+	 */
+	virtual void ungetc() = 0;
 public:
 	/**
 	 * Creates a new instance of this class.
-	 * @param[in] in The input string that will be parsed.
 	 */
-	IRJsonTokenizer(const std::string & in);
-
-	/**
-	 * Creates a new instance of this class.
-	 *
-	 * @param[in] in The input string that will be parsed.
-	 */
-	IRJsonTokenizer(const char * in);
-
-	/**
-	 * Creates a new instance of this class.
-	 *
-	 * @param[in] in The input string that will be parsed.
-	 * @param[in] size The number of characters inside in.
-	 */
-	IRJsonTokenizer(const char * in, int size);
-
-	/**
-	 * Creates a new instance of this class.
-	 *
-	 * @param[in] in The input string that will be parsed.
-	 * @param[in] start The starting point.
-	 * @param[in] size The number of characters to be used.
-	 */
-	IRJsonTokenizer(const std::string & in, int start, int size);
+	IRJsonTokenizer() = default;
 
 	/**
 	 * Disposes this instance and releases all associated resources.
@@ -529,27 +553,19 @@ public:
 	virtual ~IRJsonTokenizer() = default;
 
 	/**
-	 * Position of the reading point.
-	 *
-	 * @return The current reading point.
-	 */
-	int position() const {
-		return this->_pos;
-	}
-
-	/**
 	 * Verifies if there is more data to be processed.
 	 *
 	 * @return true if there is more data or false otherwise.
 	 */
-	bool hasMore() const {
-		return (this->_pos == this->_in.size());
-	}
+	virtual bool hasMore() const = 0;
 
 	/**
-	 * Resets this instance.
+	 * Resets this instance. Not all implementations of this class is supposed
+	 * to support this method.
+	 *
+	 * @return true on success or false otherwise.
 	 */
-	void reset();
+	virtual bool reset();
 
 	/**
 	 * Extracts the next token.
@@ -582,17 +598,146 @@ public:
 	 * @return A string with the name of the token.
 	 */
 	static std::string tokenToName(TokenType token);
+
+	/**
+	 * Verifies if a given character is a space according to the RFC8259.
+	 *
+	 * @return true if the character is a space or false otherwise.
+	 */
+	static bool isSpace(int c);
+
+	/**
+	 * Verifies if a given character is an hexadecimal digit according to the
+	 * RFC8259.
+	 *
+	 * @return true if the character is a hexadecimal digit or false otherwise.
+	 */
+	static bool isHex(int c);
+
+	/**
+	 * Verifies if a given character is a decimal digit according to the
+	 * RFC8259.
+	 *
+	 * @return true if the character is a decimal digit or false otherwise.
+	 */
+	static bool isDigit(int c);
+
+	/**
+	 * Verifies if a given character is a valid keyword character according to
+	 * the RFC8259.
+	 *
+	 * @return true if the character is a valid keyword  character or false
+	 * otherwise.
+	 * @note Only lower case letters from 'a' to 'z' are considered keyword
+	 * characters.
+	 */
+	static bool isKeywordChar(int c);
 };
 
+/**
+ * This class implements a IRJsonTokenizer that read characters from a string.
+ *
+ * @since 2018.01.07
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is not thread-safe.
+ */
+class IRJsonStringTokenizer: public IRJsonTokenizer {
+private:
+	std::string _in;
+	int _pos;
+protected:
+	virtual int getc();
+	virtual void ungetc();
+public:
+	/**
+	 * Creates a new instance of this class.
+	 * @param[in] in The input string that will be parsed.
+	 */
+	IRJsonStringTokenizer(const std::string & in);
+
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] in The input string that will be parsed.
+	 */
+	IRJsonStringTokenizer(const char * in);
+
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] in The input string that will be parsed.
+	 * @param[in] size The number of characters inside in.
+	 */
+	IRJsonStringTokenizer(const char * in, int size);
+
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] in The input string that will be parsed.
+	 * @param[in] start The starting point.
+	 * @param[in] size The number of characters to be used.
+	 */
+	IRJsonStringTokenizer(const std::string & in, int start, int size);
+
+	/**
+	 * Position of the reading point.
+	 *
+	 * @return The current reading point.
+	 */
+	int position() const {
+		return this->_pos;
+	}
+
+	virtual bool reset();
+
+	virtual bool hasMore() const;
+};
+
+
+/**
+ * JSON parser. It parses a JSON string and returns a IRJsonObject that
+ * represents its contents.
+ *
+ * @since 2018.01.07
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is not thread-safe.
+ */
 class IRJsonParser {
 private:
 	IRJsonTokenizer * _tokenizer;
 
+	/**
+	 * Parses a partial JSON object. The token OBJ_BEGIN should be the last read
+	 * from the tokenizer.
+	 *
+	 * @return The array read or if the data is not correct.
+	 */
 	IRJsonObject * parsePartialObject();
 
+	/**
+	 * Parses a partial JSON array. The token ARRAY_BEGIN should be the last
+	 * read from the tokenizer.
+	 *
+	 * @return The array read or if the data is not correct.
+	 */
 	IRJsonArray * parsePartialArray();
 
+	/**
+	 * Parses the input looking for any type of object. The initial token should
+	 * be already acquired from the tokenizer and the value of the token, if
+	 * any, should be stored inside it.
+	 *
+	 * @return An instance of a IRJsonObject on success or null otherwise.
+	 */
 	IRJsonBase * parsePartialAny(IRJsonTokenizer::TokenType type);
+
+	/**
+	 * Parses the input looking for any type of JSON object. It returns the
+	 * first element found if any.
+	 *
+	 * @return An instance of a IRJsonObject on success or null otherwise.
+	 */
+	virtual IRJsonBase * parseAny();
 public:
 	/**
 	 * Creates a new instance of this class.
@@ -607,19 +752,33 @@ public:
 	 */
 	IRJsonParser(const std::string & in);
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRJsonParser();
 
+	/**
+	 * Determines if there is more data to be parsed.
+	 *
+	 * @return true if there is more data to be parsed or false otherwise.
+	 */
 	bool hasMore() const {
 		return this->_tokenizer->hasMore();
 	}
 
+	/**
+	 * Restarts the parser and make it ready to be reused.
+	 */
 	void reset(){
 		this->_tokenizer->reset();
 	}
 
+	/**
+	 * Parses the input looking for complete object.
+	 *
+	 * @return An instance of a IRJsonObject on success or null otherwise.
+	 */
 	virtual IRJsonObject * parseObject();
-
-	virtual IRJsonBase * parseAny();
 };
 
 } //namespace json
