@@ -20,7 +20,37 @@ endif()
 
 # Sources
 add_library(irecord SHARED
+	src/IRBlockDispose.cpp
+	src/IRBlockLoad.cpp
+	src/IRBlockParameter.cpp
+	src/IRBlockSerialize.cpp
+	src/IRCheckEmergencyClosing.cpp
+	src/IRCheckParent.cpp
+	src/IRCheckRoot.cpp
+	src/IRClose.cpp
+	src/IRContextCreate.cpp
+	src/IRContextDispose.cpp
+	src/IRDataBlockAdd.cpp
+	src/IRDeinitialize.cpp
+	src/IREmergencyClose.cpp
+	src/IREmergencyKeyCreate.cpp
+	src/IREmergencyKeyDispose.cpp
+	src/IREmergencyKeyLoad.cpp
+	src/IREmergencyKeySerialized.cpp
 	src/IRGetVersion.cpp
+	src/IRInitialize.cpp
+	src/IRInstanceStateCreate.cpp
+	src/IRInstanceStateDispose.cpp
+	src/IRInstanceStateLoad.cpp
+	src/IRInstanceStateSerialize.cpp
+	src/IRInstanceStateSetParam.cpp
+	src/IRRootBlockCreate.cpp
+	src/IRRootTemplateCreate.cpp
+	src/IRRootTemplateDispose.cpp
+	src/IRRootTemplateParam.cpp
+	src/IRRootTemplateSetEmergencyKey.cpp
+	src/IRRootTemplateSetNetwork.cpp
+	src/IRRootTemplateSetParent.cpp
 	${irecord_DEF_FILE}
 )
 target_include_directories(irecord PUBLIC 

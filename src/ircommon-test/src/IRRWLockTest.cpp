@@ -31,6 +31,7 @@
 #include <memory>
 #include <algorithm>
 #include <chrono>
+
 using namespace ircommon;
 
 //==============================================================================
@@ -135,7 +136,11 @@ TEST_F(IRRWLockTest, Sync) {
 		if (log[i].value < 0) {
 			last = abs(log[i].value);
 		} else {
+#ifdef min
+			mDuration = min(std::uint64_t(timing.count()), mDuration);
+#else
 			mDuration = std::min(std::uint64_t(timing.count()), mDuration);
+#endif
 			ASSERT_EQ(last, log[i].value);
 		}
 		lastTStamp = log[i].tstamp;

@@ -1,4 +1,34 @@
 LIBRARY DLLTEST
 EXPORTS
+	IRBlockDispose
+	IRBlockLoad
+	IRBlockParameter
+	IRBlockSerialize
+	IRCheckEmergencyClosing
+	IRCheckParent
+	IRCheckRoot
+	IRClose
+	IRContextCreate
+	IRContextDispose
+	IRDataBlockAdd
+	IRDeinitialize
+	IREmergencyClose
+	IREmergencyKeyCreate
+	IREmergencyKeyDispose
+	IREmergencyKeyLoad
+	IREmergencyKeySerialized
 	IRGetVersion
 	IRGetVersionInt
+	IRInitialize
+	IRInstanceStateCreate
+	IRInstanceStateDispose
+	IRInstanceStateLoad
+	IRInstanceStateSerialize
+	IRInstanceStateSetParam
+	IRRootBlockCreate
+	IRRootTemplateCreate
+	IRRootTemplateDispose
+	IRRootTemplateParam
+	IRRootTemplateSetEmergencyKey
+	IRRootTemplateSetNetwork
+	IRRootTemplateSetParent
