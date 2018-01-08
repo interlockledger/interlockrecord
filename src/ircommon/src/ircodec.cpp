@@ -83,7 +83,7 @@ bool IRCodec::decode(const std::string & src, int srcStart, int srcSize,
 //==============================================================================
 // Class IRBase2NCodec
 //------------------------------------------------------------------------------
-IRBase2NCodec::IRBase2NCodec(const std::shared_ptr<IRAlphabet> & alphabet, int blockSize,
+IRBase2NCodec::IRBase2NCodec(std::shared_ptr<IRAlphabet> alphabet, int blockSize,
 		int paddingChar, bool ignoreSpaces):
 		IRCodec(), _blockSize(blockSize), _paddingChar(paddingChar),
 		_alphabet(alphabet), _ignoreSpaces(ignoreSpaces) {
@@ -170,7 +170,7 @@ bool IRBase2NCodec::decodeCore(const char * src, int srcSize,
 //------------------------------------------------------------------------------
 int IRBase2NCodec::removePadding(const char * src, int srcSize) const {
 
-	if (this->blockSize() <= 0) {
+	if ((this->blockSize() <= 0) || (srcSize == 0)) {
 		return srcSize;
 	}
 

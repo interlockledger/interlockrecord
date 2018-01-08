@@ -196,7 +196,7 @@ public:
 	 * space characters while decoding.
 	 * @exception std::invalid_argument If the alphabet size is not valid.
 	 */
-	IRBase2NCodec(const std::shared_ptr<IRAlphabet> & alphabet, int blockSize = 0,
+	IRBase2NCodec(std::shared_ptr<IRAlphabet> alphabet, int blockSize = 0,
 			int paddingChar = '=', bool ignoreSpaces = false);
 
 	/**
