@@ -253,6 +253,17 @@ private:
 	 */
 	const char * _map;
 public:
+	enum {
+		/**
+		 * Size of the default padding block size for Base32 (RFC4648).
+		 */
+		DEFAULT_PADDING = 8,
+		/**
+		 * Size of the default padding character for base32 (RFC4648).
+		 */
+		DEFAULT_PADDING_CHAR = '='
+	};
+
 	/**
 	 * Creates a new instance of this class.
 	 *
@@ -299,6 +310,17 @@ class IRBase64Alphabet: public IRAlphabet {
 private:
 	char _map[64];
 public:
+	enum {
+		/**
+		 * Size of the default padding block size for Base64 (RFC4648).
+		 */
+		DEFAULT_PADDING = 4,
+		/**
+		 * Size of the default padding character for base64 (RFC4648).
+		 */
+		DEFAULT_PADDING_CHAR = '='
+	};
+
 	/**
 	 * Creates a new instance of this class.
 	 *
