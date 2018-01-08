@@ -245,7 +245,7 @@ public:
 	 * @param[in] name The name of the attribute.
 	 * @param[in] value The value.
 	 */
-	void set(const std::string & name, std::shared_ptr<IRJsonBase> & value);
+	void set(const std::string & name, std::shared_ptr<IRJsonBase> value);
 
 	/**
 	 * Verifies if a given attribute exists.
@@ -314,9 +314,9 @@ public:
 
 	void remove(int idx);
 
-	void insert(int idx, const std::shared_ptr<IRJsonBase> & value);
+	void insert(int idx, const std::shared_ptr<IRJsonBase> value);
 
-	void append(const std::shared_ptr<IRJsonBase> & value);
+	void append(const std::shared_ptr<IRJsonBase> value);
 };
 
 /**
