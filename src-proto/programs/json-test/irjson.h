@@ -300,22 +300,60 @@ class IRJsonArray: public IRJsonBase {
 private:
 	std::vector<std::shared_ptr<IRJsonBase>> _values;
 public:
+	/**
+	 * Creates a new instance of this class.
+	 */
 	IRJsonArray() : IRJsonBase(IRJsonBase::ARRAY) {}
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRJsonArray() = default;
 
+	/**
+	 * Returns the size of this array.
+	 * @return The size of this array.
+	 */
 	int size() const {
 		return this->_values.size();
 	}
 
+	/**
+	 * Allows read/write access to the elements of this array.
+	 *
+	 * @param[in] idx The index of the element.
+	 * @return A reference to the given element.
+	 */
 	std::shared_ptr<IRJsonBase> & operator[](int idx);
 
+	/**
+	 * Allows read-only access to the elements of this array.
+	 *
+	 * @param[in] idx The index of the element.
+	 * @return A read-only reference to the given element.
+	 */
 	const std::shared_ptr<IRJsonBase> & operator[](int idx) const;
 
+	/**
+	 * Removes the element at a given index.
+	 *
+	 * @param[in] idx The index of the element.
+	 */
 	void remove(int idx);
 
+	/**
+	 * Inserts a new element into a given position.
+	 *
+	 * @param[in] idx The index of the element.
+	 * @param[in] value The value to be added.
+	 */
 	void insert(int idx, const std::shared_ptr<IRJsonBase> value);
 
+	/**
+	 * Inserts a new element into the end of the array.
+	 *
+	 * @param[in] value The value to be added.
+	 */
 	void append(const std::shared_ptr<IRJsonBase> value);
 };
 
@@ -455,24 +493,68 @@ private:
 
 	TokenType extractKeyword();
 public:
+	/**
+	 * Creates a new instance of this class.
+	 * @param[in] in The input string that will be parsed.
+	 */
 	IRJsonTokenizer(const std::string & in);
 
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] in The input string that will be parsed.
+	 */
 	IRJsonTokenizer(const char * in);
 
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] in The input string that will be parsed.
+	 * @param[in] size The number of characters inside in.
+	 */
 	IRJsonTokenizer(const char * in, int size);
 
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] in The input string that will be parsed.
+	 * @param[in] start The starting point.
+	 * @param[in] size The number of characters to be used.
+	 */
 	IRJsonTokenizer(const std::string & in, int start, int size);
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRJsonTokenizer() = default;
 
+	/**
+	 * Position of the reading point.
+	 *
+	 * @return The current reading point.
+	 */
 	int position() const {
 		return this->_pos;
 	}
 
+	/**
+	 * Resets this instance.
+	 */
 	void reset();
 
+	/**
+	 * Extracts the next token.
+	 *
+	 * @return The type of the token found.
+	 */
 	TokenType next();
 
+	/**
+	 * Returns the actual value of the last token read. It is used only if the
+	 * last token is a string or a numeric value.
+	 *
+	 * @return The value of the token.
+	 */
 	const std::string value() const {
 		return this->_token;
 	}
@@ -485,10 +567,13 @@ public:
 	 */
 	static void unicodeToUTF8(int c, std::string & out);
 
+	/**
+	 * This is a debugging helper that translates the token type to its name.
+	 *
+	 * @return A string with the name of the token.
+	 */
 	static std::string tokenToName(TokenType token);
 };
-
-
 
 
 } //namespace json
