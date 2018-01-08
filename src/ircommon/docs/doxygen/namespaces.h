@@ -29,6 +29,10 @@
  * Main namespace of the IRCommon library.
  */
 /**
+ * @namespace ircommon::json
+ * JSON parser and serializer (RFC8259).
+ */
+/**
  * @namespace ircommon::IRUtils
  * Utility functions.
  */

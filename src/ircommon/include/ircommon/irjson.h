@@ -129,6 +129,26 @@ public:
 	 * @return true if it is an instance of IRJsonNull or false otherwise.
 	 */
 	bool isNull() const { return this->type() == NULL_VALUE; }
+
+	/**
+	 * Verifies if this instance has the same contents of another IRJsonBase.
+	 *
+	 * @param[in] v The other instance of IRJsonBase.
+	 * @return true if they are equal or false otherwise.
+	 * @since 2018.01.08
+	 */
+	virtual bool equals(const IRJsonBase & v) const;
+
+	/**
+	 * Verifies if this instance has the same contents of another IRJsonBase.
+	 *
+	 * @param[in] v The other instance of IRJsonBase.
+	 * @return true if they are equal or false otherwise.
+	 * @since 2018.01.08
+	 */
+	bool operator == (const IRJsonBase & v) const {
+		return this->equals(v);
+	}
 };
 
 /**
@@ -191,6 +211,14 @@ public:
 		this->set(value);
 		return (*this);
 	}
+
+	virtual bool equals(const IRJsonBase & v) const {
+		if (this->type() == v.type()) {
+			return (this->get() == static_cast<const IRJsonValue&>(v).get());
+		} else {
+			return false;
+		}
+	}
 };
 
 /**
@@ -200,7 +228,13 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-typedef IRJsonValue<std::string, IRJsonBase::STRING> IRJsonString;
+class IRJsonString: public IRJsonValue<std::string, IRJsonBase::STRING> {
+public:
+	IRJsonString() = default;
+	IRJsonString(const std::string & v) :
+		IRJsonValue<std::string, IRJsonBase::STRING>(v) {}
+	virtual ~IRJsonString() = default;
+};
 
 /**
  * JSON integer. It uses std::int64_t as its basic type.
@@ -209,7 +243,13 @@ typedef IRJsonValue<std::string, IRJsonBase::STRING> IRJsonString;
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-typedef IRJsonValue<std::int64_t, IRJsonBase::INTEGER> IRJsonInteger;
+class IRJsonInteger: public IRJsonValue<std::int64_t, IRJsonBase::INTEGER> {
+public:
+	IRJsonInteger() = default;
+	IRJsonInteger(std::int64_t v) :
+		IRJsonValue<std::int64_t, IRJsonBase::INTEGER>(v) {}
+	virtual ~IRJsonInteger() = default;
+};
 
 /**
  * JSON decimal. It uses double as its basic type.
@@ -218,7 +258,13 @@ typedef IRJsonValue<std::int64_t, IRJsonBase::INTEGER> IRJsonInteger;
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-typedef IRJsonValue<double, IRJsonBase::DECIMAL> IRJsonDecimal;
+class IRJsonDecimal: public IRJsonValue<double, IRJsonBase::DECIMAL> {
+public:
+	IRJsonDecimal() = default;
+	IRJsonDecimal(double v) :
+		IRJsonValue<double, IRJsonBase::DECIMAL>(v) {}
+	virtual ~IRJsonDecimal() = default;
+};
 
 /**
  * JSON boolean. It uses bool as its basic type.
@@ -227,7 +273,13 @@ typedef IRJsonValue<double, IRJsonBase::DECIMAL> IRJsonDecimal;
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-typedef IRJsonValue<bool, IRJsonBase::BOOLEAN> IRJsonBoolean;
+class IRJsonBoolean: public IRJsonValue<bool, IRJsonBase::BOOLEAN>{
+public:
+	IRJsonBoolean() = default;
+	IRJsonBoolean(bool v) :
+		IRJsonValue<bool, IRJsonBase::BOOLEAN>(v) {}
+	virtual ~IRJsonBoolean() = default;
+};
 
 /**
  * JSON null. It uses bool as its basic type.
@@ -288,6 +340,15 @@ public:
 	bool contains(const std::string & name) const;
 
 	/**
+	 * Returns the number of attributes of this object.
+	 *
+	 * @return The number of attributes.
+	 */
+	int size() const {
+		return this->_map.size();
+	}
+
+	/**
 	 * Grants read and write access to a given attribute.
 	 *
 	 * @param[in] name The name of the attribute.
@@ -319,6 +380,8 @@ public:
 	 * @note The list of attributes are inserted into attr.
 	 */
 	void getAttributeNames(std::vector<std::string> & attr) const;
+
+	virtual bool equals(const IRJsonBase & v) const;
 };
 
 /**
@@ -388,6 +451,8 @@ public:
 	 * @param[in] value The value to be added.
 	 */
 	void append(const std::shared_ptr<IRJsonBase> value);
+
+	virtual bool equals(const IRJsonBase & v) const;
 };
 
 /**
@@ -804,6 +869,69 @@ public:
 	 */
 	virtual IRJsonObject * parseObject();
 };
+
+/**
+ * Returns a reference to the given IRJsonBase as an IRJsonNull.
+ *
+ * @return The reference.
+ * @exception std::invalid_argument If v cannot be converted to the desired type.
+ * @since 2018.01.08
+ */
+const IRJsonNull & IRJSonAsNull(const IRJsonBase & v);
+
+/**
+ * Returns a reference to the given IRJsonBase as an IRJsonBoolean.
+ *
+ * @return The reference.
+ * @exception std::invalid_argument If v cannot be converted to the desired type.
+ * @since 2018.01.08
+ */
+const IRJsonBoolean & IRJSonAsBoolean(const IRJsonBase & v);
+
+/**
+ * Returns a reference to the given IRJsonBase as an IRJsonString.
+ *
+ * @return The reference.
+ * @exception std::invalid_argument If v cannot be converted to the desired type.
+ * @since 2018.01.08
+ */
+const IRJsonString & IRJSonAsString(const IRJsonBase & v);
+
+/**
+ * Returns a reference to the given IRJsonBase as an IRJsonDecimal.
+ *
+ * @return The reference.
+ * @exception std::invalid_argument If v cannot be converted to the desired type.
+ * @since 2018.01.08
+ */
+const IRJsonDecimal & IRJSonAsDecimal(const IRJsonBase & v);
+
+/**
+ * Returns a reference to the given IRJsonBase as an IRJsonInteger.
+ *
+ * @return The reference.
+ * @exception std::invalid_argument If v cannot be converted to the desired type.
+ * @since 2018.01.08
+ */
+const IRJsonInteger & IRJSonAsInteger(const IRJsonBase & v);
+
+/**
+ * Returns a reference to the given IRJsonBase as an IRJsonObject.
+ *
+ * @return The reference.
+ * @exception std::invalid_argument If v cannot be converted to the desired type.
+ * @since 2018.01.08
+ */
+const IRJsonObject & IRJSonAsObject(const IRJsonBase & v);
+
+/**
+ * Returns a reference to the given IRJsonBase as an IRJsonArray.
+ *
+ * @return The reference.
+ * @exception std::invalid_argument If v cannot be converted to the desired type.
+ * @since 2018.01.08
+ */
+const IRJsonArray & IRJSonAsArray(const IRJsonBase & v);
 
 } //namespace json
 } // namespace ircommon

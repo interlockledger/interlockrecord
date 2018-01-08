@@ -33,6 +33,13 @@
 using namespace  ircommon::json;
 
 //==============================================================================
+// Class IRJsonBase
+//------------------------------------------------------------------------------
+bool IRJsonBase::equals(const IRJsonBase & v) const {
+	return (this->type() == v.type());
+}
+
+//==============================================================================
 // Class IRJsonObject
 //------------------------------------------------------------------------------
 void IRJsonObject::set(const std::string & name, std::shared_ptr<IRJsonBase> value) {
@@ -78,6 +85,36 @@ void IRJsonObject::getAttributeNames(std::vector<std::string> & attr) const {
 	}
 }
 
+//------------------------------------------------------------------------------
+bool IRJsonObject::equals(const IRJsonBase & v) const {
+
+	if (v.type() != this->type()) {
+		return false;
+	}
+
+	const IRJsonObject & o = IRJSonAsObject(v);
+	if (this->size() != o.size()) {
+		return false;
+	}
+
+	// Retrieve the keys
+	std::vector<std::string> attr;
+	this->getAttributeNames(attr);
+
+	// Compare the elements
+	for (int i = 0; i < attr.size(); i++) {
+		if (!o.contains(attr[i])) {
+			return false;
+		}
+		if (!(*this)[attr[i]]->equals(*(o[attr[i]]))) {
+			return false;
+		}
+	}
+	return true;
+
+}
+
+
 //==============================================================================
 // Class IRJsonArray
 //------------------------------------------------------------------------------
@@ -104,6 +141,26 @@ void IRJsonArray::insert(int idx, const std::shared_ptr<IRJsonBase> value) {
 void IRJsonArray::append(const std::shared_ptr<IRJsonBase> value) {
 	this->_values.push_back(value);
 }
+
+//------------------------------------------------------------------------------
+bool IRJsonArray::equals(const IRJsonBase & v) const {
+
+	if (v.type() != this->type()) {
+		return false;
+	}
+	const IRJsonArray & o = IRJSonAsArray(v);
+	if (this->size() != o.size()) {
+		return false;
+	}
+	// Compare the elements
+	for (int i = 0; i < this->size(); i++) {
+		if (!(*this)[i]->equals(*(o[i]))) {
+			return false;
+		}
+	}
+	return true;
+}
+
 
 //==============================================================================
 // Class IRJsonSerializer
@@ -869,6 +926,53 @@ IRJsonObject * IRJsonParser::parseObject() {
 	} else {
 		return nullptr;
 	}
+}
+
+//==============================================================================
+// Utilities
+//------------------------------------------------------------------------------
+template <class OutputType, IRJsonBase::JsonType TypeID>
+const OutputType & IRJSonAs(const IRJsonBase & v) {
+	if (v.type() != TypeID) {
+		throw std::invalid_argument("Invalid type.");
+	} else {
+		return static_cast<const OutputType &>(v);
+	}
+}
+
+//------------------------------------------------------------------------------
+const IRJsonNull & IRJSonAsNull(const IRJsonBase & v) {
+	return IRJSonAs<IRJsonNull, IRJsonBase::NULL_VALUE>(v);
+}
+
+//------------------------------------------------------------------------------
+const IRJsonBoolean & IRJSonAsBoolean(const IRJsonBase & v) {
+	return IRJSonAs<IRJsonBoolean, IRJsonBase::BOOLEAN>(v);
+}
+
+//------------------------------------------------------------------------------
+const IRJsonString & IRJSonAsString(const IRJsonBase & v) {
+	return IRJSonAs<IRJsonString, IRJsonBase::STRING>(v);
+}
+
+//------------------------------------------------------------------------------
+const IRJsonDecimal & IRJSonAsDecimal(const IRJsonBase & v){
+	return IRJSonAs<IRJsonDecimal, IRJsonBase::DECIMAL>(v);
+}
+
+//------------------------------------------------------------------------------
+const IRJsonInteger & IRJSonAsInteger(const IRJsonBase & v){
+	return IRJSonAs<IRJsonInteger, IRJsonBase::INTEGER>(v);
+}
+
+//------------------------------------------------------------------------------
+const IRJsonObject & IRJSonAsObject(const IRJsonBase & v){
+	return IRJSonAs<IRJsonObject, IRJsonBase::OBJECT>(v);
+}
+
+//------------------------------------------------------------------------------
+const IRJsonArray & IRJSonAsArray(const IRJsonBase & v){
+	return IRJSonAs<IRJsonArray, IRJsonBase::ARRAY>(v);
 }
 
 //------------------------------------------------------------------------------
