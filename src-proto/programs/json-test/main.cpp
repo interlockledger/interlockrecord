@@ -21,12 +21,24 @@ IRJsonObject * createJsonObject(){
 	o->set(std::string("zbool"), std::make_shared<IRJsonBoolean>(true));
 
 	std::shared_ptr<IRJsonArray> a = std::make_shared<IRJsonArray>();
+	a->append(std::make_shared<IRJsonBoolean>(false));
 	a->append(std::make_shared<IRJsonBoolean>(true));
+	a->append(std::make_shared<IRJsonNull>());
 	o->set(std::string("array"), a);
 
 	return o;
 }
 
+void testTokenizer(){
+
+	std::string out ("/* oi */  \"\\\"\\u20ACFF \\/\" /* rerwerw \n");
+	IRJsonTokenizer tokenizer(out);
+	IRJsonTokenizer::TokenType token;
+	do {
+		token = tokenizer.next();
+		std::cout <<  IRJsonTokenizer::tokenToName(token) << " " << tokenizer.value() <<"\n";
+	} while (token != IRJsonTokenizer::INPUT_END);
+}
 
 int main(){
 	std::shared_ptr<IRJsonBase> obj;
@@ -40,13 +52,20 @@ int main(){
 
 	std::cout << out << "\n";
 
-	out = "/* oi */  \"\\\"\\u20ACFF \\/\" /* rerwerw \n";
 	IRJsonTokenizer tokenizer(out);
-	IRJsonTokenizer::TokenType token;
-	do {
-		token = tokenizer.next();
-		std::cout <<  IRJsonTokenizer::tokenToName(token) << " " << tokenizer.value() <<"\n";
-	} while (token != IRJsonTokenizer::INPUT_END);
+		IRJsonTokenizer::TokenType token;
+		do {
+			token = tokenizer.next();
+			std::cout <<  IRJsonTokenizer::tokenToName(token) << " " << tokenizer.value() <<"\n";
+		} while (token != IRJsonTokenizer::INPUT_END);
+
+	IRJsonParser parser(out);
+	IRJsonBase *o2 = parser.parseObject();
+	std::cout << (o2 != nullptr) << "\n";
+
+	out.clear();
+	s.serialize(*o2, out);
+	std::cout << out << "\n";
 
 
 

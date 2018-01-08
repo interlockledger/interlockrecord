@@ -562,7 +562,6 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractKeyword() {
 			this->_token.push_back(c);
 		} else if (c != -1) {
 			this->ungetc();
-			this->_token.pop_back();
 			c = -1;
 		}
 	} while (c != -1);
@@ -675,6 +674,159 @@ std::string IRJsonTokenizer::tokenToName(IRJsonTokenizer::TokenType token) {
 		return "INPUT_END";
 	default:
 		return "????";
+	}
+}
+
+//==============================================================================
+// Class IRJsonParser
+//------------------------------------------------------------------------------
+IRJsonParser::IRJsonParser(IRJsonTokenizer * tokenizer): _tokenizer(tokenizer) {
+
+}
+
+//------------------------------------------------------------------------------
+IRJsonParser::IRJsonParser(const std::string & in):
+		_tokenizer(new IRJsonTokenizer(in)) {
+}
+
+//------------------------------------------------------------------------------
+IRJsonParser::~IRJsonParser() {
+	if (this->_tokenizer) {
+		delete this->_tokenizer;
+	}
+}
+
+//------------------------------------------------------------------------------
+IRJsonBase * IRJsonParser::parsePartialAny(IRJsonTokenizer::TokenType type) {
+
+	switch (type) {
+	case IRJsonTokenizer::OBJ_BEGIN:
+		return this->parsePartialObject();
+	case IRJsonTokenizer::ARRAY_BEGIN:
+		return this->parsePartialArray();
+	case IRJsonTokenizer::VAL_NULL:
+		return new IRJsonNull();
+	case IRJsonTokenizer::VAL_TRUE:
+		return new IRJsonBoolean(true);
+	case IRJsonTokenizer::VAL_FALSE:
+		return new IRJsonBoolean(false);
+	case IRJsonTokenizer::VAL_STRING:
+		return new IRJsonString(this->_tokenizer->value());
+	case IRJsonTokenizer::VAL_INT:
+		return new IRJsonInteger(
+				std::stol(this->_tokenizer->value()));
+	case IRJsonTokenizer::VAL_DEC:
+		return new IRJsonDecimal(
+				std::stod(this->_tokenizer->value()));
+	default:
+		return nullptr;
+	}
+}
+
+//------------------------------------------------------------------------------
+IRJsonBase *  IRJsonParser::parseAny() {
+	return this->parsePartialAny(this->_tokenizer->next());
+}
+
+//------------------------------------------------------------------------------
+IRJsonObject * IRJsonParser::parsePartialObject() {
+	bool hasMore;
+	bool error;
+	IRJsonTokenizer::TokenType type;
+	IRJsonObject * out;
+	std::string name;
+
+	hasMore = true;
+	error = true;
+	out = new IRJsonObject();
+	do {
+		type = this->_tokenizer->next();
+		if (type ==  IRJsonTokenizer::OBJ_END) {
+			error = false;
+			hasMore = false;
+		} else if (type ==  IRJsonTokenizer::VAL_STRING) {
+			name = this->_tokenizer->value();
+			type = this->_tokenizer->next();
+			if (type ==  IRJsonTokenizer::NAME_SEP) {
+				IRJsonBase * value = this->parseAny();
+				if (value) {
+					out->set(name, std::shared_ptr<IRJsonBase>(value));
+					type = this->_tokenizer->next();
+					if (type == IRJsonTokenizer::OBJ_END) {
+						error = false;
+						hasMore = false;
+					} else if (type != IRJsonTokenizer::VALUE_SEP) {
+						hasMore = false;
+					}
+				} else {
+					hasMore = false;
+				}
+			} else {
+				hasMore = false;
+			}
+		} else {
+			hasMore = false;
+		}
+	} while (hasMore);
+
+	if (!error) {
+		return out;
+	} else {
+		delete out;
+		return nullptr;
+	}
+}
+
+//------------------------------------------------------------------------------
+IRJsonArray * IRJsonParser::parsePartialArray() {
+	bool hasMore;
+	bool error;
+	IRJsonTokenizer::TokenType type;
+	IRJsonArray * out;
+	std::string name;
+
+	hasMore = true;
+	error = true;
+	out = new IRJsonArray();
+	do {
+		type = this->_tokenizer->next();
+		if (type ==  IRJsonTokenizer::ARRAY_END) {
+			error = false;
+			hasMore = false;
+		} else {
+			IRJsonBase * value = this->parsePartialAny(type);
+			if (value) {
+				out->append(std::shared_ptr<IRJsonBase>(value));
+				type = this->_tokenizer->next();
+				if (type == IRJsonTokenizer::ARRAY_END) {
+					error = false;
+					hasMore = false;
+				} else if (type != IRJsonTokenizer::VALUE_SEP) {
+					hasMore = false;
+				}
+			} else {
+				hasMore = false;
+			}
+		}
+	} while (hasMore);
+
+	if (!error) {
+		return out;
+	} else {
+		delete out;
+		return nullptr;
+	}
+}
+
+//------------------------------------------------------------------------------
+IRJsonObject * IRJsonParser::parseObject() {
+	IRJsonTokenizer::TokenType type;
+
+	type = this->_tokenizer->next();
+	if (type == IRJsonTokenizer::OBJ_BEGIN) {
+		return this->parsePartialObject();
+	} else {
+		return nullptr;
 	}
 }
 

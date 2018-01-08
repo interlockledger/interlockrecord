@@ -538,6 +538,15 @@ public:
 	}
 
 	/**
+	 * Verifies if there is more data to be processed.
+	 *
+	 * @return true if there is more data or false otherwise.
+	 */
+	bool hasMore() const {
+		return (this->_pos == this->_in.size());
+	}
+
+	/**
 	 * Resets this instance.
 	 */
 	void reset();
@@ -575,6 +584,43 @@ public:
 	static std::string tokenToName(TokenType token);
 };
 
+class IRJsonParser {
+private:
+	IRJsonTokenizer * _tokenizer;
+
+	IRJsonObject * parsePartialObject();
+
+	IRJsonArray * parsePartialArray();
+
+	IRJsonBase * parsePartialAny(IRJsonTokenizer::TokenType type);
+public:
+	/**
+	 * Creates a new instance of this class.
+	 * @param[in] tokenizer The tokenizer to be used.
+	 * @note This instance will claim the ownership of this tokenizer.
+	 */
+	IRJsonParser(IRJsonTokenizer * tokenizer);
+
+	/**
+	 * Creates a new instance of this class.
+	 * @param[in] in The input data.
+	 */
+	IRJsonParser(const std::string & in);
+
+	virtual ~IRJsonParser();
+
+	bool hasMore() const {
+		return this->_tokenizer->hasMore();
+	}
+
+	void reset(){
+		this->_tokenizer->reset();
+	}
+
+	virtual IRJsonObject * parseObject();
+
+	virtual IRJsonBase * parseAny();
+};
 
 } //namespace json
 } // namespace ircommon
