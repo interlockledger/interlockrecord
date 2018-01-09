@@ -28,6 +28,8 @@
 #define __IRJSONOBJECTTEST_H__
 
 #include <gtest/gtest.h>
+#include <ircommon/irjson.h>
+using namespace ircommon::json;
 
 class IRJsonObjectTest : public testing::Test {
 public:
@@ -35,6 +37,8 @@ public:
 	virtual ~IRJsonObjectTest();
 	virtual void SetUp();
 	virtual void TearDown();
+
+	static IRJsonObject * createObject();
 };
 #endif //__IRJSONOBJECTTEST_H__
 

@@ -45,6 +45,18 @@ void IRJsonObjectTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
+IRJsonObject  * IRJsonObjectTest::createObject() {
+	IRJsonObject * o;
+
+	o = new IRJsonObject();
+	o->set("bool", new IRJsonBoolean(true));
+	o->set("int", new IRJsonInteger(1));
+	o->set("dec", new IRJsonDecimal(2));
+	o->set("null", new IRJsonNull());
+	return o;
+}
+
+//------------------------------------------------------------------------------
 TEST_F(IRJsonObjectTest,Constructor) {
 
 	//TODO Implementation required!

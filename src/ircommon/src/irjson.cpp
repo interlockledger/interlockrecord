@@ -152,12 +152,12 @@ void IRJsonArray::remove(int idx) {
 }
 
 //------------------------------------------------------------------------------
-void IRJsonArray::insert(int idx, const SharedPointer value) {
+void IRJsonArray::insert(int idx, SharedPointer value) {
 	this->_values.insert(this->_values.begin() + idx, value);
 }
 
 //------------------------------------------------------------------------------
-void IRJsonArray::append(const SharedPointer value) {
+void IRJsonArray::append(SharedPointer value) {
 	this->_values.push_back(value);
 }
 

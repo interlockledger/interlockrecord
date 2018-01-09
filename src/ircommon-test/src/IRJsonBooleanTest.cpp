@@ -25,6 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRJsonBooleanTest.h"
+#include <ircommon/irjson.h>
+using namespace ircommon::json;
 
 //==============================================================================
 // class IRJsonBooleanTest
@@ -46,9 +48,71 @@ void IRJsonBooleanTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRJsonBooleanTest,Constructor) {
+	IRJsonBoolean * i;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	i = new IRJsonBoolean();
+	ASSERT_EQ(IRJsonValue::BOOLEAN, i->type());
+	ASSERT_FALSE(i->get());
+	delete i;
+
+	i = new IRJsonBoolean(false);
+	ASSERT_EQ(IRJsonValue::BOOLEAN, i->type());
+	ASSERT_FALSE(i->get());
+	delete i;
+
+	i = new IRJsonBoolean(true);
+	ASSERT_EQ(IRJsonValue::BOOLEAN, i->type());
+	ASSERT_TRUE(i->get());
+	delete i;
 }
+
 //------------------------------------------------------------------------------
+TEST_F(IRJsonBooleanTest,getSet) {
+	IRJsonBoolean i;
+
+	ASSERT_FALSE(i.get());
+	i.set(true);
+	ASSERT_TRUE(i.get());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonBooleanTest, as) {
+	IRJsonBoolean i;
+
+	try{
+		i.asInteger();
+		FAIL();
+	} catch(std::domain_error & e){}
+	try{
+		i.asDecimal();
+		FAIL();
+	} catch(std::domain_error & e){}
+	try{
+		i.asString();
+		FAIL();
+	} catch(std::domain_error & e){}
+	ASSERT_FALSE(i.asBoolean());
+	i.set(true);
+	ASSERT_TRUE(i.asBoolean());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonBooleanTest, equals) {
+	IRJsonBoolean a(true);
+	IRJsonBoolean b(true);
+	IRJsonBoolean c(false);
+
+	ASSERT_TRUE(a.equals(a));
+	ASSERT_TRUE(a.equals(b));
+	ASSERT_FALSE(a.equals(c));
+
+	ASSERT_FALSE(a.equals(IRJsonArray()));
+	ASSERT_FALSE(a.equals(IRJsonBoolean()));
+	ASSERT_FALSE(a.equals(IRJsonDecimal()));
+	ASSERT_FALSE(a.equals(IRJsonInteger()));
+	ASSERT_FALSE(a.equals(IRJsonNull()));
+	ASSERT_FALSE(a.equals(IRJsonObject()));
+	ASSERT_FALSE(a.equals(IRJsonString()));
+}
+//---------------------------------------------------------------------------------------------------------------------------------------------------------
 

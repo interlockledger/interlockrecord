@@ -25,6 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRJsonDecimalTest.h"
+#include <ircommon/irjson.h>
+using namespace ircommon::json;
 
 //==============================================================================
 // class IRJsonDecimalTest
@@ -46,9 +48,64 @@ void IRJsonDecimalTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRJsonDecimalTest,Constructor) {
+	IRJsonDecimal * i;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	i = new IRJsonDecimal();
+	ASSERT_EQ(IRJsonValue::DECIMAL, i->type());
+	ASSERT_EQ(0, i->get());
+	delete i;
+
+	i = new IRJsonDecimal(1.2);
+	ASSERT_EQ(IRJsonValue::DECIMAL, i->type());
+	ASSERT_EQ(1.2, i->get());
+	delete i;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonDecimalTest,getSet) {
+	IRJsonDecimal i;
+
+	ASSERT_EQ(0, i.get());
+	i.set(1.2);
+	ASSERT_EQ(1.2, i.get());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonDecimalTest, as) {
+	IRJsonDecimal i;
+
+	try{
+		i.asBoolean();
+		FAIL();
+	} catch(std::domain_error & e){}
+	try{
+		i.asInteger();
+		FAIL();
+	} catch(std::domain_error & e){}
+	try{
+		i.asString();
+		FAIL();
+	} catch(std::domain_error & e){}
+	ASSERT_EQ(0, i.asDecimal());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonDecimalTest, equals) {
+	IRJsonDecimal a(1.1);
+	IRJsonDecimal b(1.1);
+	IRJsonDecimal c(1.2);
+
+	ASSERT_TRUE(a.equals(a));
+	ASSERT_TRUE(a.equals(b));
+	ASSERT_FALSE(a.equals(c));
+
+	ASSERT_FALSE(a.equals(IRJsonArray()));
+	ASSERT_FALSE(a.equals(IRJsonBoolean()));
+	ASSERT_FALSE(a.equals(IRJsonDecimal()));
+	ASSERT_FALSE(a.equals(IRJsonInteger()));
+	ASSERT_FALSE(a.equals(IRJsonNull()));
+	ASSERT_FALSE(a.equals(IRJsonObject()));
+	ASSERT_FALSE(a.equals(IRJsonString()));
 }
 //------------------------------------------------------------------------------
 

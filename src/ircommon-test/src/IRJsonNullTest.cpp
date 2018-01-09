@@ -25,6 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRJsonNullTest.h"
+#include <ircommon/irjson.h>
+using namespace ircommon::json;
 
 //==============================================================================
 // class IRJsonNullTest
@@ -46,9 +48,11 @@ void IRJsonNullTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRJsonNullTest,Constructor) {
+	IRJsonNull * v;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	v = new IRJsonNull();
+	ASSERT_EQ(IRJsonValue::NULL_VALUE, v->type());
+	delete v;
 }
 //------------------------------------------------------------------------------
 
