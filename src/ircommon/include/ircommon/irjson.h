@@ -141,6 +141,9 @@ public:
 	 * @param[in] v The other instance of IRJsonBase.
 	 * @return true if they are equal or false otherwise.
 	 * @since 2018.01.08
+	 * @note The default implementation from IRJsonValue returns true if both
+	 * types are the same. Subclasses must override this behavior in order to
+	 * check the contents as well.
 	 */
 	virtual bool equals(const IRJsonValue & v) const;
 

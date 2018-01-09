@@ -997,6 +997,8 @@ const IRJsonArray & IRJsonAsArray(const IRJsonValue & v){
 	return IRJsonAs<IRJsonArray, IRJsonValue::ARRAY>(v);
 }
 
+//------------------------------------------------------------------------------
+
 } //namespace json
 } // namespace ircommon
 
