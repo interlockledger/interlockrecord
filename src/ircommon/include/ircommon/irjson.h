@@ -43,7 +43,7 @@ namespace json {
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-class IRJsonBase {
+class IRJsonValue {
 public:
 	typedef enum {
 		NULL_VALUE,
@@ -58,7 +58,7 @@ public:
 	/**
 	 * Alias for the type std::shared_ptr<IRJsonBase>.
 	 */
-	typedef std::shared_ptr<IRJsonBase> SharedPointer;
+	typedef std::shared_ptr<IRJsonValue> SharedPointer;
 private:
 	/**
 	 * Type ID.
@@ -70,12 +70,12 @@ public:
 	 *
 	 * @param[in] type The type id.
 	 */
-	IRJsonBase(JsonType type): _type(type) {}
+	IRJsonValue(JsonType type): _type(type) {}
 
 	/**
 	 * Disposes this instance and releases all associated resources.
 	 */
-	virtual ~IRJsonBase() = default;
+	virtual ~IRJsonValue() = default;
 
 	/**
 	 * Returns the type if of this
@@ -142,7 +142,7 @@ public:
 	 * @return true if they are equal or false otherwise.
 	 * @since 2018.01.08
 	 */
-	virtual bool equals(const IRJsonBase & v) const;
+	virtual bool equals(const IRJsonValue & v) const;
 
 	/**
 	 * Verifies if this instance has the same contents of another IRJsonBase.
@@ -151,9 +151,41 @@ public:
 	 * @return true if they are equal or false otherwise.
 	 * @since 2018.01.08
 	 */
-	bool operator == (const IRJsonBase & v) const {
+	bool operator == (const IRJsonValue & v) const {
 		return this->equals(v);
 	}
+
+	/**
+	 * Returns the current value as boolean.
+	 *
+	 * @return The boolean value.
+	 * @exception std::domain_error If if it cannot be converted to boolean.
+	 */
+	virtual bool asBoolean() const;
+
+	/**
+	 * Returns the current value as double.
+	 *
+	 * @return The double value.
+	 * @exception std::domain_error If if it cannot be converted to double.
+	 */
+	virtual double asDecimal() const;
+
+	/**
+	 * Returns the current value as integer.
+	 *
+	 * @return The integer value.
+	 * @exception std::domain_error If if it cannot be converted to integer.
+	 */
+	virtual std::uint64_t asInteger() const;
+
+	/**
+	 * Returns the current value as string.
+	 *
+	 * @return The string value.
+	 * @exception std::domain_error If if it cannot be converted to string.
+	 */
+	virtual const std::string & asString() const;
 };
 
 /**
@@ -165,8 +197,8 @@ public:
  * @tparam TypeID ID of the type.
  * @note This class is not thread-safe.
  */
-template <class ValueType, IRJsonBase::JsonType TypeID>
-class IRJsonValue: public IRJsonBase {
+template <class ValueType, IRJsonValue::JsonType TypeID>
+class IRJsonBaseValue: public IRJsonValue {
 private:
 	/**
 	 * The current value.
@@ -176,19 +208,19 @@ public:
 	/**
 	 * Creates a new instance of this class.
 	 */
-	IRJsonValue(): IRJsonBase(TypeID), _value(){}
+	IRJsonBaseValue(): IRJsonValue(TypeID), _value(){}
 
 	/**
 	 * Creates a new instance of this class.
 	 *
 	 * @param[in] value The initial value.
 	 */
-	IRJsonValue(const ValueType & value): IRJsonBase(TypeID), _value(value){}
+	IRJsonBaseValue(const ValueType & value): IRJsonValue(TypeID), _value(value){}
 
 	/**
 	 * Disposes this instance and releases all associated resources.
 	 */
-	virtual ~IRJsonValue() = default;
+	virtual ~IRJsonBaseValue() = default;
 
 	/**
 	 * Returns the current value.
@@ -212,14 +244,14 @@ public:
 	 * @param[in] value The value.
 	 * @return A reference to self.
 	 */
-	IRJsonValue & operator = (const ValueType & value) {
+	IRJsonBaseValue & operator = (const ValueType & value) {
 		this->set(value);
 		return (*this);
 	}
 
-	virtual bool equals(const IRJsonBase & v) const {
+	virtual bool equals(const IRJsonValue & v) const {
 		if (this->type() == v.type()) {
-			return (this->get() == static_cast<const IRJsonValue&>(v).get());
+			return (this->get() == static_cast<const IRJsonBaseValue&>(v).get());
 		} else {
 			return false;
 		}
@@ -233,12 +265,15 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-class IRJsonString: public IRJsonValue<std::string, IRJsonBase::STRING> {
+class IRJsonString: public IRJsonBaseValue<std::string, IRJsonValue::STRING> {
 public:
 	IRJsonString() = default;
 	IRJsonString(const std::string & v) :
-		IRJsonValue<std::string, IRJsonBase::STRING>(v) {}
+		IRJsonBaseValue<std::string, IRJsonValue::STRING>(v) {}
 	virtual ~IRJsonString() = default;
+	virtual const std::string & asString() const {
+		return this->get();
+	}
 };
 
 /**
@@ -248,12 +283,15 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-class IRJsonInteger: public IRJsonValue<std::int64_t, IRJsonBase::INTEGER> {
+class IRJsonInteger: public IRJsonBaseValue<std::int64_t, IRJsonValue::INTEGER> {
 public:
 	IRJsonInteger() = default;
 	IRJsonInteger(std::int64_t v) :
-		IRJsonValue<std::int64_t, IRJsonBase::INTEGER>(v) {}
+		IRJsonBaseValue<std::int64_t, IRJsonValue::INTEGER>(v) {}
 	virtual ~IRJsonInteger() = default;
+	virtual std::uint64_t asInteger() const{
+		return this->get();
+	}
 };
 
 /**
@@ -263,12 +301,15 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-class IRJsonDecimal: public IRJsonValue<double, IRJsonBase::DECIMAL> {
+class IRJsonDecimal: public IRJsonBaseValue<double, IRJsonValue::DECIMAL> {
 public:
 	IRJsonDecimal() = default;
 	IRJsonDecimal(double v) :
-		IRJsonValue<double, IRJsonBase::DECIMAL>(v) {}
+		IRJsonBaseValue<double, IRJsonValue::DECIMAL>(v) {}
 	virtual ~IRJsonDecimal() = default;
+	virtual double asDecimal() const{
+		return this->get();
+	}
 };
 
 /**
@@ -278,12 +319,15 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-class IRJsonBoolean: public IRJsonValue<bool, IRJsonBase::BOOLEAN>{
+class IRJsonBoolean: public IRJsonBaseValue<bool, IRJsonValue::BOOLEAN>{
 public:
 	IRJsonBoolean() = default;
 	IRJsonBoolean(bool v) :
-		IRJsonValue<bool, IRJsonBase::BOOLEAN>(v) {}
+		IRJsonBaseValue<bool, IRJsonValue::BOOLEAN>(v) {}
 	virtual ~IRJsonBoolean() = default;
+	virtual bool asBoolean() const {
+		return this->get();
+	}
 };
 
 /**
@@ -293,12 +337,12 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-class IRJsonNull : public IRJsonBase {
+class IRJsonNull : public IRJsonValue {
 public:
 	/**
 	 * Creates a new instance of this class.
 	 */
-	IRJsonNull(): IRJsonBase(IRJsonBase::NULL_VALUE){}
+	IRJsonNull(): IRJsonValue(IRJsonValue::NULL_VALUE){}
 
 	/**
 	 * Disposes this instance and releases all associated resources.
@@ -314,9 +358,9 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-class IRJsonObject: public IRJsonBase {
+class IRJsonObject: public IRJsonValue {
 private:
-	std::map<std::string, std::shared_ptr<IRJsonBase>> _map;
+	std::map<std::string, std::shared_ptr<IRJsonValue>> _map;
 public:
 	/**
 	 * Alias for the type std::vector<std::string>.
@@ -326,7 +370,7 @@ public:
 	/**
 	 * Creates a new instance of this class.
 	 */
-	IRJsonObject():IRJsonBase(IRJsonBase::OBJECT){}
+	IRJsonObject():IRJsonValue(IRJsonValue::OBJECT){}
 
 	/**
 	 * Disposes this instance and releases all associated resources.
@@ -391,7 +435,7 @@ public:
 	 */
 	void getAttributeNames(AttributeList & attr) const;
 
-	virtual bool equals(const IRJsonBase & v) const;
+	virtual bool equals(const IRJsonValue & v) const;
 };
 
 /**
@@ -402,14 +446,14 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-class IRJsonArray: public IRJsonBase {
+class IRJsonArray: public IRJsonValue {
 private:
 	std::vector<SharedPointer> _values;
 public:
 	/**
 	 * Creates a new instance of this class.
 	 */
-	IRJsonArray() : IRJsonBase(IRJsonBase::ARRAY) {}
+	IRJsonArray() : IRJsonValue(IRJsonValue::ARRAY) {}
 
 	/**
 	 * Disposes this instance and releases all associated resources.
@@ -462,7 +506,7 @@ public:
 	 */
 	void append(const SharedPointer value);
 
-	virtual bool equals(const IRJsonBase & v) const;
+	virtual bool equals(const IRJsonValue & v) const;
 };
 
 /**
@@ -506,7 +550,7 @@ public:
 	 * @param[in] v The JSON object.
 	 * @param[out] out The string that will hold the output.
 	 */
-	void serialize(const IRJsonBase & v, std::string & out);
+	void serialize(const IRJsonValue & v, std::string & out);
 };
 
 /**
@@ -828,7 +872,7 @@ private:
 	 *
 	 * @return An instance of a IRJsonObject on success or null otherwise.
 	 */
-	IRJsonBase * parsePartialAny(IRJsonTokenizer::TokenType type);
+	IRJsonValue * parsePartialAny(IRJsonTokenizer::TokenType type);
 
 	/**
 	 * Parses the input looking for any type of JSON object. It returns the
@@ -836,7 +880,7 @@ private:
 	 *
 	 * @return An instance of a IRJsonObject on success or null otherwise.
 	 */
-	virtual IRJsonBase * parseAny();
+	virtual IRJsonValue * parseAny();
 public:
 	/**
 	 * Creates a new instance of this class.
@@ -887,7 +931,7 @@ public:
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonNull & IRJSonAsNull(const IRJsonBase & v);
+const IRJsonNull & IRJSonAsNull(const IRJsonValue & v);
 
 /**
  * Returns a reference to the given IRJsonBase as an IRJsonBoolean.
@@ -896,7 +940,7 @@ const IRJsonNull & IRJSonAsNull(const IRJsonBase & v);
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonBoolean & IRJSonAsBoolean(const IRJsonBase & v);
+const IRJsonBoolean & IRJSonAsBoolean(const IRJsonValue & v);
 
 /**
  * Returns a reference to the given IRJsonBase as an IRJsonString.
@@ -905,7 +949,7 @@ const IRJsonBoolean & IRJSonAsBoolean(const IRJsonBase & v);
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonString & IRJSonAsString(const IRJsonBase & v);
+const IRJsonString & IRJSonAsString(const IRJsonValue & v);
 
 /**
  * Returns a reference to the given IRJsonBase as an IRJsonDecimal.
@@ -914,7 +958,7 @@ const IRJsonString & IRJSonAsString(const IRJsonBase & v);
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonDecimal & IRJSonAsDecimal(const IRJsonBase & v);
+const IRJsonDecimal & IRJSonAsDecimal(const IRJsonValue & v);
 
 /**
  * Returns a reference to the given IRJsonBase as an IRJsonInteger.
@@ -923,7 +967,7 @@ const IRJsonDecimal & IRJSonAsDecimal(const IRJsonBase & v);
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonInteger & IRJSonAsInteger(const IRJsonBase & v);
+const IRJsonInteger & IRJSonAsInteger(const IRJsonValue & v);
 
 /**
  * Returns a reference to the given IRJsonBase as an IRJsonObject.
@@ -932,7 +976,7 @@ const IRJsonInteger & IRJSonAsInteger(const IRJsonBase & v);
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonObject & IRJSonAsObject(const IRJsonBase & v);
+const IRJsonObject & IRJSonAsObject(const IRJsonValue & v);
 
 /**
  * Returns a reference to the given IRJsonBase as an IRJsonArray.
@@ -941,7 +985,7 @@ const IRJsonObject & IRJSonAsObject(const IRJsonBase & v);
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonArray & IRJSonAsArray(const IRJsonBase & v);
+const IRJsonArray & IRJSonAsArray(const IRJsonValue & v);
 
 } //namespace json
 } // namespace ircommon

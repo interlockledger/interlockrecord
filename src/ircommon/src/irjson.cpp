@@ -35,8 +35,28 @@ using namespace  ircommon::json;
 //==============================================================================
 // Class IRJsonBase
 //------------------------------------------------------------------------------
-bool IRJsonBase::equals(const IRJsonBase & v) const {
+bool IRJsonValue::equals(const IRJsonValue & v) const {
 	return (this->type() == v.type());
+}
+
+//------------------------------------------------------------------------------
+bool IRJsonValue::asBoolean() const {
+	throw std::domain_error("Not a boolean.");
+}
+
+//------------------------------------------------------------------------------
+double IRJsonValue::asDecimal() const {
+	throw std::domain_error("Not a decimal.");
+}
+
+//------------------------------------------------------------------------------
+std::uint64_t IRJsonValue::asInteger() const {
+	throw std::domain_error("Not an integer.");
+}
+
+//------------------------------------------------------------------------------
+const std::string & IRJsonValue::asString() const {
+	throw std::domain_error("Not a string.");
 }
 
 //==============================================================================
@@ -52,7 +72,7 @@ bool IRJsonObject::contains(const std::string & name) const {
 }
 
 //------------------------------------------------------------------------------
-IRJsonBase::SharedPointer & IRJsonObject::operator[](const std::string & name) {
+IRJsonValue::SharedPointer & IRJsonObject::operator[](const std::string & name) {
 
 	auto found = this->_map.find(name);
 	if (found != this->_map.end()) {
@@ -63,7 +83,7 @@ IRJsonBase::SharedPointer & IRJsonObject::operator[](const std::string & name) {
 }
 
 //------------------------------------------------------------------------------
-const IRJsonBase::SharedPointer & IRJsonObject::operator[](const std::string & name) const {
+const IRJsonValue::SharedPointer & IRJsonObject::operator[](const std::string & name) const {
 
 	auto found = this->_map.find(name);
 	if (found != this->_map.end()) {
@@ -86,7 +106,7 @@ void IRJsonObject::getAttributeNames(AttributeList & attr) const {
 }
 
 //------------------------------------------------------------------------------
-bool IRJsonObject::equals(const IRJsonBase & v) const {
+bool IRJsonObject::equals(const IRJsonValue & v) const {
 
 	if (v.type() != this->type()) {
 		return false;
@@ -114,16 +134,15 @@ bool IRJsonObject::equals(const IRJsonBase & v) const {
 
 }
 
-
 //==============================================================================
 // Class IRJsonArray
 //------------------------------------------------------------------------------
-IRJsonBase::SharedPointer & IRJsonArray::operator[](int idx) {
+IRJsonValue::SharedPointer & IRJsonArray::operator[](int idx) {
 	return this->_values[idx];
 }
 
 //------------------------------------------------------------------------------
-const IRJsonBase::SharedPointer & IRJsonArray::operator[](int idx) const {
+const IRJsonValue::SharedPointer & IRJsonArray::operator[](int idx) const {
 	return this->_values[idx];
 }
 
@@ -143,7 +162,7 @@ void IRJsonArray::append(const SharedPointer value) {
 }
 
 //------------------------------------------------------------------------------
-bool IRJsonArray::equals(const IRJsonBase & v) const {
+bool IRJsonArray::equals(const IRJsonValue & v) const {
 
 	if (v.type() != this->type()) {
 		return false;
@@ -189,28 +208,28 @@ void IRJsonSerializer::endLine(std::string & out) {
 }
 
 //------------------------------------------------------------------------------
-void IRJsonSerializer::serialize(const IRJsonBase & v, std::string & out) {
+void IRJsonSerializer::serialize(const IRJsonValue & v, std::string & out) {
 
 	switch(v.type()) {
-	case IRJsonBase::ARRAY:
+	case IRJsonValue::ARRAY:
 		this->serializeArray(IRJSonAsArray(v), out);
 		break;
-	case IRJsonBase::BOOLEAN:
+	case IRJsonValue::BOOLEAN:
 		this->serializeBoolean(IRJSonAsBoolean(v), out);
 		break;
-	case IRJsonBase::DECIMAL:
+	case IRJsonValue::DECIMAL:
 		this->serializeDecimal(IRJSonAsDecimal(v), out);
 		break;
-	case IRJsonBase::INTEGER:
+	case IRJsonValue::INTEGER:
 		this->serializeInteger(IRJSonAsInteger(v), out);
 		break;
-	case IRJsonBase::NULL_VALUE:
+	case IRJsonValue::NULL_VALUE:
 		this->serializeNull(out);
 		break;
-	case IRJsonBase::OBJECT:
+	case IRJsonValue::OBJECT:
 		this->serializeObject(IRJSonAsObject(v), out);
 		break;
-	case IRJsonBase::STRING:
+	case IRJsonValue::STRING:
 		this->serializeString(IRJSonAsString(v), out);
 		break;
 	}
@@ -795,7 +814,7 @@ IRJsonParser::~IRJsonParser() {
 }
 
 //------------------------------------------------------------------------------
-IRJsonBase * IRJsonParser::parsePartialAny(IRJsonTokenizer::TokenType type) {
+IRJsonValue * IRJsonParser::parsePartialAny(IRJsonTokenizer::TokenType type) {
 
 	switch (type) {
 	case IRJsonTokenizer::OBJ_BEGIN:
@@ -822,7 +841,7 @@ IRJsonBase * IRJsonParser::parsePartialAny(IRJsonTokenizer::TokenType type) {
 }
 
 //------------------------------------------------------------------------------
-IRJsonBase *  IRJsonParser::parseAny() {
+IRJsonValue *  IRJsonParser::parseAny() {
 	return this->parsePartialAny(this->_tokenizer->next());
 }
 
@@ -846,9 +865,9 @@ IRJsonObject * IRJsonParser::parsePartialObject() {
 			name = this->_tokenizer->value();
 			type = this->_tokenizer->next();
 			if (type ==  IRJsonTokenizer::NAME_SEP) {
-				IRJsonBase * value = this->parseAny();
+				IRJsonValue * value = this->parseAny();
 				if (value) {
-					out->set(name, std::shared_ptr<IRJsonBase>(value));
+					out->set(name, std::shared_ptr<IRJsonValue>(value));
 					type = this->_tokenizer->next();
 					if (type == IRJsonTokenizer::OBJ_END) {
 						error = false;
@@ -892,9 +911,9 @@ IRJsonArray * IRJsonParser::parsePartialArray() {
 			error = false;
 			hasMore = false;
 		} else {
-			IRJsonBase * value = this->parsePartialAny(type);
+			IRJsonValue * value = this->parsePartialAny(type);
 			if (value) {
-				out->append(std::shared_ptr<IRJsonBase>(value));
+				out->append(std::shared_ptr<IRJsonValue>(value));
 				type = this->_tokenizer->next();
 				if (type == IRJsonTokenizer::ARRAY_END) {
 					error = false;
@@ -931,8 +950,8 @@ IRJsonObject * IRJsonParser::parseObject() {
 //==============================================================================
 // Utilities
 //------------------------------------------------------------------------------
-template <class OutputType, IRJsonBase::JsonType TypeID>
-const OutputType & IRJSonAs(const IRJsonBase & v) {
+template <class OutputType, IRJsonValue::JsonType TypeID>
+const OutputType & IRJSonAs(const IRJsonValue & v) {
 	if (v.type() != TypeID) {
 		throw std::invalid_argument("Invalid type.");
 	} else {
@@ -941,38 +960,38 @@ const OutputType & IRJSonAs(const IRJsonBase & v) {
 }
 
 //------------------------------------------------------------------------------
-const IRJsonNull & IRJSonAsNull(const IRJsonBase & v) {
-	return IRJSonAs<IRJsonNull, IRJsonBase::NULL_VALUE>(v);
+const IRJsonNull & IRJSonAsNull(const IRJsonValue & v) {
+	return IRJSonAs<IRJsonNull, IRJsonValue::NULL_VALUE>(v);
 }
 
 //------------------------------------------------------------------------------
-const IRJsonBoolean & IRJSonAsBoolean(const IRJsonBase & v) {
-	return IRJSonAs<IRJsonBoolean, IRJsonBase::BOOLEAN>(v);
+const IRJsonBoolean & IRJSonAsBoolean(const IRJsonValue & v) {
+	return IRJSonAs<IRJsonBoolean, IRJsonValue::BOOLEAN>(v);
 }
 
 //------------------------------------------------------------------------------
-const IRJsonString & IRJSonAsString(const IRJsonBase & v) {
-	return IRJSonAs<IRJsonString, IRJsonBase::STRING>(v);
+const IRJsonString & IRJSonAsString(const IRJsonValue & v) {
+	return IRJSonAs<IRJsonString, IRJsonValue::STRING>(v);
 }
 
 //------------------------------------------------------------------------------
-const IRJsonDecimal & IRJSonAsDecimal(const IRJsonBase & v){
-	return IRJSonAs<IRJsonDecimal, IRJsonBase::DECIMAL>(v);
+const IRJsonDecimal & IRJSonAsDecimal(const IRJsonValue & v){
+	return IRJSonAs<IRJsonDecimal, IRJsonValue::DECIMAL>(v);
 }
 
 //------------------------------------------------------------------------------
-const IRJsonInteger & IRJSonAsInteger(const IRJsonBase & v){
-	return IRJSonAs<IRJsonInteger, IRJsonBase::INTEGER>(v);
+const IRJsonInteger & IRJSonAsInteger(const IRJsonValue & v){
+	return IRJSonAs<IRJsonInteger, IRJsonValue::INTEGER>(v);
 }
 
 //------------------------------------------------------------------------------
-const IRJsonObject & IRJSonAsObject(const IRJsonBase & v){
-	return IRJSonAs<IRJsonObject, IRJsonBase::OBJECT>(v);
+const IRJsonObject & IRJSonAsObject(const IRJsonValue & v){
+	return IRJSonAs<IRJsonObject, IRJsonValue::OBJECT>(v);
 }
 
 //------------------------------------------------------------------------------
-const IRJsonArray & IRJSonAsArray(const IRJsonBase & v){
-	return IRJSonAs<IRJsonArray, IRJsonBase::ARRAY>(v);
+const IRJsonArray & IRJSonAsArray(const IRJsonValue & v){
+	return IRJSonAs<IRJsonArray, IRJsonValue::ARRAY>(v);
 }
 
 //------------------------------------------------------------------------------
