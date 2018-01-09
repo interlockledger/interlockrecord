@@ -112,7 +112,7 @@ bool IRJsonObject::equals(const IRJsonValue & v) const {
 		return false;
 	}
 
-	const IRJsonObject & o = IRJSonAsObject(v);
+	const IRJsonObject & o = IRJsonAsObject(v);
 	if (this->size() != o.size()) {
 		return false;
 	}
@@ -167,7 +167,7 @@ bool IRJsonArray::equals(const IRJsonValue & v) const {
 	if (v.type() != this->type()) {
 		return false;
 	}
-	const IRJsonArray & o = IRJSonAsArray(v);
+	const IRJsonArray & o = IRJsonAsArray(v);
 	if (this->size() != o.size()) {
 		return false;
 	}
@@ -212,25 +212,25 @@ void IRJsonSerializer::serialize(const IRJsonValue & v, std::string & out) {
 
 	switch(v.type()) {
 	case IRJsonValue::ARRAY:
-		this->serializeArray(IRJSonAsArray(v), out);
+		this->serializeArray(IRJsonAsArray(v), out);
 		break;
 	case IRJsonValue::BOOLEAN:
-		this->serializeBoolean(IRJSonAsBoolean(v), out);
+		this->serializeBoolean(IRJsonAsBoolean(v), out);
 		break;
 	case IRJsonValue::DECIMAL:
-		this->serializeDecimal(IRJSonAsDecimal(v), out);
+		this->serializeDecimal(IRJsonAsDecimal(v), out);
 		break;
 	case IRJsonValue::INTEGER:
-		this->serializeInteger(IRJSonAsInteger(v), out);
+		this->serializeInteger(IRJsonAsInteger(v), out);
 		break;
 	case IRJsonValue::NULL_VALUE:
 		this->serializeNull(out);
 		break;
 	case IRJsonValue::OBJECT:
-		this->serializeObject(IRJSonAsObject(v), out);
+		this->serializeObject(IRJsonAsObject(v), out);
 		break;
 	case IRJsonValue::STRING:
-		this->serializeString(IRJSonAsString(v), out);
+		this->serializeString(IRJsonAsString(v), out);
 		break;
 	}
 }
@@ -951,7 +951,7 @@ IRJsonObject * IRJsonParser::parseObject() {
 // Utilities
 //------------------------------------------------------------------------------
 template <class OutputType, IRJsonValue::JsonType TypeID>
-const OutputType & IRJSonAs(const IRJsonValue & v) {
+const OutputType & IRJsonAs(const IRJsonValue & v) {
 	if (v.type() != TypeID) {
 		throw std::invalid_argument("Invalid type.");
 	} else {
@@ -959,39 +959,45 @@ const OutputType & IRJSonAs(const IRJsonValue & v) {
 	}
 }
 
+namespace ircommon {
+namespace json {
+
 //------------------------------------------------------------------------------
-const IRJsonNull & IRJSonAsNull(const IRJsonValue & v) {
-	return IRJSonAs<IRJsonNull, IRJsonValue::NULL_VALUE>(v);
+const IRJsonNull & IRJsonAsNull(const IRJsonValue & v) {
+	return IRJsonAs<IRJsonNull, IRJsonValue::NULL_VALUE>(v);
 }
 
 //------------------------------------------------------------------------------
-const IRJsonBoolean & IRJSonAsBoolean(const IRJsonValue & v) {
-	return IRJSonAs<IRJsonBoolean, IRJsonValue::BOOLEAN>(v);
+const IRJsonBoolean & IRJsonAsBoolean(const IRJsonValue & v) {
+	return IRJsonAs<IRJsonBoolean, IRJsonValue::BOOLEAN>(v);
 }
 
 //------------------------------------------------------------------------------
-const IRJsonString & IRJSonAsString(const IRJsonValue & v) {
-	return IRJSonAs<IRJsonString, IRJsonValue::STRING>(v);
+const IRJsonString & IRJsonAsString(const IRJsonValue & v) {
+	return IRJsonAs<IRJsonString, IRJsonValue::STRING>(v);
 }
 
 //------------------------------------------------------------------------------
-const IRJsonDecimal & IRJSonAsDecimal(const IRJsonValue & v){
-	return IRJSonAs<IRJsonDecimal, IRJsonValue::DECIMAL>(v);
+const IRJsonDecimal & IRJsonAsDecimal(const IRJsonValue & v){
+	return IRJsonAs<IRJsonDecimal, IRJsonValue::DECIMAL>(v);
 }
 
 //------------------------------------------------------------------------------
-const IRJsonInteger & IRJSonAsInteger(const IRJsonValue & v){
-	return IRJSonAs<IRJsonInteger, IRJsonValue::INTEGER>(v);
+const IRJsonInteger & IRJsonAsInteger(const IRJsonValue & v){
+	return IRJsonAs<IRJsonInteger, IRJsonValue::INTEGER>(v);
 }
 
 //------------------------------------------------------------------------------
-const IRJsonObject & IRJSonAsObject(const IRJsonValue & v){
-	return IRJSonAs<IRJsonObject, IRJsonValue::OBJECT>(v);
+const IRJsonObject & IRJsonAsObject(const IRJsonValue & v){
+	return IRJsonAs<IRJsonObject, IRJsonValue::OBJECT>(v);
 }
 
 //------------------------------------------------------------------------------
-const IRJsonArray & IRJSonAsArray(const IRJsonValue & v){
-	return IRJSonAs<IRJsonArray, IRJsonValue::ARRAY>(v);
+const IRJsonArray & IRJsonAsArray(const IRJsonValue & v){
+	return IRJsonAs<IRJsonArray, IRJsonValue::ARRAY>(v);
 }
+
+} //namespace json
+} // namespace ircommon
 
 //------------------------------------------------------------------------------

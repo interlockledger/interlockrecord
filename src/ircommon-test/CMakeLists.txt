@@ -6,6 +6,7 @@ enable_testing()
 find_package(GTest REQUIRED)
 add_executable(ircommon-test
 	src/main.cpp
+	src/ILIntTest.cpp
 	src/I32FeistelObfuscatorTest.cpp
 	src/I32ObfuscatorTest.cpp
 	src/IRAlphabetTest.cpp
@@ -17,7 +18,19 @@ add_executable(ircommon-test
 	src/IRCodecTest.cpp
 	src/IRGenericAlphabetTest.cpp
 	src/IRHexAlphabetTest.cpp
-	src/ILIntTest.cpp
+	src/IRJsonArrayTest.cpp
+	src/IRJsonBooleanTest.cpp
+	src/IRJsonDecimalTest.cpp
+	src/IRJsonIntegerTest.cpp
+	src/IRJsonNullTest.cpp
+	src/IRJsonObjectTest.cpp
+	src/IRJsonParserTest.cpp
+	src/IRJsonSerializerTest.cpp
+	src/IRJsonStringTest.cpp
+	src/IRJsonStringTokenizerTest.cpp
+	src/IRJsonTokenizerTest.cpp
+	src/IRJsonUtilsTest.cpp
+	src/IRJsonValueTest.cpp
 	src/IRRWLockTest.cpp
 	src/IRSemaphoreTest.cpp
 	src/IRUtilsTest.cpp)

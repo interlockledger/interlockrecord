@@ -931,7 +931,7 @@ public:
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonNull & IRJSonAsNull(const IRJsonValue & v);
+const IRJsonNull & IRJsonAsNull(const IRJsonValue & v);
 
 /**
  * Returns a reference to the given IRJsonBase as an IRJsonBoolean.
@@ -940,7 +940,7 @@ const IRJsonNull & IRJSonAsNull(const IRJsonValue & v);
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonBoolean & IRJSonAsBoolean(const IRJsonValue & v);
+const IRJsonBoolean & IRJsonAsBoolean(const IRJsonValue & v);
 
 /**
  * Returns a reference to the given IRJsonBase as an IRJsonString.
@@ -949,7 +949,7 @@ const IRJsonBoolean & IRJSonAsBoolean(const IRJsonValue & v);
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonString & IRJSonAsString(const IRJsonValue & v);
+const IRJsonString & IRJsonAsString(const IRJsonValue & v);
 
 /**
  * Returns a reference to the given IRJsonBase as an IRJsonDecimal.
@@ -958,7 +958,7 @@ const IRJsonString & IRJSonAsString(const IRJsonValue & v);
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonDecimal & IRJSonAsDecimal(const IRJsonValue & v);
+const IRJsonDecimal & IRJsonAsDecimal(const IRJsonValue & v);
 
 /**
  * Returns a reference to the given IRJsonBase as an IRJsonInteger.
@@ -967,7 +967,7 @@ const IRJsonDecimal & IRJSonAsDecimal(const IRJsonValue & v);
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonInteger & IRJSonAsInteger(const IRJsonValue & v);
+const IRJsonInteger & IRJsonAsInteger(const IRJsonValue & v);
 
 /**
  * Returns a reference to the given IRJsonBase as an IRJsonObject.
@@ -976,7 +976,7 @@ const IRJsonInteger & IRJSonAsInteger(const IRJsonValue & v);
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonObject & IRJSonAsObject(const IRJsonValue & v);
+const IRJsonObject & IRJsonAsObject(const IRJsonValue & v);
 
 /**
  * Returns a reference to the given IRJsonBase as an IRJsonArray.
@@ -985,7 +985,7 @@ const IRJsonObject & IRJSonAsObject(const IRJsonValue & v);
  * @exception std::invalid_argument If v cannot be converted to the desired type.
  * @since 2018.01.08
  */
-const IRJsonArray & IRJSonAsArray(const IRJsonValue & v);
+const IRJsonArray & IRJsonAsArray(const IRJsonValue & v);
 
 } //namespace json
 } // namespace ircommon
