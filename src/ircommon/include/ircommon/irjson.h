@@ -389,6 +389,18 @@ public:
 	void set(const std::string & name, SharedPointer value);
 
 	/**
+	 * Sets the value of an attribute.
+	 *
+	 * @param[in] name The name of the attribute.
+	 * @param[in] value The value. This method will claim the ownership of this
+	 * instance.
+	 * @since 2018.01.09
+	 */
+	void set(const std::string & name, IRJsonValue * value) {
+		this->set(name, SharedPointer(value));
+	}
+
+	/**
 	 * Verifies if a given attribute exists.
 	 *
 	 * @param[in] name The name of the attribute.
@@ -500,14 +512,37 @@ public:
 	 * @param[in] idx The index of the element.
 	 * @param[in] value The value to be added.
 	 */
-	void insert(int idx, const SharedPointer value);
+	void insert(int idx, SharedPointer value);
+
+	/**
+	 * Inserts a new element into a given position.
+	 *
+	 * @param[in] idx The index of the element.
+	 * @param[in] value The value to be added. This method will claim the
+	 * ownership of this instance.
+	 * @since 2018.01.09
+	 */
+	void insert(int idx, IRJsonValue * value) {
+		this->insert(idx, SharedPointer(value));
+	}
 
 	/**
 	 * Inserts a new element into the end of the array.
 	 *
 	 * @param[in] value The value to be added.
 	 */
-	void append(const SharedPointer value);
+	void append(SharedPointer value);
+
+	/**
+	 * Inserts a new element into the end of the array.
+	 *
+	 * @param[in] value The value to be added. This method will claim the
+	 * ownership of this instance.
+	 * @since 2018.01.09
+	 */
+	void append(IRJsonValue * value) {
+		this->append(SharedPointer(value));
+	}
 
 	virtual bool equals(const IRJsonValue & v) const;
 };
