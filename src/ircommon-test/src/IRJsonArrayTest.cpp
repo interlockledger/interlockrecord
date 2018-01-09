@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRJsonArrayTest.h"
+#include "IRJsonObjectTest.h"
 
 //==============================================================================
 // class IRJsonArrayTest
@@ -45,10 +46,69 @@ void IRJsonArrayTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRJsonArrayTest,Constructor) {
+IRJsonArray * IRJsonArrayTest::createArray() {
+	IRJsonArray * a;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	a = new IRJsonArray();
+	a->append(new IRJsonArray());
+	a->append(new IRJsonBoolean(true));
+	a->append(new IRJsonInteger(1));
+	a->append(new IRJsonDecimal(2));
+	a->append(new IRJsonNull());
+	a->append(new IRJsonObject());
+	a->append(new IRJsonString("s"));
+	return a;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonArrayTest,createArray) {
+	IRJsonArray * a;
+
+	a = IRJsonArrayTest::createArray();
+	ASSERT_EQ(7, a->size());
+
+	ASSERT_TRUE((*a)[0]->isArray());
+	ASSERT_EQ(0, IRJsonAsArray(*(*a)[0]).size());
+
+	ASSERT_TRUE((*a)[1]->isBoolean());
+	ASSERT_TRUE((*a)[1]->asBoolean());
+
+	ASSERT_TRUE((*a)[2]->isInteger());
+	ASSERT_EQ(1, (*a)[2]->asInteger());
+
+	ASSERT_TRUE((*a)[3]->isDecimal());
+	ASSERT_EQ(2, (*a)[3]->asDecimal());
+
+	ASSERT_TRUE((*a)[4]->isNull());
+
+	ASSERT_TRUE((*a)[5]->isObject());
+	ASSERT_EQ(0, IRJsonAsObject(*((*a)[5])).size());
+
+	ASSERT_TRUE((*a)[6]->isString());
+	ASSERT_STREQ("s", (*a)[6]->asString().c_str());
+	delete a;
+}
+
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonArrayTest,Constructor) {
+	IRJsonArray * a;
+
+	a = new IRJsonArray();
+	ASSERT_EQ(IRJsonValue::ARRAY, a->type());
+	delete a;
+
+	a = IRJsonArrayTest::createArray();
+	ASSERT_EQ(IRJsonValue::ARRAY, a->type());
+	ASSERT_EQ(7, a->size());
+	delete a;
+
+	a = IRJsonArrayTest::createArray();
+	ASSERT_EQ(IRJsonValue::ARRAY, a->type());
+	a->append(IRJsonArrayTest::createArray());
+	ASSERT_EQ(8, a->size());
+	delete a;
+
 }
 //------------------------------------------------------------------------------
 
