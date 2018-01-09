@@ -50,16 +50,48 @@ IRJsonObject  * IRJsonObjectTest::createObject() {
 	IRJsonObject * o;
 
 	o = new IRJsonObject();
+	o->set("array", new IRJsonArray());
 	o->set("bool", new IRJsonBoolean(true));
 	o->set("int", new IRJsonInteger(1));
 	o->set("dec", new IRJsonDecimal(2));
 	o->set("null", new IRJsonNull());
+	o->set("object", new IRJsonObject());
+	o->set("string", new IRJsonString("s"));
 	return o;
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRJsonObjectTest,Constructor) {
+TEST_F(IRJsonObjectTest,createObject) {
+	IRJsonObject * o;
 
+	o = IRJsonObjectTest::createObject();
+	ASSERT_EQ(IRJsonValue::OBJECT, o->type());
+	ASSERT_EQ(7, o->size());
+	ASSERT_TRUE((*o)["array"]->isArray());
+	ASSERT_EQ(0, IRJsonAsArray(*(*o)["array"]).size());
+
+	ASSERT_TRUE((*o)["bool"]->isBoolean());
+	ASSERT_TRUE((*o)["bool"]->asBoolean());
+
+	ASSERT_TRUE((*o)["int"]->isInteger());
+	ASSERT_EQ(1, (*o)["int"]->asInteger());
+
+	ASSERT_TRUE((*o)["dec"]->isDecimal());
+	ASSERT_EQ(2, (*o)["dec"]->asDecimal());
+
+	ASSERT_TRUE((*o)["null"]->isNull());
+
+	ASSERT_TRUE((*o)["object"]->isObject());
+	ASSERT_EQ(0, IRJsonAsObject(*(*o)["object"]).size());
+
+	ASSERT_TRUE((*o)["string"]->isString());
+	ASSERT_STREQ("s", (*o)["string"]->asString().c_str());
+	delete o;
+}
+
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonObjectTest,Constructor) {
 	IRJsonObject * o;
 
 	o = new IRJsonObject();
@@ -69,13 +101,13 @@ TEST_F(IRJsonObjectTest,Constructor) {
 
 	o = IRJsonObjectTest::createObject();
 	ASSERT_EQ(IRJsonValue::OBJECT, o->type());
-	ASSERT_EQ(4, o->size());
+	ASSERT_EQ(7, o->size());
 	delete o;
 
 	o = IRJsonObjectTest::createObject();
 	ASSERT_EQ(IRJsonValue::OBJECT, o->type());
 	o->set("obj2", IRJsonObjectTest::createObject());
-	ASSERT_EQ(5, o->size());
+	ASSERT_EQ(8, o->size());
 	delete o;
 }
 
