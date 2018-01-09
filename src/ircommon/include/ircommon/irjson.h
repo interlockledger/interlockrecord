@@ -189,6 +189,14 @@ public:
 	 * @exception std::domain_error If if it cannot be converted to string.
 	 */
 	virtual const std::string & asString() const;
+
+	/**
+	 * Creates a clone of this value. The clone is created by
+	 * performing a deep copy of this instance.
+	 *
+	 * @return The clone of this value or NULL if it is not implemented.
+	 */
+	virtual IRJsonValue * clone() const;
 };
 
 /**
@@ -258,6 +266,10 @@ public:
 		} else {
 			return false;
 		}
+	}
+
+	virtual IRJsonValue * clone() const {
+		return new IRJsonBaseValue(this->get());
 	}
 };
 
@@ -351,6 +363,10 @@ public:
 	 * Disposes this instance and releases all associated resources.
 	 */
 	virtual ~IRJsonNull() = default;
+
+	virtual IRJsonValue * clone() const {
+		return new IRJsonNull();
+	}
 };
 
 /**
@@ -451,6 +467,8 @@ public:
 	void getAttributeNames(AttributeList & attr) const;
 
 	virtual bool equals(const IRJsonValue & v) const;
+
+	virtual IRJsonValue * clone() const;
 };
 
 /**
@@ -545,6 +563,8 @@ public:
 	}
 
 	virtual bool equals(const IRJsonValue & v) const;
+
+	virtual IRJsonValue * clone() const;
 };
 
 /**

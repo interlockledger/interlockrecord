@@ -59,6 +59,11 @@ const std::string & IRJsonValue::asString() const {
 	throw std::domain_error("Not a string.");
 }
 
+//------------------------------------------------------------------------------
+IRJsonValue * IRJsonValue::clone() const {
+	return nullptr;
+}
+
 //==============================================================================
 // Class IRJsonObject
 //------------------------------------------------------------------------------
@@ -117,21 +122,27 @@ bool IRJsonObject::equals(const IRJsonValue & v) const {
 		return false;
 	}
 
-	// Retrieve the keys
-	AttributeList attr;
-	this->getAttributeNames(attr);
-
 	// Compare the elements
-	for (int i = 0; i < attr.size(); i++) {
-		if (!o.contains(attr[i])) {
+	for(auto pair = this->_map.begin(); pair != this->_map.end(); pair++) {
+		if (!o.contains(pair->first)) {
 			return false;
 		}
-		if (!(*this)[attr[i]]->equals(*(o[attr[i]]))) {
+		if (!pair->second->equals(*o[pair->first])) {
 			return false;
 		}
 	}
 	return true;
+}
 
+//------------------------------------------------------------------------------
+IRJsonValue * IRJsonObject::clone() const {
+	IRJsonObject * o;
+
+	o = new IRJsonObject ();
+	for(auto pair = this->_map.begin(); pair != this->_map.end(); pair++) {
+		o->set(pair->first, pair->second->clone());
+	}
+	return o;
 }
 
 //==============================================================================
@@ -180,6 +191,16 @@ bool IRJsonArray::equals(const IRJsonValue & v) const {
 	return true;
 }
 
+//------------------------------------------------------------------------------
+IRJsonValue * IRJsonArray::clone() const {
+	IRJsonArray * a;
+
+	a = new IRJsonArray();
+	for (int i = 0; i < this->size(); i++) {
+		a->append((*this)[i]->clone());
+	}
+	return a;
+}
 
 //==============================================================================
 // Class IRJsonSerializer
