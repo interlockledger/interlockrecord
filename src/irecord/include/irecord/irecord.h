@@ -138,10 +138,11 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL  IRContextDispose(IRContext context);
  *
  * @param[out] version The buffer that will receive the version string.
  * @param[in,out] versionSize On input, the size of version in characters. On output, it
- * returns the number of characters used without the null terminator.
+ * returns the number of characters used including the null terminator.
  * @return IRE_SUCCESS on success or other error code in case of failure.
- * @note When the function returns IRE_BUFFER_TOO_SHORT, versionSize will hold the
- * number of characters in the version string.
+ * @note The function will return the required size of the buffer if
+ * version is NULL or the initial versionSize is smaller than the required size to
+ * store the version string. In both cases, the returned error code will be IRE_BUFFER_TOO_SHORT.
  */
 IR_EXPORT_ATTR int IR_EXPORT_CALL  IRGetVersion(char * version, int * versionSize);
 

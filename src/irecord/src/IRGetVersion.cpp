@@ -33,16 +33,16 @@
 IR_EXPORT_ATTR int IR_EXPORT_CALL  IRGetVersion(char * version, int * versionSize) {
 
 	// Check parameters
-	if (version == nullptr) {
-		return IRE_GET_INVALID_PARAM(0);
-	}
 	if (versionSize == nullptr) {
-		return IRE_GET_INVALID_PARAM(1);
+		return IRE_INVALID_PARAM_01;
+	}
+	if (!version) {
+		*versionSize = -1;
 	}
 
-	int len = std::strlen(IRECORD_VERSION_STR);
-	if ((len + 1) < *versionSize) {
-		std::memcpy(version, IRECORD_VERSION_STR, len + 1);
+	int len = std::strlen(IRECORD_VERSION_STR) + 1;
+	if (len <= *versionSize) {
+		std::memcpy(version, IRECORD_VERSION_STR, len);
 		*versionSize = len;
 		return IRE_SUCCESS;
 	} else {

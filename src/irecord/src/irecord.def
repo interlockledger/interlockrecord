@@ -16,7 +16,7 @@ EXPORTS
 	IREmergencyKeyCreate
 	IREmergencyKeyDispose
 	IREmergencyKeyLoad
-	IREmergencyKeySerialized
+	IREmergencyKeySerialize
 	IRGetVersion
 	IRGetVersionInt
 	IRInitialize
