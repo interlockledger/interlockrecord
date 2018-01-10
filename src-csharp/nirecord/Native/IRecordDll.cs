@@ -24,14 +24,17 @@ namespace InterlockRecord.Native
         /// use of the library.
         /// </summary>
         /// <returns>IRErrorCode.IRE_SUCCESS on success or other error code in case of failure.</returns>
-        [DllImport("IRInitialize", CallingConvention=CallingConvention.Cdecl, CharSet=CharSet.Ansi)]
+        [DllImport("irecord.dll", EntryPoint="IRInitialize", CallingConvention=CallingConvention.Cdecl, CharSet=CharSet.Ansi)]
         public static extern int IRInitialize();
 
-        [DllImport("IRDeinitialize", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport("irecord.dll", EntryPoint = "IRDeinitialize", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern int IRDeinitialize();
 
-        [DllImport("IRGetVersion", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport("irecord.dll", EntryPoint = "IRGetVersion", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern int IRGetVersion(byte [] version, ref int versionSize);
+
+        [DllImport("irecord.dll", EntryPoint = "IRGetVersionInt", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        public static extern int IRGetVersionInt(ref int major, ref int minor);
 
     }
 }
