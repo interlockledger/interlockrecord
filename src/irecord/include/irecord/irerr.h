@@ -77,6 +77,52 @@
  */
 #define IRE_INVALID_HANDLE 5
 
+/**
+ * Unsupported version.
+ */
+#define IRE_UNSUPPORTED_VERSION 6
+
+/**
+ * Unsupported algorithm.
+ */
+#define IRE_UNSUPPORTED_ALG 7
+
+/**
+ * Unsupported root template parameter.
+ */
+#define IRE_ROOT_TEMPL_UNSUPPORTED_PARAM 8
+
+/**
+ * Missing emergency key in root template parameter.
+ */
+#define IRE_ROOT_TEMPL_MISSING_EKEY 9
+
+/**
+ * Missing friendly name in root template parameter.
+ */
+#define IRE_ROOT_TEMPL_MISSING_FNAME 10
+
+/**
+ * Missing owner name in root template parameter.
+ */
+#define IRE_ROOT_TEMPL_MISSING_OWNER 11
+
+/**
+ * The block data is corrupted.
+ */
+#define IRE_BLOCK_CORRUPTED 12
+
+/**
+ * The given block is not a root record.
+ */
+#define IRE_BLOCK_NOT_ROOT 13
+
+/**
+ * The given block is not the parent.
+ */
+#define IRE_BLOCK_NOT_PARENT 14
+
+
 //------------------------------------------------------------------------------
 /**
  * @defgroup irerr_param Invalid parameter error codes.
