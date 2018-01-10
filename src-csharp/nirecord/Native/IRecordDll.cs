@@ -36,5 +36,14 @@ namespace InterlockRecord.Native
         [DllImport("irecord.dll", EntryPoint = "IRGetVersionInt", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern int IRGetVersionInt(ref int major, ref int minor);
 
+        [DllImport("irecord.dll", EntryPoint = "IRBlockDispose", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        public static extern int IRBlockDispose(IRContext context, int hBlock);
+
+        [DllImport("irecord.dll", EntryPoint = "IRContext", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        public static extern int IRBlockLoad(IRContext context, int blockSize, byte [] block, ref int hBlock);
+
+
+
+
     }
 }
