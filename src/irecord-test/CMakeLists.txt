@@ -23,7 +23,7 @@ add_executable(irecord-tests
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IREmergencyKeyCreateTest.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IREmergencyKeyDisposeTest.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IREmergencyKeyLoadTest.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/IREmergencyKeySerializedTest.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/IREmergencyKeySerializeTest.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IRGetVersionTest.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IRInitializeTest.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IRInstanceStateCreateTest.cpp

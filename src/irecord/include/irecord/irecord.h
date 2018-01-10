@@ -195,7 +195,7 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IREmergencyKeyDispose(IRContext context, int h
 * @param[out] buff The emergency key serialized buffer.
 * @return IRE_SUCCESS on success or other error code in case of failure.
 */
-IR_EXPORT_ATTR int IR_EXPORT_CALL IREmergencyKeySerialized(IRContext context, int hKey, int ** buffSize, void * buff);
+IR_EXPORT_ATTR int IR_EXPORT_CALL IREmergencyKeySerialize(IRContext context, int hKey, int ** buffSize, void * buff);
 
 /**
 * Loads an emergency key.
@@ -404,11 +404,11 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRBlockDispose(IRContext context, int hBlock);
 *
 * @param[in] context The new context.
 * @param[in] hTemplate The root record template.
-* @param[out] hState The root block state.
+* @param[in] hState The root block state.
 * @param[out] hBlock The block loaded.
 * @return IRE_SUCCESS on success or other error code in case of failure.
 */
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRRootBlockCreate(IRContext context, int hTemplate, int * hState, int * hBlock);
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRRootBlockCreate(IRContext context, int hTemplate, int hState, int * hBlock);
 
 /** @}*/ //addtogroup irecord_pub_root_block
 
@@ -436,7 +436,7 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRRootBlockCreate(IRContext context, int hTemp
 * @return IRE_SUCCESS on success or other error code in case of failure.
 */
 IR_EXPORT_ATTR int IR_EXPORT_CALL IRDataBlockAdd(IRContext context, int hState, int lockKey, int hParentBlock,
-	uint64_t applicationId, int payloadSize, int payload, int * hBlock);
+	uint64_t applicationId, int payloadSize, const void * payload, int * hBlock);
 
 
 /** @}*/ //addtogroup irecord_pub_data_record

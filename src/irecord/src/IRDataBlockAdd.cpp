@@ -31,7 +31,7 @@
 
 //------------------------------------------------------------------------------
 IR_EXPORT_ATTR int IR_EXPORT_CALL IRDataBlockAdd(IRContext context, int hState, int lockKey, int hParentBlock,
-	uint64_t applicationId, int payloadSize, int payload, int * hBlock) {
+	uint64_t applicationId, int payloadSize, const void * payload, int * hBlock) {
 	// TODO 
 	return IRE_NOT_IMPLEMENTED;
 }

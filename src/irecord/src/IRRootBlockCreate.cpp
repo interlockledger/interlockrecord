@@ -30,7 +30,7 @@
 #include <cstring>
 
 //------------------------------------------------------------------------------
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRRootBlockCreate(IRContext context, int hTemplate, int * hState, int * hBlock) {
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRRootBlockCreate(IRContext context, int hTemplate, int hState, int * hBlock) {
 	// TODO 
 	return IRE_NOT_IMPLEMENTED;
 }

@@ -36,7 +36,7 @@ add_library(irecord SHARED
 	src/IREmergencyKeyCreate.cpp
 	src/IREmergencyKeyDispose.cpp
 	src/IREmergencyKeyLoad.cpp
-	src/IREmergencyKeySerialized.cpp
+	src/IREmergencyKeySerialize.cpp
 	src/IRGetVersion.cpp
 	src/IRInitialize.cpp
 	src/IRInstanceStateCreate.cpp
