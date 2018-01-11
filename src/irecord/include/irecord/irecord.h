@@ -111,8 +111,7 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRDeinitialize();
  * @return IRE_SUCCESS on success or other error code in case of failure.
  * @note This function is thread safe.
  */
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRContextCreate(const char * configFile,
-	IRContext * context);
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRContextCreate(const char * configFile, IRContext * context);
 
 /**
  * Disposes the IRContext created with IRContextCreate().
@@ -144,7 +143,7 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL  IRContextDispose(IRContext context);
  * version is NULL or the initial versionSize is smaller than the required size to
  * store the version string. In both cases, the returned error code will be IRE_BUFFER_TOO_SHORT.
  */
-IR_EXPORT_ATTR int IR_EXPORT_CALL  IRGetVersion(char * version, int * versionSize);
+IR_EXPORT_ATTR int IR_EXPORT_CALL  IRGetVersion(int * versionSize, char * version);
 
 /**
  * Get the version of the DLL as integers.
@@ -192,11 +191,11 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IREmergencyKeyDispose(IRContext context, int h
 *
 * @param[in] context The new context.
 * @param[in] hkey The emergency key.
-* @param[out] buffSize The buffer size of the serialized emergency key.
+* @param[in/out] buffSize The buffer size of the serialized emergency key.
 * @param[out] buff The emergency key serialized buffer.
 * @return IRE_SUCCESS on success or other error code in case of failure.
 */
-IR_EXPORT_ATTR int IR_EXPORT_CALL IREmergencyKeySerialize(IRContext context, int hKey, int ** buffSize, void * buff);
+IR_EXPORT_ATTR int IR_EXPORT_CALL IREmergencyKeySerialize(IRContext context, int hKey, int * buffSize, void * buff);
 
 /**
 * Loads an emergency key.
@@ -300,13 +299,13 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRRootTemplateSetNetwork(IRContext context, in
 * @param[out] hState The state created.
 * @return IRE_SUCCESS on success or other error code in case of failure.
 */
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateCreate(IRContext context, int ** hState);
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateCreate(IRContext context, int * hState);
 
 /**
 * Sets a new state parameter.
 *
 * @param[in] context The new context.
-* @param[in] hState The state.
+* @param[out] hState The state.
 * @param[in] param The state parameter to be set.
 * @param[in] value The state parameter value to be set
 * @note  Parameters such as Hash type, Signature algorithm type among others
@@ -323,18 +322,18 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateSetParam(IRContext context, int
 * @param[out] hState The state loaded.
 * @return IRE_SUCCESS on success or other error code in case of failure.
 */
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateLoad(IRContext context, int stateSize, const void * state, int ** hState);
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateLoad(IRContext context, int stateSize, const void * state, int * hState);
 
 /**
 * Serializes a state.
 *
 * @param[in] context The new context.
 * @param[in] hState The state.
-* @param[out] buffSize The buffer size of the serialized state.
+* @param[in/out] buffSize The buffer size of the serialized state.
 * @param[out] buff The serialized state buffer.
 * @return IRE_SUCCESS on success or other error code in case of failure.
 */
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateSerialize(IRContext context, int hState, int ** buffSize, void * buff);
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateSerialize(IRContext context, int hState, int * buffSize, void * buff);
 
 /**
 * Diosposes a state.
@@ -373,11 +372,11 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRBlockLoad(IRContext context, int blockSize, 
 *
 * @param[in] context The new context.
 * @param[in] hBlock The block.
-* @param[out] buffSize The buffer size of the serialized block.
+* @param[in/out] buffSize The buffer size of the serialized block.
 * @param[out] buff The serialized block buffer.
 * @return IRE_SUCCESS on success or other error code in case of failure.
 */
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRBlockSerialize(IRContext context, int hBlock, int ** buffSize, void * buff);
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRBlockSerialize(IRContext context, int hBlock, int * buffSize, void * buff);
 
 /**
 * Diosposes a block.
@@ -528,7 +527,7 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRCheckEmergencyClosing(IRContext context, int
 * @param[in] context The new context.
 * @param[in] hBlock The actual block.
 * @param[in] param The parameter.
-* @param[in] value The parameter value.
+* @param[out] value The parameter value.
 * @return IRE_SUCCESS on success or other error code in case of failure.
 */
 IR_EXPORT_ATTR int IR_EXPORT_CALL IRBlockParameter(IRContext context, int hBlock, int param, uint64_t * value);
