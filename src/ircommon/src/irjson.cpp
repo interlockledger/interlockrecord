@@ -149,12 +149,20 @@ IRJsonValue * IRJsonObject::clone() const {
 // Class IRJsonArray
 //------------------------------------------------------------------------------
 IRJsonValue::SharedPointer & IRJsonArray::operator[](int idx) {
+#ifdef NDEBUG
 	return this->_values[idx];
+#else
+	return this->_values.at(idx);
+#endif
 }
 
 //------------------------------------------------------------------------------
 const IRJsonValue::SharedPointer & IRJsonArray::operator[](int idx) const {
+#ifdef NDEBUG
 	return this->_values[idx];
+#else
+	return this->_values.at(idx);
+#endif
 }
 
 //------------------------------------------------------------------------------
