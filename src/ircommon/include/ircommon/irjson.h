@@ -506,6 +506,7 @@ public:
 	 *
 	 * @param[in] idx The index of the element.
 	 * @return A reference to the given element.
+	 * @note This operator does not check the bounds of the index.
 	 */
 	SharedPointer & operator[](int idx);
 
@@ -514,6 +515,7 @@ public:
 	 *
 	 * @param[in] idx The index of the element.
 	 * @return A read-only reference to the given element.
+	 * @note This operator does not check the bounds of the index.
 	 */
 	const SharedPointer & operator[](int idx) const;
 
