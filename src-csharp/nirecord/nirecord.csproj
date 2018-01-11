@@ -43,7 +43,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IRBaseObject.cs" />
+    <Compile Include="IRClosingReason.cs" />
     <Compile Include="IRContext.cs" />
+    <Compile Include="IRContextObject.cs" />
+    <Compile Include="IRBlock.cs" />
+    <Compile Include="IRInstanceState.cs" />
+    <Compile Include="IRKeyType.cs" />
+    <Compile Include="IRRootTemplate.cs" />
+    <Compile Include="IREmergencyKey.cs" />
     <Compile Include="Native\IRecordDll.cs" />
     <Compile Include="IRErrorCode.cs" />
     <Compile Include="IRecordUtil.cs" />
