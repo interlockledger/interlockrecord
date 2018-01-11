@@ -89,7 +89,6 @@ TEST_F(IRJsonArrayTest,createArray) {
 	delete a;
 }
 
-
 //------------------------------------------------------------------------------
 TEST_F(IRJsonArrayTest,Constructor) {
 	IRJsonArray * a;
@@ -108,7 +107,236 @@ TEST_F(IRJsonArrayTest,Constructor) {
 	a->append(IRJsonArrayTest::createArray());
 	ASSERT_EQ(8, a->size());
 	delete a;
+}
 
+//------------------------------------------------------------------------------
+TEST_F(IRJsonArrayTest, is) {
+	IRJsonArray a;
+
+	ASSERT_TRUE(a.isArray());
+	ASSERT_FALSE(a.isBoolean());
+	ASSERT_FALSE(a.isDecimal());
+	ASSERT_FALSE(a.isInteger());
+	ASSERT_FALSE(a.isNull());
+	ASSERT_FALSE(a.isObject());
+	ASSERT_FALSE(a.isString());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonArrayTest, as) {
+	IRJsonArray a;
+
+	try{
+		a.asBoolean();
+		FAIL();
+	} catch(std::domain_error & e){}
+	try{
+		a.asInteger();
+		FAIL();
+	} catch(std::domain_error & e){}
+	try{
+		a.asString();
+		FAIL();
+	} catch(std::domain_error & e){}
+	try{
+		a.asDecimal();
+		FAIL();
+	} catch(std::domain_error & e){}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonArrayTest, appendShared) {
+	IRJsonArray a;
+
+	a.append(IRJsonValue::SharedPointer(new IRJsonBoolean()));
+	ASSERT_TRUE(a[0]->isBoolean());
+	ASSERT_EQ(1, a.size());
+
+	a.append(std::make_shared<IRJsonInteger>());
+	ASSERT_TRUE(a[0]->isBoolean());
+	ASSERT_TRUE(a[1]->isInteger());
+	ASSERT_EQ(2, a.size());
+
+	a.append(std::make_shared<IRJsonDecimal>());
+	ASSERT_TRUE(a[0]->isBoolean());
+	ASSERT_TRUE(a[1]->isInteger());
+	ASSERT_TRUE(a[2]->isDecimal());
+	ASSERT_EQ(3, a.size());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonArrayTest, appendPtr) {
+	IRJsonArray a;
+
+	a.append(new IRJsonBoolean());
+	ASSERT_TRUE(a[0]->isBoolean());
+	ASSERT_EQ(1, a.size());
+
+	a.append(new IRJsonInteger());
+	ASSERT_TRUE(a[0]->isBoolean());
+	ASSERT_TRUE(a[1]->isInteger());
+	ASSERT_EQ(2, a.size());
+
+	a.append(new IRJsonDecimal());
+	ASSERT_TRUE(a[0]->isBoolean());
+	ASSERT_TRUE(a[1]->isInteger());
+	ASSERT_TRUE(a[2]->isDecimal());
+	ASSERT_EQ(3, a.size());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonArrayTest, insertShared) {
+	IRJsonArray a;
+
+	a.insert(0, IRJsonValue::SharedPointer(new IRJsonBoolean()));
+	ASSERT_TRUE(a[0]->isBoolean());
+	ASSERT_EQ(1, a.size());
+
+	a.insert(0, std::make_shared<IRJsonInteger>());
+	ASSERT_TRUE(a[0]->isInteger());
+	ASSERT_TRUE(a[1]->isBoolean());
+	ASSERT_EQ(2, a.size());
+
+	a.insert(1, std::make_shared<IRJsonDecimal>());
+	ASSERT_TRUE(a[0]->isInteger());
+	ASSERT_TRUE(a[1]->isDecimal());
+	ASSERT_TRUE(a[2]->isBoolean());
+	ASSERT_EQ(3, a.size());
+
+	a.insert(3, std::make_shared<IRJsonString>());
+	ASSERT_TRUE(a[0]->isInteger());
+	ASSERT_TRUE(a[1]->isDecimal());
+	ASSERT_TRUE(a[2]->isBoolean());
+	ASSERT_TRUE(a[3]->isString());
+	ASSERT_EQ(4, a.size());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonArrayTest, insertPtr) {
+	IRJsonArray a;
+
+	a.insert(0, new IRJsonBoolean());
+	ASSERT_TRUE(a[0]->isBoolean());
+	ASSERT_EQ(1, a.size());
+
+	a.insert(0, new IRJsonInteger());
+	ASSERT_TRUE(a[0]->isInteger());
+	ASSERT_TRUE(a[1]->isBoolean());
+	ASSERT_EQ(2, a.size());
+
+	a.insert(1, new IRJsonDecimal());
+	ASSERT_TRUE(a[0]->isInteger());
+	ASSERT_TRUE(a[1]->isDecimal());
+	ASSERT_TRUE(a[2]->isBoolean());
+	ASSERT_EQ(3, a.size());
+
+	a.insert(3, new IRJsonString());
+	ASSERT_TRUE(a[0]->isInteger());
+	ASSERT_TRUE(a[1]->isDecimal());
+	ASSERT_TRUE(a[2]->isBoolean());
+	ASSERT_TRUE(a[3]->isString());
+	ASSERT_EQ(4, a.size());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonArrayTest, size) {
+	IRJsonArray a;
+
+	for (int i = 0; i < 10; i++) {
+		ASSERT_EQ(i, a.size());
+		a.append(new IRJsonBoolean());
+		ASSERT_EQ(i + 1, a.size());
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonArrayTest, AccessOperatorRW) {
+	IRJsonArray a;
+
+	a.append(new IRJsonBoolean());
+	a.append(new IRJsonInteger());
+	a.append(new IRJsonDecimal());
+	ASSERT_TRUE(a[0]->isBoolean());
+	ASSERT_TRUE(a[1]->isInteger());
+	ASSERT_TRUE(a[2]->isDecimal());
+
+	a[1] = IRJsonValue::SharedPointer(new IRJsonString());
+	ASSERT_TRUE(a[0]->isBoolean());
+	ASSERT_TRUE(a[1]->isString());
+	ASSERT_TRUE(a[2]->isDecimal());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonArrayTest, AccessOperatorRO) {
+	IRJsonArray a;
+	IRJsonArray & ra = a;
+
+	a.append(new IRJsonBoolean());
+	a.append(new IRJsonInteger());
+	a.append(new IRJsonDecimal());
+
+	ASSERT_TRUE(ra[0]->isBoolean());
+	ASSERT_TRUE(ra[1]->isInteger());
+	ASSERT_TRUE(ra[2]->isDecimal());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonArrayTest, Remove) {
+	IRJsonArray a;
+
+	a.append(new IRJsonBoolean());
+	a.append(new IRJsonInteger());
+	a.append(new IRJsonDecimal());
+	a.append(new IRJsonString());
+
+	ASSERT_EQ(4, a.size());
+	ASSERT_TRUE(a[0]->isBoolean());
+	ASSERT_TRUE(a[1]->isInteger());
+	ASSERT_TRUE(a[2]->isDecimal());
+	ASSERT_TRUE(a[3]->isString());
+
+	a.remove(0);
+	ASSERT_EQ(3, a.size());
+	ASSERT_TRUE(a[0]->isInteger());
+	ASSERT_TRUE(a[1]->isDecimal());
+	ASSERT_TRUE(a[2]->isString());
+
+	a.remove(1);
+	ASSERT_EQ(2, a.size());
+	ASSERT_TRUE(a[0]->isInteger());
+	ASSERT_TRUE(a[1]->isString());
+
+	a.remove(1);
+	ASSERT_EQ(1, a.size());
+	ASSERT_TRUE(a[0]->isInteger());
+
+	a.remove(0);
+	ASSERT_EQ(0, a.size());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonArrayTest, Equals) {
+	IRJsonArray * a;
+	IRJsonArray * b;
+	IRJsonArray * c;
+
+	a = IRJsonArrayTest::createArray();
+	b = IRJsonArrayTest::createArray();
+	c = IRJsonArrayTest::createArray();
+	(*c)[4] = IRJsonValue::SharedPointer(new IRJsonArray());
+
+	ASSERT_TRUE(a->equals(*a));
+	ASSERT_TRUE(a->equals(*b));
+	ASSERT_FALSE(a->equals(*c));
+
+	ASSERT_TRUE((*a) ==(*a));
+	ASSERT_TRUE((*a) == (*b));
+	ASSERT_FALSE((*a) == (*c));
+
+	delete a;
+	delete b;
+	delete c;
 }
 //------------------------------------------------------------------------------
+
 
