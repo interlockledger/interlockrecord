@@ -30,7 +30,7 @@
 #include <cstring>
 
 //------------------------------------------------------------------------------
-IR_EXPORT_ATTR int IR_EXPORT_CALL IREmergencyClose(IRContext context, int hState, int hParentBlock, int hEmerngencyKey, int reason, const char * comments, int * hBlock) {
+IR_EXPORT_ATTR int IR_EXPORT_CALL IREmergencyClose(IRContext context, int hState, int hRootBlock, int hParentBlock, int hEmerngencyKey, int reason, const char * comments, int * hBlock) {
 	// TODO 
 	return IRE_NOT_IMPLEMENTED;
 }

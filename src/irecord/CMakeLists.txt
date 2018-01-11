@@ -48,6 +48,7 @@ add_library(irecord SHARED
 	src/IRRootTemplateCreate.cpp
 	src/IRRootTemplateDispose.cpp
 	src/IRRootTemplateParam.cpp
+	src/IRRootTemplateParamInt.cpp
 	src/IRRootTemplateSetEmergencyKey.cpp
 	src/IRRootTemplateSetNetwork.cpp
 	src/IRRootTemplateSetParent.cpp

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Open Communications Security
+ * Copyright (c) 2017-2018, Open Communications Security
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -30,39 +30,9 @@
 #include <cstring>
 
 //------------------------------------------------------------------------------
-IR_EXPORT_ATTR int IR_EXPORT_CALL  IRGetVersion(int * versionSize, char * version) {
-
-	// Check parameters
-	if (versionSize == nullptr) {
-		return IRE_INVALID_PARAM_01;
-	}
-	if (!version) {
-		*versionSize = -1;
-	}
-
-	int len = std::strlen(IRECORD_VERSION_STR) + 1;
-	if (len <= *versionSize) {
-		std::memcpy(version, IRECORD_VERSION_STR, len);
-		*versionSize = len;
-		return IRE_SUCCESS;
-	} else {
-		*versionSize = len;
-		return IRE_BUFFER_TOO_SHORT;
-	} 
-}
-
-//------------------------------------------------------------------------------
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRGetVersionInt(int * major, int * minor) {
-
-	if (major == nullptr) {
-		return IRE_GET_INVALID_PARAM(0);
-	}
-	if (minor == nullptr) {
-		return IRE_GET_INVALID_PARAM(1);
-	}
-	*major = IRECORD_VERSION_MAJOR;
-	*minor = IRECORD_VERSION_MINOR;
-	return IRE_SUCCESS;
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRRootTemplateParamInt(IRContext context, int hTemplate, int param, int64_t value) {
+	// TODO 
+	return IRE_NOT_IMPLEMENTED;
 }
 //------------------------------------------------------------------------------
 
