@@ -30,7 +30,7 @@
 #include <cstring>
 
 //------------------------------------------------------------------------------
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateLoad(IRContext context, int stateSize, const void * state, int ** hState) {
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateLoad(IRContext context, int stateSize, const void * state, int * hState) {
 	// TODO 
 	return IRE_NOT_IMPLEMENTED;
 }

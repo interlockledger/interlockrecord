@@ -30,7 +30,7 @@
 #include <cstring>
 
 //------------------------------------------------------------------------------
-IR_EXPORT_ATTR int IR_EXPORT_CALL IREmergencyKeySerialize(IRContext context, int hKey, int ** buffSize, void * buff) {
+IR_EXPORT_ATTR int IR_EXPORT_CALL IREmergencyKeySerialize(IRContext context, int hKey, int * buffSize, void * buff) {
 	// TODO 
 	return IRE_NOT_IMPLEMENTED;
 }

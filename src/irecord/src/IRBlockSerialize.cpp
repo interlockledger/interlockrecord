@@ -30,7 +30,7 @@
 #include <cstring>
 
 //------------------------------------------------------------------------------
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRBlockSerialize(IRContext context, int hBlock, int ** buffSize, void * buff) {
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRBlockSerialize(IRContext context, int hBlock, int * buffSize, void * buff) {
 	// TODO 
 	return IRE_NOT_IMPLEMENTED;
 }

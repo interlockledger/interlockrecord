@@ -250,6 +250,17 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRRootTemplateDispose(IRContext context, int h
 IR_EXPORT_ATTR int IR_EXPORT_CALL IRRootTemplateParam(IRContext context, int hTemplate, int param, const char * value);
 
 /**
+* Root Record Template Integer Parameter.
+*
+* @param[in] context The new context.
+* @param[in] hTemplate The root record template.
+* @param[in] param The new root record template parameter.
+* @param[in] value The root record template integer parameter value.
+* @return IRE_SUCCESS on success or other error code in case of failure.
+*/
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRRootTemplateParamInt(IRContext context, int hTemplate, int param, int64_t value);
+
+/**
 * Sets a Parent Root Record Template.
 *
 * @param[in] context The new context.
@@ -311,7 +322,7 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateCreate(IRContext context, int *
 * @note  Parameters such as Hash type, Signature algorithm type among others
 * @return IRE_SUCCESS on success or other error code in case of failure.
 */
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateSetParam(IRContext context, int * hState, int param, int value);
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateSetParam(IRContext context, int * hState, int param, uint64_t value);
 
 /**
 * Loads a state.
@@ -478,7 +489,7 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRClose(IRContext context, int hState, int hPa
 * @param[out] hBlock The block emergency closed.
 * @return IRE_SUCCESS on success or other error code in case of failure.
 */
-IR_EXPORT_ATTR int IR_EXPORT_CALL IREmergencyClose(IRContext context, int hState, int hParentBlock, int hEmerngencyKey, int reason, const char * comments, int * hBlock);
+IR_EXPORT_ATTR int IR_EXPORT_CALL IREmergencyClose(IRContext context, int hState, int hRootBlock, int hParentBlock, int hEmerngencyKey, int reason, const char * comments, int * hBlock);
 
 /** @}*/ //addtogroup irecord_pub_closing_record
 

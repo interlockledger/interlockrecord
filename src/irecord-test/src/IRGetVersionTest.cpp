@@ -55,16 +55,16 @@ TEST_F(IRGetVersionTest,IRGetVersion) {
 	retval = IRGetVersion(NULL, NULL);
 	ASSERT_EQ(IRE_GET_INVALID_PARAM(0), retval);
 
-	retval = IRGetVersion(version, NULL);
+	retval = IRGetVersion(NULL,version);
 	ASSERT_EQ(IRE_GET_INVALID_PARAM(1), retval);
 
 	versionSize = 0;
-	retval = IRGetVersion(version, &versionSize);
+	retval = IRGetVersion(&versionSize, version);
 	ASSERT_EQ(IRE_BUFFER_TOO_SHORT, retval);
 	ASSERT_LT(0, versionSize);
 
 	versionSize = sizeof(version);
-	retval = IRGetVersion(version, &versionSize);
+	retval = IRGetVersion(&versionSize, version);
 	ASSERT_EQ(IRE_SUCCESS, retval);
 	ASSERT_EQ(std::strlen(version), versionSize);
 	std::cout << "Version: " << version << "\n";

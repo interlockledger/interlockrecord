@@ -32,11 +32,11 @@ namespace InterlockRecord.Tests
             byte[] version;
             int versionSize = 0;
 
-            retval = IRecordDll.IRGetVersion(null, ref versionSize);
+            retval = IRecordDll.IRGetVersion( ref versionSize, null);
             Assert.AreEqual(IRErrorCode.IRE_BUFFER_TOO_SHORT, (IRErrorCode)retval);
 
             version = new byte[versionSize];
-            retval = IRecordDll.IRGetVersion(version, ref versionSize);
+            retval = IRecordDll.IRGetVersion(ref versionSize, version);
             Assert.AreEqual(IRErrorCode.IRE_SUCCESS, (IRErrorCode)retval);
             Assert.AreEqual(versionSize - 1, IRecordUtil.CStringLength(version));
             Assert.AreEqual("0.1.0.0", IRecordUtil.FromUTF8(version));

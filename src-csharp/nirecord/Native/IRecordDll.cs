@@ -31,7 +31,7 @@ namespace InterlockRecord.Native
         public static extern int IRDeinitialize();
 
         [DllImport("irecord.dll", EntryPoint = "IRGetVersion", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        public static extern int IRGetVersion(byte[] version, ref int versionSize);
+        public static extern int IRGetVersion(ref int versionSize, byte[] version);
 
         [DllImport("irecord.dll", EntryPoint = "IRGetVersionInt", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern int IRGetVersionInt(ref int major, ref int minor);
@@ -70,7 +70,7 @@ namespace InterlockRecord.Native
         public static extern int IRDataBlockAdd(IRContext context, int hState, int lockKey, int hParentBlock, ulong applicationId, int payloadSize, byte[] payload, ref int hBlock);
 
         [DllImport("irecord.dll", EntryPoint = "IREmergencyClose", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        public static extern int IREmergencyClose(IRContext context, int hState, int hParentBlock, int hEmerngencyKey, int reason, byte[] comments, ref int hBlock);
+        public static extern int IREmergencyClose(IRContext context, int hState, int hRootBlock, int hParentBlock, int hEmerngencyKey, int reason, byte[] comments, ref int hBlock);
 
         [DllImport("irecord.dll", EntryPoint = "IREmergencyKeyCreate", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern int IREmergencyKeyCreate(IRContext context, int type, int size, ref int hKey);
@@ -97,7 +97,7 @@ namespace InterlockRecord.Native
         public static extern int IRInstanceStateSerialize(IRContext context, int hState, ref byte[] buffSize, ref byte[] buff);
 
         [DllImport("irecord.dll", EntryPoint = "IRInstanceStateSetParam", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        public static extern int IRInstanceStateSetParam(IRContext context, ref int hState, int param, int value);
+        public static extern int IRInstanceStateSetParam(IRContext context, ref int hState, int param, ulong value);
 
         [DllImport("irecord.dll", EntryPoint = "IRRootBlockCreate", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern int IRRootBlockCreate(IRContext context, int hTemplate, int hState, ref int hBlock);

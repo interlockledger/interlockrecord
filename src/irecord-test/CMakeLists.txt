@@ -35,6 +35,7 @@ add_executable(irecord-tests
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IRRootTemplateCreateTest.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IRRootTemplateDisposeTest.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IRRootTemplateParamTest.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/IRRootTemplateParamIntTest.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IRRootTemplateSetEmergencyKeyTest.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IRRootTemplateSetNetworkTest.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IRRootTemplateSetParentTest.cpp

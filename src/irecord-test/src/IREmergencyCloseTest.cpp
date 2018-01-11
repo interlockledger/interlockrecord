@@ -49,7 +49,7 @@ void IREmergencyCloseTest::TearDown() {
 TEST_F(IREmergencyCloseTest, FunctionExits) {
 	int retval;
 
-	retval = IREmergencyClose(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	retval = IREmergencyClose(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

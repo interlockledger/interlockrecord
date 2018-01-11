@@ -93,14 +93,14 @@ namespace InterlockRecord
             byte[] versionBin;
 
             versionSize = 0;
-            retval = (IRErrorCode)IRecordDll.IRGetVersion(null, ref versionSize);
+            retval = (IRErrorCode)IRecordDll.IRGetVersion(ref versionSize, null);
             if (retval != IRErrorCode.IRE_BUFFER_TOO_SHORT)
             {
                 throw new IRException(retval, "Unexpected error code.");
             }
             versionSize = versionSize + 1;
             versionBin = new byte[versionSize];
-            retval = (IRErrorCode)IRecordDll.IRGetVersion(versionBin, ref versionSize);
+            retval = (IRErrorCode)IRecordDll.IRGetVersion(ref versionSize, versionBin);
             if (retval == IRErrorCode.IRE_SUCCESS)
             {
                 return IRecordUtil.FromUTF8(versionBin);
