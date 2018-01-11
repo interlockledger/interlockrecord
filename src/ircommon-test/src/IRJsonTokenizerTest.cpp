@@ -25,6 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRJsonTokenizerTest.h"
+#include <ircommon/irjson.h>
+using namespace ircommon::json;
 
 //==============================================================================
 // class IRJsonTokenizerTest
@@ -45,10 +47,99 @@ void IRJsonTokenizerTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRJsonTokenizerTest,Constructor) {
+TEST_F(IRJsonTokenizerTest, unicodeToUTF8) {
+	std::string out;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	out.clear();
+	IRJsonTokenizer::unicodeToUTF8(0x24, out);
+	ASSERT_STREQ("\x24", out.c_str());
+
+	out.clear();
+	IRJsonTokenizer::unicodeToUTF8(0xA2, out);
+	ASSERT_STREQ("\xC2\xA2", out.c_str());
+
+	out.clear();
+	IRJsonTokenizer::unicodeToUTF8(0x20AC, out);
+	ASSERT_STREQ("\xE2\x82\xAC", out.c_str());
+
+	out.clear();
+	IRJsonTokenizer::unicodeToUTF8(0x10348, out);
+	ASSERT_STREQ("\xF0\x90\x8D\x88", out.c_str());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, tokenToName) {
+
+	ASSERT_STREQ("ARRAY_BEGIN", IRJsonTokenizer::tokenToName(IRJsonTokenizer::ARRAY_BEGIN).c_str());
+	ASSERT_STREQ("ARRAY_END", IRJsonTokenizer::tokenToName(IRJsonTokenizer::ARRAY_END).c_str());
+	ASSERT_STREQ("INPUT_END", IRJsonTokenizer::tokenToName(IRJsonTokenizer::INPUT_END).c_str());
+	ASSERT_STREQ("INVALID", IRJsonTokenizer::tokenToName(IRJsonTokenizer::INVALID).c_str());
+	ASSERT_STREQ("NAME_SEP", IRJsonTokenizer::tokenToName(IRJsonTokenizer::NAME_SEP).c_str());
+	ASSERT_STREQ("OBJ_BEGIN", IRJsonTokenizer::tokenToName(IRJsonTokenizer::OBJ_BEGIN).c_str());
+	ASSERT_STREQ("OBJ_END", IRJsonTokenizer::tokenToName(IRJsonTokenizer::OBJ_END).c_str());
+	ASSERT_STREQ("VALUE_SEP", IRJsonTokenizer::tokenToName(IRJsonTokenizer::VALUE_SEP).c_str());
+	ASSERT_STREQ("VAL_DEC", IRJsonTokenizer::tokenToName(IRJsonTokenizer::VAL_DEC).c_str());
+	ASSERT_STREQ("VAL_FALSE", IRJsonTokenizer::tokenToName(IRJsonTokenizer::VAL_FALSE).c_str());
+	ASSERT_STREQ("VAL_INT", IRJsonTokenizer::tokenToName(IRJsonTokenizer::VAL_INT).c_str());
+	ASSERT_STREQ("VAL_NULL", IRJsonTokenizer::tokenToName(IRJsonTokenizer::VAL_NULL).c_str());
+	ASSERT_STREQ("VAL_STRING", IRJsonTokenizer::tokenToName(IRJsonTokenizer::VAL_STRING).c_str());
+	ASSERT_STREQ("VAL_TRUE", IRJsonTokenizer::tokenToName(IRJsonTokenizer::VAL_TRUE).c_str());
+	ASSERT_STREQ("????", IRJsonTokenizer::tokenToName((IRJsonTokenizer::TokenType)-1).c_str());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, isSpace) {
+
+	for (int c = 0; c < 256; c++) {
+		switch (c) {
+		case 0x20:
+		case 0x09:
+		case 0x0A:
+		case 0x0D:
+			ASSERT_TRUE(IRJsonTokenizer::isSpace(c));
+			break;
+		default:
+			ASSERT_FALSE(IRJsonTokenizer::isSpace(c));
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, isHex) {
+
+	for (int c = 0; c < 256; c++) {
+		if (((c >= '0') && (c <= '9')) ||
+				((c >= 'A') && (c <= 'F')) ||
+				((c >= 'a') && (c <= 'f'))) {
+			ASSERT_TRUE(IRJsonTokenizer::isHex(c));
+		} else {
+			ASSERT_FALSE(IRJsonTokenizer::isHex(c));
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, isDigit) {
+
+	for (int c = 0; c < 256; c++) {
+		if ((c >= '0') && (c <= '9')) {
+			ASSERT_TRUE(IRJsonTokenizer::isDigit(c));
+		} else {
+			ASSERT_FALSE(IRJsonTokenizer::isDigit(c));
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, isKeywordChar) {
+
+	for (int c = 0; c < 256; c++) {
+		if ((c >= 'a') && (c <= 'z')) {
+			ASSERT_TRUE(IRJsonTokenizer::isKeywordChar(c));
+		} else {
+			ASSERT_FALSE(IRJsonTokenizer::isKeywordChar(c));
+		}
+	}
 }
 //------------------------------------------------------------------------------
 
