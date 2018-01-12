@@ -32,6 +32,7 @@
 #include <stdlib.h>
 
 using namespace ircommon;
+using namespace ircommon::codec;
 
 // Samples from https://tools.ietf.org/html/rfc4648
 #define IRBase2NCodecTest_RFC4648_BASE64_NP_SIZE (7 * 2)

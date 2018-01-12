@@ -32,6 +32,7 @@
 // https://github.com/opencs/ocsbincodec-c
 
 using namespace ircommon;
+using namespace ircommon::codec;
 
 //==============================================================================
 // Class IRAlphabet

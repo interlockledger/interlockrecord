@@ -27,6 +27,7 @@
 #include "IRHexAlphabetTest.h"
 
 using namespace ircommon;
+using namespace ircommon::codec;
 
 //==============================================================================
 // class IRHexAlphabetTest

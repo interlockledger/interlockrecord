@@ -26,6 +26,7 @@
  */
 #include "IRBinaryAlphabetTest.h"
 using namespace ircommon;
+using namespace ircommon::codec;
 
 //==============================================================================
 // class IRBinaryAlphabetTest

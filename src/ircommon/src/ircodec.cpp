@@ -30,6 +30,7 @@
 #include <cassert>
 
 using namespace ircommon;
+using namespace ircommon::codec;
 
 //==============================================================================
 // Class IRCodec

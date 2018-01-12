@@ -33,6 +33,7 @@
 #include <cstdint>
 
 namespace ircommon {
+namespace codec {
 
 /**
  * This is the base class for all binary-to-text encoders. This code is loosely
@@ -264,6 +265,7 @@ public:
 	}
 };
 
+} // namespace codec
 } //namespace ircommon
 
 #endif /* __IRCOMMON_IRCODEC_H__ */

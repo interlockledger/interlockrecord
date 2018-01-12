@@ -30,6 +30,7 @@
 #include <ircommon/iralphab.h>
 
 using namespace ircommon;
+using namespace ircommon::codec;
 
 //==============================================================================
 // class IRDummyAlphabet - This class will be used to test IRAlphabet and
@@ -85,7 +86,7 @@ void IRAlphabetTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-bool IRAlphabetTest::checkMapping(ircommon::IRAlphabet & alphabet) {
+bool IRAlphabetTest::checkMapping(ircommon::codec::IRAlphabet & alphabet) {
 
 	for (int i = 0; i < alphabet.size(); i++) {
 		int c = alphabet.getChar(i);
@@ -97,7 +98,7 @@ bool IRAlphabetTest::checkMapping(ircommon::IRAlphabet & alphabet) {
 }
 
 //------------------------------------------------------------------------------
-bool IRAlphabetTest::checkUniqueChars(ircommon::IRAlphabet & alphabet) {
+bool IRAlphabetTest::checkUniqueChars(ircommon::codec::IRAlphabet & alphabet) {
 
 	std::set<int> chars;
 	for (int i = 0; i < alphabet.size(); i++) {

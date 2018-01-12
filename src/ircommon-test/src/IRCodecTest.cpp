@@ -29,6 +29,7 @@
 #include <ircommon/ircodec.h>
 #include <cstring>
 using namespace ircommon;
+using namespace ircommon::codec;
 
 //==============================================================================
 // class IRDummyCodec - This class implements a NULL codec that will be used for

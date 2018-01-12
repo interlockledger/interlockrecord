@@ -30,6 +30,7 @@
 #include <stdexcept>
 
 namespace ircommon {
+namespace codec {
 
 // This implementation is loosely based on the original code from
 // https://github.com/opencs/ocsbincodec-c
@@ -359,6 +360,7 @@ public:
 	virtual int getChar(int v) const;
 };
 
+} // namespace codec
 } //namespace ircommon
 
 #endif /* __IRCOMMON_IRALPHAB_H__ */

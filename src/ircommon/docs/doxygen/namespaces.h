@@ -29,6 +29,10 @@
  * Main namespace of the IRCommon library.
  */
 /**
+ * @namespace ircommon::codec
+ * Binary-to-text encoders and decoders.
+ */
+/**
  * @namespace ircommon::json
  * JSON parser and serializer (RFC8259).
  */

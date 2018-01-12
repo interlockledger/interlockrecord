@@ -40,9 +40,9 @@ public:
 
 	virtual void TearDown();
 
-	virtual bool checkMapping(ircommon::IRAlphabet & alphabet);
+	virtual bool checkMapping(ircommon::codec::IRAlphabet & alphabet);
 
-	virtual bool checkUniqueChars(ircommon::IRAlphabet & alphabet);
+	virtual bool checkUniqueChars(ircommon::codec::IRAlphabet & alphabet);
 };
 #endif //__IRALPHABETTEST_H__
 

@@ -26,6 +26,7 @@
  */
 #include "IRBase32AlphabetTest.h"
 using namespace ircommon;
+using namespace ircommon::codec;
 
 //==============================================================================
 // class IRBase32AlphabetTest
