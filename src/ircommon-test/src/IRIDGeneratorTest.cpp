@@ -25,6 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRIDGeneratorTest.h"
+#include <stdlib.h>
+#include <set>
+#include <ircommon/iridgen.h>
+using namespace ircommon;
+using namespace ircommon::crypto;
 
 //==============================================================================
 // class IRIDGeneratorTest
@@ -46,9 +51,40 @@ void IRIDGeneratorTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRIDGeneratorTest,Constructor) {
+	IRIDGenerator * g;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	g = new IRIDGenerator(0);
+	ASSERT_EQ(0, g->getCounter());
+	delete g;
 }
+
+//------------------------------------------------------------------------------
+TEST_F(IRIDGeneratorTest, setGetCounter) {
+	IRIDGenerator g;
+
+	for (int i = 0; i < 16; i++) {
+		int v = rand();
+		g.setCounter(v);
+		ASSERT_EQ(v, g.getCounter());
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRIDGeneratorTest, next) {
+	IRIDGenerator g;
+	I32FeistelObfuscator o;
+	std::set<std::uint32_t> dups;
+
+	for (int i = 0; i < 64; i++) {
+		int v = g.next();
+		ASSERT_NE(0, v);
+		ASSERT_EQ(dups.end(), dups.find(v));
+		dups.insert(v);
+	}
+
+	g.setCounter(o.deobfuscate(0));
+	ASSERT_NE(0, g.next());
+}
+
 //------------------------------------------------------------------------------
 

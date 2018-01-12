@@ -65,6 +65,26 @@ public:
 	~IRIDGenerator() = default;
 
 	/**
+	 * Returns the current value of the internal counter.
+	 *
+	 * @return The value of the internal counter.
+	 * @since 2017.01.12
+	 */
+	std::uint32_t getCounter() const {
+		return this->_counter;
+	}
+
+	/**
+	 * Sets the value of the internal counter.
+	 *
+	 * @param[in] v The new value of the counter.
+	 * @since 2017.01.12
+	 */
+	void setCounter(std::uint32_t v) {
+		this->_counter = v;
+	}
+
+	/**
 	 * Returns the next id.
 	 *
 	 * @return The next id in the sequence. This ID is guaranteed to be greater
@@ -76,7 +96,7 @@ public:
 		do {
 			id = this->_obfuscator.obfuscate(this->_counter);
 			this->_counter++;
-		} while (id != 0);
+		} while (id == 0);
 		return id;
 	}
 };
