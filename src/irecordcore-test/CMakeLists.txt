@@ -9,6 +9,7 @@ add_executable(irecordcore-test
 )
 
 target_include_directories(irecordcore-test PUBLIC
+	$<TARGET_PROPERTY:irecordcore,INTERFACE_INCLUDE_DIRECTORIES>
 	irecordcore
 	"${GTEST_INCLUDE_DIRS}"
 )

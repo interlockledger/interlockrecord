@@ -35,14 +35,14 @@ add_executable(ircommon-test
 	src/IRSemaphoreTest.cpp
 	src/IRUtilsTest.cpp)
 
-target_include_directories(ircommon-test PUBLIC
-	ircommon
+target_include_directories(ircommon-test 
+	PUBLIC 
+	$<TARGET_PROPERTY:ircommon,INTERFACE_INCLUDE_DIRECTORIES>
 	${GTEST_INCLUDE_DIRS})
+
 target_link_libraries(ircommon-test
 	ircommon
 	${GTEST_LIBRARIES})
-
-include_directories(${CMAKE_SOURCE_DIR}/ircommon/include)
 
 add_test(tests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ircommon-tests)
 

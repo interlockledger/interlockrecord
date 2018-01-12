@@ -40,8 +40,9 @@ add_executable(irecord-tests
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IRRootTemplateSetNetworkTest.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/IRRootTemplateSetParentTest.cpp
 	)
-target_include_directories(irecord-tests PUBLIC
-	irecord
+target_include_directories(irecord-tests 
+	PUBLIC
+	$<TARGET_PROPERTY:irecord,INTERFACE_INCLUDE_DIRECTORIES>
 	"${GTEST_INCLUDE_DIRS}"
 )
 target_link_libraries(

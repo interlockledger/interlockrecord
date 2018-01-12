@@ -16,7 +16,7 @@ configure_file (
 add_library(irecordcore STATIC
 	src/IRCHandle.cpp)
 target_include_directories(irecordcore PUBLIC
-	include
-	ircommonlib
+	${CMAKE_CURRENT_SOURCE_DIR}/include
+	$<TARGET_PROPERTY:ircommon,INTERFACE_INCLUDE_DIRECTORIES>	
 )
 

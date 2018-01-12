@@ -24,9 +24,9 @@ add_library(ircommon STATIC
 	src/irsemaph.cpp
 	src/irrwlock.cpp
 )
-target_include_directories(ircommon PUBLIC
-	include
-	${OPENSSL_INCLUDE_DIR}
-)
 
+target_include_directories(ircommon 
+	PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
