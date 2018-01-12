@@ -28,6 +28,7 @@
 #include "ircommon/i32obfus.h"
 
 using namespace ircommon;
+using namespace ircommon::crypto;
 
 //------------------------------------------------------------------------------
 // class I32Obfuscator

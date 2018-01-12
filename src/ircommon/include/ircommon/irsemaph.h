@@ -34,6 +34,7 @@
 #endif //__WIN32
 
 namespace ircommon {
+namespace threading {
 
 /**
  * This class implements a semaphore. It is important to notice that
@@ -92,6 +93,7 @@ public:
 	bool release();
 };
 
+} // namespace threading
 } // namespace ircommon
 
 #endif //__IRCOMMON_IRSEMAPH_H__

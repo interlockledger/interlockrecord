@@ -30,6 +30,7 @@
 #include <cstdlib>
 
 using namespace ircommon;
+using namespace ircommon::crypto;
 
 //==============================================================================
 // class I32FeistelObfuscatorTest

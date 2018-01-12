@@ -33,6 +33,7 @@
 #include <chrono>
 
 using namespace ircommon;
+using namespace ircommon::threading;
 
 //==============================================================================
 // class IRRWLockTest

@@ -27,6 +27,7 @@
 #include "ircommon/irsemaph.h"
 
 using namespace ircommon;
+using namespace ircommon::threading;
 
 #ifndef _WIN32
 	#include <ctime>

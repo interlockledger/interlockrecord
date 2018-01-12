@@ -31,6 +31,7 @@
 #include <ircommon/irsemaph.h>
 
 namespace ircommon {
+namespace threading {
 
 /**
  * This class implements a read/write lock that allows multiple simultaneous
@@ -95,6 +96,7 @@ public:
 	void unlockWrite();
 };
 
+} // namespace threading
 } // namespace ircommon
 
 #endif /* __IRCOMMON_IRRWLOCK_H__ */

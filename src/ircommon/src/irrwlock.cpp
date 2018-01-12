@@ -27,6 +27,7 @@
 #include "ircommon/irrwlock.h"
 
 using namespace ircommon;
+using namespace ircommon::threading;
 
 //------------------------------------------------------------------------------
 // class IRRWLock

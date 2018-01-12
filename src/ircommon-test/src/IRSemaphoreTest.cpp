@@ -29,6 +29,7 @@
 #include <memory>
 #include <thread>
 using namespace ircommon;
+using namespace ircommon::threading;
 
 //==============================================================================
 // class IRSemaphoreTest

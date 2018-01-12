@@ -26,18 +26,35 @@
  */
 /**
  * @namespace ircommon
- * Main namespace of the IRCommon library.
+ * @brief Main namespace of IRCommon.
  */
 /**
  * @namespace ircommon::codec
- * Binary-to-text encoders and decoders.
+ * @brief Binary-to-text codecs.
+ * This namespace contains the classes used to encode and decode binary-to-text
+ * encoding schemes.
+ */
+/**
+ * @namespace ircommon::crypto
+ * @brief Cryptographic related classes.
+ * This namespace contains all elements that covers cryptographic related
+ * functionalities.
  */
 /**
  * @namespace ircommon::json
- * JSON parser and serializer (RFC8259).
+ * @brief JSON utilities.
+ * This namespace contains the classes handle JSON file format. This
+ * implementation follows the RFC8259.
  */
 /**
  * @namespace ircommon::IRUtils
- * Utility functions.
+ * @brief Utility funcitions.
+ * This namespace contains utility functions used by all classes of this
+ * library.
  */
-
+/**
+ * @namespace ircommon::threading
+ * @brief Multi-threading.
+ * This namespace contains classes used to deal with multi-threading
+ * programming.
+ */

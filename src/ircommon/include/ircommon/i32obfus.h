@@ -30,6 +30,7 @@
 #include <cstdint>
 
 namespace ircommon {
+namespace crypto {
 
 /**
  * This class is the base class for all I32 obfuscators. The obfuscation
@@ -138,6 +139,7 @@ public:
 	virtual std::uint32_t deobfuscate(std::uint32_t v) const;
 };
 
+} //namespace crypto
 } // namespace ircommon
 
 #endif //__ILCOMMON_I32OBFUS__
