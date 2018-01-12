@@ -97,7 +97,7 @@ namespace InterlockRecord.Native
         public static extern int IRInstanceStateSerialize(IRContext context, int hState, ref byte[] buffSize, ref byte[] buff);
 
         [DllImport("irecord.dll", EntryPoint = "IRInstanceStateSetParam", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        public static extern int IRInstanceStateSetParam(IRContext context, ref int hState, int param, ulong value);
+        public static extern int IRInstanceStateSetParam(IRContext context, int hState, int param, ulong value);
 
         [DllImport("irecord.dll", EntryPoint = "IRRootBlockCreate", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern int IRRootBlockCreate(IRContext context, int hTemplate, int hState, ref int hBlock);
