@@ -29,6 +29,7 @@
 
 #include <unordered_map>
 #include <memory>
+#include <vector>
 #include <ircommon/irrwlock.h>
 #include <ircommon/iridgen.h>
 
@@ -91,7 +92,7 @@ public:
 			id = this->_generator.next();
 		} while (this->_map.find(id) != this->_map.end());
 
-		this->_map.insert(id, obj);
+		this->_map.insert({id, obj});
 		this->_lock.unlockWrite();
 		return id;
 	}
@@ -108,7 +109,7 @@ public:
 
 		this->_lock.lockWrite();
 		auto found = this->_map.find(id);
-		if (found == this->_map.end()) {
+		if (found != this->_map.end()) {
 			this->_map.erase(found);
 			ret = true;
 		} else {
@@ -132,7 +133,7 @@ public:
 		this->_lock.lockRead();
 		auto found = this->_map.find(id);
 		if (found != this->_map.end()) {
-			obj = *found;
+			obj = found->second;
 			ret = true;
 		} else {
 			ret = false;
@@ -143,11 +144,41 @@ public:
 
 	/**
 	 * Removes all entries in this list.
+	 * @note This method executes a write lock.
 	 */
 	void clear() {
 		this->_lock.lockWrite();
 		this->_map.clear();
 		this->_lock.unlockWrite();
+	}
+
+	/**
+	 * Verifies if a given handle is stored inside this map.
+	 *
+	 * @return true if the id is inside the list or false otherwise.
+	 * @since 2017.01.12
+	 * @note This method executes a read lock.
+	 */
+	bool contains(std::uint32_t id){
+		bool ret;
+		this->_lock.lockRead();
+		ret = (this->_map.find(id) != this->_map.end());
+		this->_lock.unlockRead();
+		return ret;
+	}
+
+	/**
+	 * Returns the list of handles.
+	 *
+	 * @param[out] The list of handles inside this instance.
+	 * @note This method executes a read lock.
+	 */
+	void listHandles(std::vector<std::uint32_t> & ids) {
+		this->_lock.lockRead();
+		for (auto entry = this->_map.begin(); entry != this->_map.end(); entry++) {
+			ids.push_back(entry->first);
+		}
+		this->_lock.unlockRead();
 	}
 };
 
