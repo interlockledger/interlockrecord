@@ -17,7 +17,9 @@ add_executable(ircommon-test
 	src/IRBufferTest.cpp
 	src/IRCodecTest.cpp
 	src/IRGenericAlphabetTest.cpp
+	src/IRHandleListTest.cpp
 	src/IRHexAlphabetTest.cpp
+	src/IRIDGeneratorTest
 	src/IRJsonArrayTest.cpp
 	src/IRJsonBooleanTest.cpp
 	src/IRJsonDecimalTest.cpp
@@ -33,6 +35,7 @@ add_executable(ircommon-test
 	src/IRJsonValueTest.cpp
 	src/IRRWLockTest.cpp
 	src/IRSemaphoreTest.cpp
+	src/IRSharedPtrHandleListTest.cpp
 	src/IRUtilsTest.cpp)
 
 target_include_directories(ircommon-test 

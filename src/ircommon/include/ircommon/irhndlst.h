@@ -67,7 +67,7 @@ public:
 	 *
 	 * @note This method executes a read lock.
 	 */
-	int size() const {
+	int size() {
 		int size;
 
 		this->_lock.lockRead();
@@ -88,7 +88,7 @@ public:
 
 		this->_lock.lockWrite();
 		do {
-			id = this->_generator.nex();
+			id = this->_generator.next();
 		} while (this->_map.find(id) != this->_map.end());
 
 		this->_map.insert(id, obj);
