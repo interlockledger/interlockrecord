@@ -316,13 +316,13 @@ IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateCreate(IRContext context, int *
 * Sets a new state parameter.
 *
 * @param[in] context The new context.
-* @param[out] hState The state.
+* @param[in] hState The state.
 * @param[in] param The state parameter to be set.
 * @param[in] value The state parameter value to be set
 * @note  Parameters such as Hash type, Signature algorithm type among others
 * @return IRE_SUCCESS on success or other error code in case of failure.
 */
-IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateSetParam(IRContext context, int * hState, int param, uint64_t value);
+IR_EXPORT_ATTR int IR_EXPORT_CALL IRInstanceStateSetParam(IRContext context, int hState, int param, uint64_t value);
 
 /**
 * Loads a state.

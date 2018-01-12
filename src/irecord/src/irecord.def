@@ -29,6 +29,7 @@ EXPORTS
 	IRRootTemplateCreate
 	IRRootTemplateDispose
 	IRRootTemplateParam
+	IRRootTemplateParamInt
 	IRRootTemplateSetEmergencyKey
 	IRRootTemplateSetNetwork
 	IRRootTemplateSetParent
