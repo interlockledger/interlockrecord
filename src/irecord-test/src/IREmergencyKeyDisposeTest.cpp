@@ -49,7 +49,7 @@ void IREmergencyKeyDisposeTest::TearDown() {
 TEST_F(IREmergencyKeyDisposeTest, FunctionExits) {
 	int retval;
 
-	retval = IREmergencyKeyDispose(NULL, NULL);
+	retval = IREmergencyKeyDispose(0, 0);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

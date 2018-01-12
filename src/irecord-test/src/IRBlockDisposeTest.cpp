@@ -49,7 +49,7 @@ void IRBlockDisposeTest::TearDown() {
 TEST_F(IRBlockDisposeTest,FunctionExits) {
 	int retval;
 
-	retval = IRBlockDispose(NULL, NULL);
+	retval = IRBlockDispose(0, 0);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 
 	//TODO Implementation required!

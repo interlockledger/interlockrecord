@@ -49,7 +49,7 @@ void IRRootBlockCreateTest::TearDown() {
 TEST_F(IRRootBlockCreateTest, FunctionExits) {
 	int retval;
 
-	retval = IRRootBlockCreate(NULL, NULL, NULL, NULL);
+	retval = IRRootBlockCreate(0, 0, 0, NULL);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

@@ -49,7 +49,7 @@ void IRDataBlockAddTest::TearDown() {
 TEST_F(IRDataBlockAddTest, FunctionExits) {
 	int retval;
 
-	retval = IRDataBlockAdd(NULL, NULL, NULL, NULL, NULL, NULL, NULL,NULL);
+	retval = IRDataBlockAdd(0, 0, 0, 0, 0, 0, NULL, NULL);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

@@ -49,7 +49,7 @@ void IRInstanceStateSetParamTest::TearDown() {
 TEST_F(IRInstanceStateSetParamTest, FunctionExits) {
 	int retval;
 
-	retval = IRInstanceStateSetParam(NULL, NULL, NULL, NULL);
+	retval = IRInstanceStateSetParam(0, NULL, 0, 0);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

@@ -49,7 +49,7 @@ void IRCheckParentTest::TearDown() {
 TEST_F(IRCheckParentTest, FunctionExits) {
 	int retval;
 
-	retval = IRCheckParent(NULL, NULL, NULL);
+	retval = IRCheckParent(0, 0, 0);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

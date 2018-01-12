@@ -49,7 +49,7 @@ void IRInstanceStateSerializeTest::TearDown() {
 TEST_F(IRInstanceStateSerializeTest, FunctionExits) {
 	int retval;
 
-	retval = IRInstanceStateSerialize(NULL, NULL, NULL, NULL);
+	retval = IRInstanceStateSerialize(0, 0, NULL, NULL);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

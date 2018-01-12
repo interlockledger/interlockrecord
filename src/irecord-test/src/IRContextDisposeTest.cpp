@@ -49,7 +49,7 @@ void IRContextDisposeTest::TearDown() {
 TEST_F(IRContextDisposeTest, FunctionExits) {
 	int retval;
 
-	retval = IRClose(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	retval = IRClose(0, 0, 0, 0, NULL, 0, NULL);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

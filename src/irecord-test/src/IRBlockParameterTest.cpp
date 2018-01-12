@@ -49,7 +49,7 @@ void IRBlockParameterTest::TearDown() {
 TEST_F(IRBlockParameterTest,Constructor) {
 	int retval;
 
-	retval = IRBlockParameter(NULL,NULL,NULL,NULL);
+	retval = IRBlockParameter(0, 0, 0,NULL);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

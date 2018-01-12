@@ -49,7 +49,7 @@ void IREmergencyKeySerializeTest::TearDown() {
 TEST_F(IREmergencyKeySerializeTest, FunctionExits) {
 	int retval;
 
-	retval = IREmergencyKeySerialize(NULL, NULL, NULL, NULL);
+	retval = IREmergencyKeySerialize(0, 0, NULL, NULL);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

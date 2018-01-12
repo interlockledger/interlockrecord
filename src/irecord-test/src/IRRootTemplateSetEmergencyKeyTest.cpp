@@ -49,7 +49,7 @@ void IRRootTemplateSetEmergencyKeyTest::TearDown() {
 TEST_F(IRRootTemplateSetEmergencyKeyTest, FunctionExits) {
 	int retval;
 
-	retval = IRRootTemplateSetEmergencyKey(NULL, NULL, NULL);
+	retval = IRRootTemplateSetEmergencyKey(0, 0, 0);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

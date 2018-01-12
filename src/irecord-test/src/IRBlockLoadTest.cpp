@@ -49,7 +49,7 @@ void IRBlockLoadTest::TearDown() {
 TEST_F(IRBlockLoadTest, FunctionExits) {
 	int retval;
 
-	retval = IRBlockLoad(NULL, NULL, NULL, NULL);
+	retval = IRBlockLoad(0, 0, NULL, NULL);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 
 	//TODO Implementation required!

@@ -49,7 +49,7 @@ void IRRootTemplateSetNetworkTest::TearDown() {
 TEST_F(IRRootTemplateSetNetworkTest, FunctionExits) {
 	int retval;
 
-	retval = IRRootTemplateSetNetwork(NULL, NULL, NULL);
+	retval = IRRootTemplateSetNetwork(0, 0, 0);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

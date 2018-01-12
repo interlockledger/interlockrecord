@@ -49,7 +49,7 @@ void IRCheckRootTest::TearDown() {
 TEST_F(IRCheckRootTest, FunctionExits) {
 	int retval;
 
-	retval = IRCheckRoot(NULL, NULL);
+	retval = IRCheckRoot(0, 0);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

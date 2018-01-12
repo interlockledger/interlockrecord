@@ -49,7 +49,7 @@ void IRBlockSerializeTest::TearDown() {
 TEST_F(IRBlockSerializeTest, FunctionExits) {
 	int retval;
 
-	retval = IRBlockSerialize(NULL, NULL, NULL, NULL);
+	retval = IRBlockSerialize(0, 0, NULL, NULL);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 
 	//TODO Implementation required!

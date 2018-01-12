@@ -49,7 +49,7 @@ void IRRootTemplateDisposeTest::TearDown() {
 TEST_F(IRRootTemplateDisposeTest, FunctionExits) {
 	int retval;
 
-	retval = IRRootTemplateDispose(NULL, NULL);
+	retval = IRRootTemplateDispose(0, 0);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

@@ -49,7 +49,7 @@ void IRRootTemplateParamTest::TearDown() {
 TEST_F(IRRootTemplateParamTest, FunctionExits) {
 	int retval;
 
-	retval = IRRootTemplateParam(NULL, NULL, NULL, NULL);
+	retval = IRRootTemplateParam(0, 0, 0, NULL);
 	ASSERT_EQ(IRE_NOT_IMPLEMENTED, retval);
 	//TODO Implementation required!
 	std::cout << "Implementation required!";
