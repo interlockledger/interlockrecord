@@ -226,8 +226,9 @@ public:
 	 * @return The id assigned to the given object.
 	 * @note This method executes a write lock.
 	 */
-	std::uint32_t insert(ObjectType * obj){
-		return this->insert(SharedPointer(obj));
+	std::uint32_t insertPtr(ObjectType * obj){
+		return IRHandleList<std::shared_ptr<ObjectType>>::insert(
+				SharedPointer(obj));
 	}
 };
 

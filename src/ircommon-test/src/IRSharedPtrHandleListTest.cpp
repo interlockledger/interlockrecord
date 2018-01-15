@@ -55,5 +55,19 @@ TEST_F(IRSharedPtrHandleListTest,Constructor) {
 	l = new IRSharedPtrHandleList<std::string>(0);
 	delete l;
 }
+
+//------------------------------------------------------------------------------
+TEST_F(IRSharedPtrHandleListTest, InsertPtr) {
+	IRSharedPtrHandleList<std::string> l(0);
+
+	for (int i = 0; i < 10; i++) {
+		l.insertPtr(new std::string("a"));
+	}
+	ASSERT_EQ(10, l.size());
+
+	l.insert(IRSharedPtrHandleList<std::string>::SharedPointer(
+			new std::string("1")));
+	ASSERT_EQ(11, l.size());
+}
 //------------------------------------------------------------------------------
 
