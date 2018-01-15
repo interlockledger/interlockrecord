@@ -26,7 +26,78 @@
  */
 #include "IRJsonTokenizerTest.h"
 #include <ircommon/irjson.h>
+#include <stdexcept>
 using namespace ircommon::json;
+
+//==============================================================================
+// class IRJsonDummyTokenizer
+//------------------------------------------------------------------------------
+class IRJsonDummyTokenizer: public IRJsonTokenizer {
+private:
+	std::string _buff;
+	int _pos;
+	bool _got;
+protected:
+	virtual int getc();
+
+	virtual void ungetc();
+public:
+	IRJsonDummyTokenizer(const char * s): _buff(s), _pos(0), _got(false) {
+	}
+
+	virtual ~IRJsonDummyTokenizer() = default;
+
+	virtual bool hasMore() const;
+
+	int getcEx() {
+		return this->getc();
+	}
+
+	void ungetcEx() {
+		return this->ungetc();
+	}
+
+	std::string & buffer() {
+		return this->_buff;
+	}
+
+	int pos(){
+		return this->_pos;
+	}
+};
+
+//------------------------------------------------------------------------------
+int IRJsonDummyTokenizer::getc() {
+	int c;
+
+	if (this->_pos < this->_buff.size()) {
+		c = this->_buff[this->_pos];
+		this->_pos++;
+	} else {
+		c = -1;
+	}
+	this->_got = true;
+	return c;
+}
+
+//------------------------------------------------------------------------------
+void IRJsonDummyTokenizer::ungetc() {
+
+	if (this->_got) {
+		if (this->_pos > 0) {
+			this->_pos--;
+			this->_got = false;
+		}
+	} else {
+		throw std::logic_error("Cannot call ungetc() two consecutive times.");
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRJsonDummyTokenizer::hasMore() const {
+
+	return (this->_pos < this->_buff.size());
+}
 
 //==============================================================================
 // class IRJsonTokenizerTest
@@ -44,6 +115,45 @@ void IRJsonTokenizerTest::SetUp() {
 
 //------------------------------------------------------------------------------
 void IRJsonTokenizerTest::TearDown() {
+}
+
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, IRJsonDummyTokenizer) {
+	const char * DATA = "0123456789";
+	IRJsonDummyTokenizer t(DATA);
+
+	// Quick test on all methods from IRJsonDummyTokenizer
+	ASSERT_STREQ(DATA, t.buffer().c_str());
+	ASSERT_EQ(0, t.pos());
+	for (int i =0; i < 10; i++) {
+		ASSERT_TRUE(t.hasMore());
+		ASSERT_EQ(DATA[i], t.getcEx());
+	}
+	ASSERT_FALSE(t.hasMore());
+	t.ungetcEx();
+	ASSERT_EQ(DATA[9], t.getcEx());
+	t.ungetcEx();
+	try {
+		t.ungetcEx();
+		FAIL();
+	} catch (std::logic_error & e){}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, reset) {
+	IRJsonDummyTokenizer p("");
+
+	ASSERT_FALSE(p.reset());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, token) {
+	IRJsonDummyTokenizer p("1");
+
+	ASSERT_STREQ("", p.value().c_str());
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("1", p.value().c_str());
 }
 
 //------------------------------------------------------------------------------
