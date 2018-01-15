@@ -52,6 +52,11 @@ private:
 	ircommon::threading::IRRWLock _lock;
 public:
 	/**
+	 * Type of the list of handles.
+	 */
+	typedef std::vector<std::uint32_t> HandleList;
+
+	/**
 	 * Creates a new instance of this class.
 	 *
 	 * @param[in] seed The seed of the ID generator.
@@ -173,7 +178,7 @@ public:
 	 * @param[out] The list of handles inside this instance.
 	 * @note This method executes a read lock.
 	 */
-	void listHandles(std::vector<std::uint32_t> & ids) {
+	void listHandles(HandleList & ids) {
 		this->_lock.lockRead();
 		for (auto entry = this->_map.begin(); entry != this->_map.end(); entry++) {
 			ids.push_back(entry->first);
