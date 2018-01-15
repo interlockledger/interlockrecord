@@ -53,12 +53,21 @@ TEST_F(IRGetVersionTest,IRGetVersion) {
 	int versionSize;
 
 	retval = IRGetVersion(NULL, NULL);
-	ASSERT_EQ(IRE_GET_INVALID_PARAM(0), retval);
+	ASSERT_EQ(IRE_INVALID_PARAM_01, retval);
 
-	retval = IRGetVersion(NULL,version);
-	ASSERT_EQ(IRE_GET_INVALID_PARAM(1), retval);
+	retval = IRGetVersion(NULL, version);
+	ASSERT_EQ(IRE_INVALID_PARAM_01, retval);
+
+	versionSize = sizeof(version);
+	retval = IRGetVersion(&versionSize, NULL);
+	ASSERT_EQ(IRE_BUFFER_TOO_SHORT, retval);
 
 	versionSize = 0;
+	retval = IRGetVersion(&versionSize, version);
+	ASSERT_EQ(IRE_BUFFER_TOO_SHORT, retval);
+	ASSERT_LT(0, versionSize);
+
+	versionSize--;
 	retval = IRGetVersion(&versionSize, version);
 	ASSERT_EQ(IRE_BUFFER_TOO_SHORT, retval);
 	ASSERT_LT(0, versionSize);
@@ -66,8 +75,16 @@ TEST_F(IRGetVersionTest,IRGetVersion) {
 	versionSize = sizeof(version);
 	retval = IRGetVersion(&versionSize, version);
 	ASSERT_EQ(IRE_SUCCESS, retval);
-	ASSERT_EQ(std::strlen(version), versionSize);
-	std::cout << "Version: " << version << "\n";
+	ASSERT_EQ(std::strlen(version) + 1, versionSize);
+
+	// Exact size
+	versionSize = 0;
+	retval = IRGetVersion(&versionSize, version);
+	ASSERT_EQ(IRE_BUFFER_TOO_SHORT, retval);
+	ASSERT_GE(sizeof(version), versionSize);
+	retval = IRGetVersion(&versionSize, version);
+	ASSERT_EQ(IRE_SUCCESS, retval);
+	ASSERT_EQ(std::strlen(version) + 1, versionSize);
 }
 
 //------------------------------------------------------------------------------
