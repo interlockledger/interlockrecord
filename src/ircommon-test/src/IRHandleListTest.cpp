@@ -26,6 +26,8 @@
  */
 #include "IRHandleListTest.h"
 #include <ircommon/irhndlst.h>
+#include <thread>
+#include <memory>
 using namespace ircommon;
 
 //==============================================================================
@@ -190,6 +192,61 @@ TEST_F(IRHandleListTest, listHandles) {
 		dups.insert(ids[i]);
 	}
 }
+
+//------------------------------------------------------------------------------
+TEST_F(IRHandleListTest, Concurrency) {
+	std::vector<std::shared_ptr<std::thread>> threads;
+	IRHandleList<int> l(0);
+
+	// Insert the first one
+	l.insert(0);
+
+	// Create 5 readers
+	for (int i = 0; i < 5; i++) {
+		threads.push_back(
+				std::shared_ptr<std::thread>(
+				new std::thread([&l](){
+					do {
+						IRHandleList<int>::HandleList list;
+						l.listHandles(list);
+						if (list.size() > 0) {
+							int v;
+							l.get(list[0], v);
+						}
+					} while (l.size() > 0);
+				})));
+	}
+
+	// Create 3 writers
+	for (int i = 0; i < 3; i++) {
+		threads.push_back(
+				std::shared_ptr<std::thread>(
+				new std::thread([&l](){
+					do {
+						IRHandleList<int>::HandleList list;
+						std::uint32_t h  = l.insert(0);
+						l.remove(h);
+					} while (l.size() > 0);
+				})));
+	}
+
+	// Let them run for 15ms to see if they will deadlock
+	std::this_thread::sleep_for(std::chrono::milliseconds(15));
+
+	// Launch the one who will clear then all
+	threads.push_back(
+			std::shared_ptr<std::thread>(
+			new std::thread([&l](){
+				do {
+					l.clear();
+				} while (l.size() > 0);
+			})));
+
+	for (int i = 0; i < threads.size(); i++){
+		threads[i]->join();
+	}
+}
+
 //------------------------------------------------------------------------------
 
 

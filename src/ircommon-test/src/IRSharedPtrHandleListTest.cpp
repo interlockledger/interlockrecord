@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRSharedPtrHandleListTest.h"
+#include <ircommon/irrwlock.h>
+#include <ircommon/irhndlst.h>
+#include <string>
+using namespace ircommon;
 
 //==============================================================================
 // class IRSharedPtrHandleListTest
@@ -46,9 +50,10 @@ void IRSharedPtrHandleListTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRSharedPtrHandleListTest,Constructor) {
+	IRSharedPtrHandleList<std::string> * l;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	l = new IRSharedPtrHandleList<std::string>(0);
+	delete l;
 }
 //------------------------------------------------------------------------------
 
