@@ -321,6 +321,131 @@ TEST_F(IRJsonTokenizerTest, extractNumeric) {
 }
 
 //------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, extractKeyword) {
+	IRJsonDummyTokenizer p("");
+
+	p.setBuffer("true");
+	ASSERT_EQ(IRJsonTokenizer::VAL_TRUE, p.next());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("false");
+	ASSERT_EQ(IRJsonTokenizer::VAL_FALSE, p.next());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("null");
+	ASSERT_EQ(IRJsonTokenizer::VAL_NULL, p.next());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("False");
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
+
+	p.setBuffer("once");
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, extractString) {
+	IRJsonDummyTokenizer p("");
+
+	p.setBuffer("\"once\"");
+	ASSERT_EQ(IRJsonTokenizer::VAL_STRING, p.next());
+	ASSERT_STREQ("once", p.value().c_str());
+
+	p.setBuffer("\"once\\\"\"");
+	ASSERT_EQ(IRJsonTokenizer::VAL_STRING, p.next());
+	ASSERT_STREQ("once\"", p.value().c_str());
+
+	p.setBuffer("\"once\\\"\"");
+	ASSERT_EQ(IRJsonTokenizer::VAL_STRING, p.next());
+	ASSERT_STREQ("once\"", p.value().c_str());
+
+	// Escaping
+	p.setBuffer("\"\\\"\\\\\\/\\b\\f\\n\\r\\t\"");
+	ASSERT_EQ(IRJsonTokenizer::VAL_STRING, p.next());
+	ASSERT_STREQ("\"\\/\b\f\n\r\t", p.value().c_str());
+
+	// UTF-8
+	p.setBuffer("\"\u0024\u00A2\u20ac\"");
+	ASSERT_EQ(IRJsonTokenizer::VAL_STRING, p.next());
+	ASSERT_STREQ("\x24\xC2\xA2\xE2\x82\xAC", p.value().c_str());
+
+	// Failed strings
+	p.setBuffer("\"");
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
+
+	p.setBuffer("\"\\l\"");
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
+
+	p.setBuffer("\"\\u123Q\"");
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, operators) {
+	IRJsonDummyTokenizer p("");
+
+	p.setBuffer("{ } [ ] : ,");
+	ASSERT_EQ(IRJsonTokenizer::OBJ_BEGIN, p.next());
+	ASSERT_EQ(IRJsonTokenizer::OBJ_END, p.next());
+	ASSERT_EQ(IRJsonTokenizer::ARRAY_BEGIN, p.next());
+	ASSERT_EQ(IRJsonTokenizer::ARRAY_END, p.next());
+	ASSERT_EQ(IRJsonTokenizer::NAME_SEP, p.next());
+	ASSERT_EQ(IRJsonTokenizer::VALUE_SEP, p.next());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, mixed) {
+	IRJsonDummyTokenizer p("");
+
+	p.setBuffer("{\"a\":12,\"b\":[-12.3 ,+12.3E1,null,false,true]}");
+	ASSERT_EQ(IRJsonTokenizer::OBJ_BEGIN, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::VAL_STRING, p.next());
+	ASSERT_STREQ("a", p.value().c_str());
+
+	ASSERT_EQ(IRJsonTokenizer::NAME_SEP, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("12", p.value().c_str());
+
+	ASSERT_EQ(IRJsonTokenizer::VALUE_SEP, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::VAL_STRING, p.next());
+	ASSERT_STREQ("b", p.value().c_str());
+
+	ASSERT_EQ(IRJsonTokenizer::NAME_SEP, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::ARRAY_BEGIN, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::VAL_DEC, p.next());
+	ASSERT_STREQ("-12.3", p.value().c_str());
+
+	ASSERT_EQ(IRJsonTokenizer::VALUE_SEP, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::VAL_DEC, p.next());
+	ASSERT_STREQ("12.3E1", p.value().c_str());
+
+	ASSERT_EQ(IRJsonTokenizer::VALUE_SEP, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::VAL_NULL, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::VALUE_SEP, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::VAL_FALSE, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::VALUE_SEP, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::VAL_TRUE, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::ARRAY_END, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::OBJ_END, p.next());
+
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+}
+
+//------------------------------------------------------------------------------
 TEST_F(IRJsonTokenizerTest, unicodeToUTF8) {
 	std::string out;
 
