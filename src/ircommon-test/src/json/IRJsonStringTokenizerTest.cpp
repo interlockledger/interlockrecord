@@ -87,7 +87,10 @@ TEST_F(IRJsonStringTokenizerTest,reset) {
 
 //------------------------------------------------------------------------------
 TEST_F(IRJsonStringTokenizerTest,hasMore) {
+	IRJsonStringTokenizer t0("");
 	IRJsonStringTokenizer t("12345 12345");
+
+	ASSERT_FALSE(t0.hasMore());
 
 	ASSERT_TRUE(t.hasMore());
 	ASSERT_EQ(IRJsonTokenizer::VAL_INT, t.next());

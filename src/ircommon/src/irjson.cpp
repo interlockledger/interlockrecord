@@ -844,7 +844,7 @@ void IRJsonStringTokenizer::ungetc() {
 
 //------------------------------------------------------------------------------
 bool IRJsonStringTokenizer::hasMore() const {
-	return (this->_pos == this->_in.size());
+	return (this->_pos < this->_in.size());
 }
 
 //==============================================================================
