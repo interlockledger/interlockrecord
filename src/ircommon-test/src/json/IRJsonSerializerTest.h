@@ -28,6 +28,11 @@
 #define __IRJSONSERIALIZERTEST_H__
 
 #include <gtest/gtest.h>
+#include <ircommon/irjson.h>
+#include "IRJsonObjectTest.h"
+#include "IRJsonArrayTest.h"
+using namespace ircommon::json;
+
 
 class IRJsonSerializerTest : public testing::Test {
 public:
@@ -35,6 +40,8 @@ public:
 	virtual ~IRJsonSerializerTest();
 	virtual void SetUp();
 	virtual void TearDown();
+
+	static IRJsonObject * createComplexObject();
 };
 #endif //__IRJSONSERIALIZERTEST_H__
 
