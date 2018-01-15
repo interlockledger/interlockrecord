@@ -611,6 +611,15 @@ public:
 	 * @param[out] out The string that will hold the output.
 	 */
 	void serialize(const IRJsonValue & v, std::string & out);
+
+	/**
+	 * Returns the indent flag.
+	 *
+	 * @return true if this serializer will indent the result or false otherwise.
+	 */
+	bool indent() const {
+		return this->_indent;
+	}
 };
 
 /**
