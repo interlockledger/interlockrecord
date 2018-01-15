@@ -560,14 +560,13 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric(int initialChar) {
 	int c;
 	bool decimal;
 
-	this->_token.push_back(initialChar);
-
 	decimal = false;
 	if ((initialChar == '-') || (initialChar == '+')) {
 		state = ST_INT_FIRST;
 	} else {
 		state = ST_INT;
 	}
+	this->_token.push_back(initialChar);
 	do {
 		c = this->getc();
 		this->_token.push_back(c);
@@ -583,6 +582,7 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric(int initialChar) {
 			// Integral part
 			switch (c) {
 			case -1:
+				this->_token.pop_back();
 				state = ST_END;
 				break;
 			case '.':
