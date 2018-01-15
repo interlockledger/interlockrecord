@@ -420,25 +420,27 @@ bool IRJsonTokenizer::ignoreComment() {
 
 	c = this->getc();
 	if (c == '/') {
+		// Single-line
 		do {
 			c = this->getc();
-		} while (c != '\n');
+		} while ((c != '\n') && (c != -1));
 		return true;
 	} else if (c == '*') {
-		bool prefix = false;
+		// Multi-line
+		bool endPrefix = false;
 		do {
 			c = this->getc();
 			switch (c) {
 			case '*':
-				prefix = true;
+				endPrefix = true;
 				break;
 			case '/':
-				if (prefix) {
+				if (endPrefix) {
 					return true;
 				}
 				break;
 			default:
-				prefix = false;;
+				endPrefix = false;
 			}
 		} while (c != -1);
 		return false; // Premature EOF
@@ -555,18 +557,26 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric(int initialChar) {
 		ST_FRAC_FIRST,
 		ST_FRAC,
 		ST_EXP_FIRST,
+		ST_EXP_FIRST_DIGIT,
 		ST_EXP,
 		ST_END} state;
 	int c;
 	bool decimal;
 
 	decimal = false;
-	if ((initialChar == '-') || (initialChar == '+')) {
+	switch (initialChar) {
+	case '-':
+		this->_token.push_back(initialChar);
 		state = ST_INT_FIRST;
-	} else {
+		break;
+	case '+':
+		state = ST_INT_FIRST;
+		break;
+	default:
+		this->_token.push_back(initialChar);
 		state = ST_INT;
+		break;
 	}
-	this->_token.push_back(initialChar);
 	do {
 		c = this->getc();
 		this->_token.push_back(c);
@@ -611,6 +621,7 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric(int initialChar) {
 			break;
 		case ST_FRAC:
 			if (c == -1) {
+				this->_token.pop_back();
 				state = ST_END;
 			} else if ((c == 'e') || (c == 'E')) {
 				state = ST_EXP_FIRST;
@@ -621,7 +632,19 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric(int initialChar) {
 			}
 			break;
 		case ST_EXP_FIRST:
-			if ((c == '-') || (c == '+') || (IRJsonTokenizer::isDigit(c))) {
+			if (IRJsonTokenizer::isDigit(c)) {
+				state = ST_EXP;
+			} else if (c == '-') {
+				state = ST_EXP_FIRST_DIGIT;
+			} else if (c == '+') {
+				this->_token.pop_back();
+				state = ST_EXP_FIRST_DIGIT;
+			} else {
+				return IRJsonTokenizer::INVALID;
+			}
+			break;
+		case ST_EXP_FIRST_DIGIT:
+			if (IRJsonTokenizer::isDigit(c)) {
 				state = ST_EXP;
 			} else {
 				return IRJsonTokenizer::INVALID;
@@ -630,6 +653,7 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric(int initialChar) {
 		case ST_EXP:
 			// Exponent
 			if (c == -1) {
+				this->_token.pop_back();
 				state = ST_END;
 			} else if (!IRJsonTokenizer::isDigit(c)) {
 				this->ungetc();

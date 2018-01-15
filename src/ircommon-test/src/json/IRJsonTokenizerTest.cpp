@@ -64,6 +64,12 @@ public:
 	int pos(){
 		return this->_pos;
 	}
+
+	void setBuffer(const char * s) {
+		this->_buff = s;
+		this->_pos = 0;
+		this->_got = false;
+	}
 };
 
 //------------------------------------------------------------------------------
@@ -148,12 +154,170 @@ TEST_F(IRJsonTokenizerTest, reset) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRJsonTokenizerTest, token) {
+TEST_F(IRJsonTokenizerTest, value) {
 	IRJsonDummyTokenizer p("1");
 
 	ASSERT_STREQ("", p.value().c_str());
 	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
 	ASSERT_STREQ("1", p.value().c_str());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, ignoreComment) {
+	IRJsonDummyTokenizer p("");
+
+	p.setBuffer("//\n");
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("//");
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("//\n1");
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("1", p.value().c_str());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("//\n1////\n2");
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("1", p.value().c_str());
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("2", p.value().c_str());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("//test me\n1");
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("1", p.value().c_str());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("//test me\n1//test me");
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("1", p.value().c_str());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	// Multi-line
+	p.setBuffer("/**/");
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("/*\n*/1");
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("1", p.value().c_str());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("1\n/**/");
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("1", p.value().c_str());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("/* test me // */1/**/");
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("1", p.value().c_str());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("/*");
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
+
+	p.setBuffer("/* test me // */1/*");
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("1", p.value().c_str());
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
+
+	p.setBuffer("/1");
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, ignoreSpaces) {
+	IRJsonDummyTokenizer p("");
+
+	p.setBuffer("\t\n\r ");
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("\t\n\r 1");
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("1\t\n2\r ");
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonTokenizerTest, extractNumeric) {
+	IRJsonDummyTokenizer p("");
+
+	// Integer
+	p.setBuffer("1");
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("1", p.value().c_str());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("11");
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("11", p.value().c_str());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	p.setBuffer("+11");
+	ASSERT_EQ(IRJsonTokenizer::VAL_INT, p.next());
+	ASSERT_STREQ("11", p.value().c_str());
+	ASSERT_EQ(IRJsonTokenizer::INPUT_END, p.next());
+
+	// Decimal
+	p.setBuffer("0.1");
+	ASSERT_EQ(IRJsonTokenizer::VAL_DEC, p.next());
+	ASSERT_STREQ("0.1", p.value().c_str());
+
+	p.setBuffer("-0.1");
+	ASSERT_EQ(IRJsonTokenizer::VAL_DEC, p.next());
+	ASSERT_STREQ("-0.1", p.value().c_str());
+
+	p.setBuffer("+0.1");
+	ASSERT_EQ(IRJsonTokenizer::VAL_DEC, p.next());
+	ASSERT_STREQ("0.1", p.value().c_str());
+
+	p.setBuffer("0.1E1");
+	ASSERT_EQ(IRJsonTokenizer::VAL_DEC, p.next());
+	ASSERT_STREQ("0.1E1", p.value().c_str());
+
+	p.setBuffer("0.1E-1");
+	ASSERT_EQ(IRJsonTokenizer::VAL_DEC, p.next());
+	ASSERT_STREQ("0.1E-1", p.value().c_str());
+
+	p.setBuffer("0.1E+1");
+	ASSERT_EQ(IRJsonTokenizer::VAL_DEC, p.next());
+	ASSERT_STREQ("0.1E1", p.value().c_str());
+
+	p.setBuffer("0.1E12");
+	ASSERT_EQ(IRJsonTokenizer::VAL_DEC, p.next());
+	ASSERT_STREQ("0.1E12", p.value().c_str());
+
+	p.setBuffer("0.1E-12");
+	ASSERT_EQ(IRJsonTokenizer::VAL_DEC, p.next());
+	ASSERT_STREQ("0.1E-12", p.value().c_str());
+
+	p.setBuffer("0.1E+12");
+	ASSERT_EQ(IRJsonTokenizer::VAL_DEC, p.next());
+	ASSERT_STREQ("0.1E12", p.value().c_str());
+
+	// Invalid integers
+	p.setBuffer("- ");
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
+
+	p.setBuffer("+ ");
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
+
+	// Invalid decimals
+	p.setBuffer("0.");
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
+
+	p.setBuffer("0.1E");
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
+
+	p.setBuffer("0.1E-");
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
+
+	p.setBuffer("0.1E+");
+	ASSERT_EQ(IRJsonTokenizer::INVALID, p.next());
 }
 
 //------------------------------------------------------------------------------
