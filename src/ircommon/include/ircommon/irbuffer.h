@@ -104,9 +104,10 @@ public:
 	 *
 	 * @param[in] reserved The initial reserved size.
 	 * @param[in] secure If true, all memory allocations will be treated as secure.
-	 * @param[in] inc The size of the increment.
+	 * @param[in] inc The size of the increment. Must be a value larger than 0.
+	 * @exception std::invalid_argument If inc is 0.
 	 */
-	IRBuffer(std::uint64_t reserved, bool secure = false, std::uint64_t inc = 16);
+	IRBuffer(std::uint64_t reserved = 0, bool secure = false, std::uint64_t inc = 16);
 
 	/**
 	 * Disposes this instance and releases all associated resources.
@@ -144,8 +145,9 @@ public:
 	/**
 	 * Returns a writeable pointer to the buffer.
 	 *
-	 * @return The pointer to the buffer.
-	 * @note Never cache this value outside this class because
+	 * @return The pointer to the buffer or NULL if this instance
+	 * is read-only.
+	 * @warning Never cache this value outside this class because
 	 * resize operations may lead to changes in this value.
 	 */
 	std::uint8_t * buffer() {
@@ -153,14 +155,21 @@ public:
 	}
 
 	/**
-	 * Returns a read-only pointer to the buffer.
+	 * Returns a read-only pointer to the buffer. On writable instances
+	 * this value is always equals to IRBuffer::buffer().
 	 *
-	 * @return The pointer to the buffer.
-	 * @note Never cache this value outside this class because
+	 * @return The read-only pointer to the buffer.
+	 * @warning Never cache this value outside this class because
 	 * resize operations may lead to changes in this value.
+	 * @note On read-only instances, it will always point to the same
+	 * buffer used in the constructor.
 	 */
-	const std::uint8_t * buffer() const {
-		return this->_robuff;
+	const std::uint8_t * roBuffer() const {
+		if (this->readOnly()) {
+			return this->_robuff;
+		} else {
+			return this->_buff;
+		}
 	}
 
 	/**
@@ -168,7 +177,7 @@ public:
 	 *
 	 * @return The total size of the buffer.
 	 */
-	std::uint64_t getBufferSize() const {
+	std::uint64_t bufferSize() const {
 		return this->_buffSize;
 	}
 
@@ -177,7 +186,7 @@ public:
 	 *
 	 * @return true if the instance is read-only or false otherwise.
 	 */
-	bool isReadOnly() const {
+	bool readOnly() const {
 		return (this->_buff == nullptr) && (this->_robuff);
 	}
 
@@ -244,6 +253,61 @@ public:
 	 * @return The actual number of bytes read.
 	 */
 	std::uint64_t read(void * buff, std::uint64_t buffSize);
+
+	/**
+	 * Checks if this instance is secure or not.
+	 *
+	 * @return true if the instance is secure or false otherwise.
+	 */
+	bool secure() const {
+		return this->_secure;
+	}
+
+	/**
+	 * Sets the contents of this buffer. On success, the contents of
+	 * buff will be copied into the internal buffer and the position will
+	 * be moved to the begining of the data.
+	 *
+	 * @param[in] buff The data to be copied.
+	 * @param[in] buffSize The number of bytes in buff.
+	 * @return true on success or false otherwise.
+	 * @note This method does not work in read-only buffers.
+	 * @since 2018.01.16
+	 */
+	bool set(const void * buff, std::uint64_t buffSize);
+
+	/**
+	 * Moves the read/write position to the begining of the data.
+	 * It has the same effect of setPosition(0).
+	 * @since 2018.01.16
+	 */
+	void beginning(){
+		this->_position = 0;
+	}
+
+	/**
+	 * Moves the read/write position to the end of the data.
+	 * It has the same effect of setPosition(size()).
+	 * @since 2018.01.16
+	 */
+	void ending(){
+		this->_position = this->_size;
+	}
+
+	/**
+	 * This method reduces the buffer to the minimum size required
+	 * to hold the actual data.
+	 *
+	 * <p>On success, the buffer size will be reduced to the same
+	 * size of the data. It is important to notice that the minimum
+	 * buffer size will always be the size of the increment.</p>
+	 *
+	 * @return true on success or false otherwise.
+	 * @note On failure, the instance will remain unchanged.
+	 * @note This method does not work in read-only buffers.
+	 * @since 2018.01.16
+	 */
+	bool shrink();
 };
 
 } //namespace ircommon
