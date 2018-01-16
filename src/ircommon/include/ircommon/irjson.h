@@ -980,9 +980,12 @@ public:
 
 	/**
 	 * Restarts the parser and make it ready to be reused.
+	 *
+	 * @return true if the operation is supported by the underlying tokenizer or
+	 * false otherwise.
 	 */
-	void reset(){
-		this->_tokenizer->reset();
+	bool reset(){
+		return this->_tokenizer->reset();
 	}
 
 	/**
