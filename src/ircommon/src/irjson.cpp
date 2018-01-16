@@ -523,6 +523,7 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractString() {
 				literal = '\t';
 				break;
 			case 'u':
+				hex.clear();
 				state = ST_UC;
 				break;
 			default:

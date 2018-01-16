@@ -365,9 +365,9 @@ TEST_F(IRJsonTokenizerTest, extractString) {
 	ASSERT_STREQ("\"\\/\b\f\n\r\t", p.value().c_str());
 
 	// UTF-8
-	p.setBuffer("\"\u0024\u00A2\u20ac\"");
+	p.setBuffer("\"\\u0024\\u00A2\\u20ac\"");
 	ASSERT_EQ(IRJsonTokenizer::VAL_STRING, p.next());
-	ASSERT_STREQ("\x24\xC2\xA2\xE2\x82\xAC", p.value().c_str());
+	ASSERT_STREQ("\x024\x0C2\x0A2\x0E2\x082\x0AC", p.value().c_str());
 
 	// Failed strings
 	p.setBuffer("\"");
