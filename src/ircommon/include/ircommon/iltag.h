@@ -50,7 +50,7 @@ public:
 
 	virtual std::uint64_t getSerializedSize() const = 0;
 
-	std::uint64_t serialize(ircommon::IRBuffer & out) const = 0;
+	virtual std::uint64_t serialize(ircommon::IRBuffer & out) const = 0;
 };
 
 
