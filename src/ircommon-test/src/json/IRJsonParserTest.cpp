@@ -238,6 +238,130 @@ TEST_F(IRJsonParserTest, ParseExampleRFC) {
 
 	delete dst;
 }
+
+//------------------------------------------------------------------------------
+TEST_F(IRJsonParserTest, ParseExample2) {
+	IRJsonObject * dst;
+
+	IRJsonParser p(new IRJsonStringTokenizer(
+		"/* Example from RFC7159 */\n"
+		"{\n"
+		"	\"results\": \n"
+		"	[\n"
+		"	{ \n"
+		"		\"gender\":\"female\",\n"
+		"		\"name\" : \n"
+		"		{\n"
+		"			\"title\":\"miss\",\n"
+		"			\"first\" : \"mildred\",\n"
+		"			\"last\" : \"campbell\",\n"
+		"		},\n"
+		"		\"location\" : \n"
+		"		{\n"
+		"			\"street\":\"5076 hillcrest rd\",\n"
+		"			\"city\" : \"bendigo\",\n"
+		"			\"state\" : \"northern territory\",\n"
+		"			\"postcode\" : 6626 \n"
+		"		},\n"
+		"		\"email\" : \"mildred.campbell@example.com\",\n"
+		"		\"login\" : \n"
+		"		{\n"
+		"			\"username\":\"crazycat503\",\n"
+		"			\"password\" : \"dharma\",\n"
+		"			\"salt\" : \"RFWp21AU\",\n"
+		"			\"md5\" : \"3582c43162268360b5ef301f875695e6\",\n"
+		"			\"sha1\" : \"e0b404c85a1ad365050fd9920376274b08f14454\",\n"
+		"			\"sha256\" : \"4f443959dd9d44a3c511a29ccf976aa17739cf3a4efce3cf0d894fa5178ac5c6\"\n"
+		"		},\n"
+		"		\"dob\":\"1975-07-29 13:26:50\",\n"
+		"		\"registered\" : \"2003-08-01 11:44:07\",\n"
+		"		\"phone\" : \"08-7802-4454\",\n"
+		"		\"cell\" : \"0449-211-200\",\n"
+		"		\"id\" : \n"
+		"		{\n"
+		"			\"name\":\"TFN\",\n"
+		"			\"value\" : \"892538135\"\n"
+		"		},\n"
+		"		\"picture\" : \n"
+		"		{\n"
+		"			\"large\":\"https://randomuser.me/api/portraits/women/76.jpg\",\n"
+		"			\"medium\" : \"https://randomuser.me/api/portraits/med/women/76.jpg\",\n"
+		"			\"thumbnail\" : \"https://randomuser.me/api/portraits/thumb/women/76.jpg\"\n"
+		"		},\n"
+		"		\"nat\" : \"AU\"\n"
+		"	}\n"
+		"	],\n"
+		"	\"info\":\n"
+		"	{\n"
+		"		\"seed\":\"38b33240cdf129f5\",\n"
+		"		\"results\" : 25,\n"
+		"		\"page\" : 1,\n"
+		"		\"version\" : \"1.1\"\n"
+		"	}\n"
+		"}\n"));
+
+	dst = p.parseObject();
+	ASSERT_TRUE(dst != nullptr);
+
+	ASSERT_TRUE(dst->isObject());
+
+	ASSERT_TRUE((*dst)["results"]->isArray());
+	const IRJsonArray & resultsArr = IRJsonAsArray(*(*dst)["results"]);
+
+	ASSERT_EQ(1, resultsArr.size());
+
+	ASSERT_TRUE(resultsArr[0]->isObject());
+
+	const IRJsonObject & resultsObj = IRJsonAsObject(*(resultsArr[0]));
+
+	ASSERT_TRUE(resultsObj["gender"]->isString());
+
+	/*
+
+	ASSERT_TRUE(imageObj["Height"]->isInteger());
+	ASSERT_EQ(600, imageObj["Height"]->asInteger());
+
+	ASSERT_TRUE(imageObj["Width"]->isInteger());
+	ASSERT_EQ(800, imageObj["Width"]->asInteger());
+
+	ASSERT_TRUE(imageObj["Title"]->isString());
+	ASSERT_STREQ("View from 15th Floor", imageObj["Title"]->asString().c_str());
+
+	ASSERT_TRUE(imageObj["Thumbnail"]->isObject());
+	const IRJsonObject & thumbnailObj = IRJsonAsObject(*imageObj["Thumbnail"]);
+	ASSERT_EQ(3, thumbnailObj.size());
+
+	ASSERT_TRUE(thumbnailObj["Url"]->isString());
+	ASSERT_STREQ("http://www.example.com/image/481989943", thumbnailObj["Url"]->asString().c_str());
+
+	ASSERT_TRUE(thumbnailObj["Height"]->isDecimal());
+	ASSERT_EQ(125.0, thumbnailObj["Height"]->asDecimal());
+
+	ASSERT_TRUE(thumbnailObj["Width"]->isDecimal());
+	ASSERT_EQ(100.0, thumbnailObj["Width"]->asDecimal());
+
+	ASSERT_TRUE(imageObj["Animated"]->isBoolean());
+	ASSERT_FALSE(imageObj["Animated"]->asBoolean());
+
+	ASSERT_TRUE(imageObj["IDs"]->isArray());
+	const IRJsonArray & idsArray = IRJsonAsArray(*imageObj["IDs"]);
+	ASSERT_EQ(4, idsArray.size());
+
+	ASSERT_TRUE(idsArray[0]->isInteger());
+	ASSERT_EQ(116, idsArray[0]->asInteger());
+
+	ASSERT_TRUE(idsArray[1]->isInteger());
+	ASSERT_EQ(943, idsArray[1]->asInteger());
+
+	ASSERT_TRUE(idsArray[2]->isNull());
+
+	ASSERT_TRUE(idsArray[3]->isBoolean());
+	ASSERT_TRUE(idsArray[3]->asBoolean());
+
+	*/
+
+	delete dst;
+}
 //------------------------------------------------------------------------------
 
 
