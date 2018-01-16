@@ -27,7 +27,7 @@
 #include <ircommon/iltag.h>
 #include <ircommon/ilint.h>
 
-using namespace ircommon;
+using namespace ircommon::iltags;
 
 //==============================================================================
 // Class ILTag

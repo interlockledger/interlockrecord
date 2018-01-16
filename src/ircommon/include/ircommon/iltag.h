@@ -29,8 +29,10 @@
 
 #include <cstdint>
 #include <vector>
+#include <ircommon/irbuffer.h>
 
 namespace ircommon {
+namespace iltags {
 
 class ILTag {
 private:
@@ -46,10 +48,11 @@ public:
 
 	virtual std::uint64_t getSize() const = 0;
 
-	virtual std::uint64_t getSerializedSize() const;
+	virtual std::uint64_t getSerializedSize() const = 0;
 
-	std::uint64_t serialize(std::vector<std::uint8_t> & out) const;
+	std::uint64_t serialize(ircommon::IRBuffer & out) const = 0;
 };
+
 
 class ILRawTag: public ILTag {
 protected:
@@ -78,6 +81,7 @@ public:
 	}
 };
 
+} //namespace iltags
 } //namespace ircommon
 
 #endif /* _IRCOMMON_ILTAG_H_ */

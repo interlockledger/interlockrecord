@@ -41,6 +41,11 @@
  * functionalities.
  */
 /**
+ * @namespace ircommon::iltags
+ * @brief ILTag classes.
+ * This namespace contains the classes that implements the ILTag file format.
+ */
+/**
  * @namespace ircommon::json
  * @brief JSON utilities.
  * This namespace contains the classes handle JSON file format. This
