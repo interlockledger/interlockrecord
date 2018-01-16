@@ -54,8 +54,9 @@ IRSemaphore::~IRSemaphore() {
 
 //------------------------------------------------------------------------------
 bool IRSemaphore::tryWait(int ms) {
-	if (!this->_handle) {
-		return (WaitForSingleObject(this->_handle, ms) == WAIT_OBJECT_0);
+	if (this->_handle) {
+		DWORD retval = WaitForSingleObject(this->_handle, ms);
+		return (retval == WAIT_OBJECT_0);
 	} else {
 		return false;
 	}
@@ -63,8 +64,9 @@ bool IRSemaphore::tryWait(int ms) {
 
 //------------------------------------------------------------------------------
 bool IRSemaphore::wait() {
-	if (!this->_handle) {
-		return (WaitForSingleObject(this->_handle, INFINITE) == WAIT_OBJECT_0);
+	if (this->_handle) {
+		DWORD retval = WaitForSingleObject(this->_handle, INFINITE);
+		return (retval == WAIT_OBJECT_0);
 	} else {
 		return false;
 	}
@@ -72,7 +74,7 @@ bool IRSemaphore::wait() {
 
 //------------------------------------------------------------------------------
 bool IRSemaphore::release() {
-	if (!this->_handle) {
+	if (this->_handle) {
 		return (ReleaseSemaphore(this->_handle, 1, NULL) == TRUE);
 	} else {
 		return false;
