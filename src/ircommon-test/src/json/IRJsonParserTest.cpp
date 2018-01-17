@@ -296,7 +296,7 @@ TEST_F(IRJsonParserTest, ParseExample2) {
 		"		\"seed\":\"38b33240cdf129f5\",\n"
 		"		\"results\" : 25,\n"
 		"		\"page\" : 1,\n"
-		"		\"version\" : \"1.1\"\n"
+		"		\"version\" : 1.1\n"
 		"	}\n"
 		"}\n"));
 
@@ -315,50 +315,115 @@ TEST_F(IRJsonParserTest, ParseExample2) {
 	const IRJsonObject & resultsObj = IRJsonAsObject(*(resultsArr[0]));
 
 	ASSERT_TRUE(resultsObj["gender"]->isString());
+	ASSERT_STREQ("female", resultsObj["gender"]->asString().c_str());
 
-	/*
+	ASSERT_TRUE(resultsObj["name"]->isObject());
+	const IRJsonObject & nameObj = IRJsonAsObject(*resultsObj["name"]);
+	ASSERT_EQ(3, nameObj.size());
 
-	ASSERT_TRUE(imageObj["Height"]->isInteger());
-	ASSERT_EQ(600, imageObj["Height"]->asInteger());
+	ASSERT_TRUE(nameObj["title"]->isString());
+	ASSERT_STREQ("miss", nameObj["title"]->asString().c_str());
 
-	ASSERT_TRUE(imageObj["Width"]->isInteger());
-	ASSERT_EQ(800, imageObj["Width"]->asInteger());
+	ASSERT_TRUE(nameObj["first"]->isString());
+	ASSERT_STREQ("mildred", nameObj["first"]->asString().c_str());
 
-	ASSERT_TRUE(imageObj["Title"]->isString());
-	ASSERT_STREQ("View from 15th Floor", imageObj["Title"]->asString().c_str());
+	ASSERT_TRUE(nameObj["last"]->isString());
+	ASSERT_STREQ("campbell", nameObj["last"]->asString().c_str());
 
-	ASSERT_TRUE(imageObj["Thumbnail"]->isObject());
-	const IRJsonObject & thumbnailObj = IRJsonAsObject(*imageObj["Thumbnail"]);
-	ASSERT_EQ(3, thumbnailObj.size());
+	ASSERT_TRUE(resultsObj["location"]->isObject());
+	const IRJsonObject & locationObj = IRJsonAsObject(*resultsObj["location"]);
+	ASSERT_EQ(4, locationObj.size());
 
-	ASSERT_TRUE(thumbnailObj["Url"]->isString());
-	ASSERT_STREQ("http://www.example.com/image/481989943", thumbnailObj["Url"]->asString().c_str());
+	ASSERT_TRUE(locationObj["street"]->isString());
+	ASSERT_STREQ("5076 hillcrest rd", locationObj["street"]->asString().c_str());
 
-	ASSERT_TRUE(thumbnailObj["Height"]->isDecimal());
-	ASSERT_EQ(125.0, thumbnailObj["Height"]->asDecimal());
+	ASSERT_TRUE(locationObj["city"]->isString());
+	ASSERT_STREQ("bendigo", locationObj["city"]->asString().c_str());
 
-	ASSERT_TRUE(thumbnailObj["Width"]->isDecimal());
-	ASSERT_EQ(100.0, thumbnailObj["Width"]->asDecimal());
+	ASSERT_TRUE(locationObj["state"]->isString());
+	ASSERT_STREQ("northern territory", locationObj["state"]->asString().c_str());
 
-	ASSERT_TRUE(imageObj["Animated"]->isBoolean());
-	ASSERT_FALSE(imageObj["Animated"]->asBoolean());
+	ASSERT_TRUE(locationObj["postcode"]->isInteger());
+	ASSERT_EQ(6626, locationObj["postcode"]->asInteger());
 
-	ASSERT_TRUE(imageObj["IDs"]->isArray());
-	const IRJsonArray & idsArray = IRJsonAsArray(*imageObj["IDs"]);
-	ASSERT_EQ(4, idsArray.size());
+	ASSERT_TRUE(resultsObj["email"]->isString());
+	ASSERT_STREQ("mildred.campbell@example.com", resultsObj["email"]->asString().c_str());
 
-	ASSERT_TRUE(idsArray[0]->isInteger());
-	ASSERT_EQ(116, idsArray[0]->asInteger());
+	ASSERT_TRUE(resultsObj["login"]->isObject());
+	const IRJsonObject & loginObj = IRJsonAsObject(*resultsObj["login"]);
+	ASSERT_EQ(6, loginObj.size());
 
-	ASSERT_TRUE(idsArray[1]->isInteger());
-	ASSERT_EQ(943, idsArray[1]->asInteger());
+	ASSERT_TRUE(loginObj["username"]->isString());
+	ASSERT_STREQ("crazycat503", loginObj["username"]->asString().c_str());
 
-	ASSERT_TRUE(idsArray[2]->isNull());
+	ASSERT_TRUE(loginObj["password"]->isString());
+	ASSERT_STREQ("dharma", loginObj["password"]->asString().c_str());
 
-	ASSERT_TRUE(idsArray[3]->isBoolean());
-	ASSERT_TRUE(idsArray[3]->asBoolean());
+	ASSERT_TRUE(loginObj["salt"]->isString());
+	ASSERT_STREQ("RFWp21AU", loginObj["salt"]->asString().c_str());
 
-	*/
+	ASSERT_TRUE(loginObj["md5"]->isString());
+	ASSERT_STREQ("3582c43162268360b5ef301f875695e6", loginObj["md5"]->asString().c_str());
+
+	ASSERT_TRUE(loginObj["sha1"]->isString());
+	ASSERT_STREQ("e0b404c85a1ad365050fd9920376274b08f14454", loginObj["sha1"]->asString().c_str());
+
+	ASSERT_TRUE(loginObj["sha256"]->isString());
+	ASSERT_STREQ("4f443959dd9d44a3c511a29ccf976aa17739cf3a4efce3cf0d894fa5178ac5c6", loginObj["sha256"]->asString().c_str());
+
+	ASSERT_TRUE(resultsObj["dob"]->isString());
+	ASSERT_STREQ("1975-07-29 13:26:50", resultsObj["dob"]->asString().c_str());
+
+	ASSERT_TRUE(resultsObj["registered"]->isString());
+	ASSERT_STREQ("2003-08-01 11:44:07", resultsObj["registered"]->asString().c_str());
+
+	ASSERT_TRUE(resultsObj["phone"]->isString());
+	ASSERT_STREQ("08-7802-4454", resultsObj["phone"]->asString().c_str());
+
+	ASSERT_TRUE(resultsObj["cell"]->isString());
+	ASSERT_STREQ("0449-211-200", resultsObj["cell"]->asString().c_str());
+
+	ASSERT_TRUE(resultsObj["id"]->isObject());
+	const IRJsonObject & idObj = IRJsonAsObject(*resultsObj["id"]);
+	ASSERT_EQ(2, idObj.size());
+
+	ASSERT_TRUE(idObj["name"]->isString());
+	ASSERT_STREQ("TFN", idObj["name"]->asString().c_str());
+
+	ASSERT_TRUE(idObj["value"]->isString());
+	ASSERT_STREQ("892538135", idObj["value"]->asString().c_str());
+
+	ASSERT_TRUE(resultsObj["picture"]->isObject());
+	const IRJsonObject & pictureObj = IRJsonAsObject(*resultsObj["picture"]);
+	ASSERT_EQ(3, pictureObj.size());
+
+	ASSERT_TRUE(pictureObj["large"]->isString());
+	ASSERT_STREQ("https://randomuser.me/api/portraits/women/76.jpg", pictureObj["large"]->asString().c_str());
+
+	ASSERT_TRUE(pictureObj["medium"]->isString());
+	ASSERT_STREQ("https://randomuser.me/api/portraits/med/women/76.jpg", pictureObj["medium"]->asString().c_str());
+
+	ASSERT_TRUE(pictureObj["thumbnail"]->isString());
+	ASSERT_STREQ("https://randomuser.me/api/portraits/thumb/women/76.jpg", pictureObj["thumbnail"]->asString().c_str());
+
+	ASSERT_TRUE(resultsObj["nat"]->isString());
+	ASSERT_STREQ("AU", resultsObj["nat"]->asString().c_str());
+
+	ASSERT_TRUE((*dst)["info"]->isObject());
+	const IRJsonObject & infoObj = IRJsonAsObject(*(*dst)["info"]);
+	ASSERT_EQ(4, infoObj.size());
+
+	ASSERT_TRUE(infoObj["seed"]->isString());
+	ASSERT_STREQ("38b33240cdf129f5", infoObj["seed"]->asString().c_str());
+
+	ASSERT_TRUE(infoObj["results"]->isInteger());
+	ASSERT_EQ(25, infoObj["results"]->asInteger());
+
+	ASSERT_TRUE(infoObj["page"]->isInteger());
+	ASSERT_EQ(1, infoObj["page"]->asInteger());
+
+	ASSERT_TRUE(infoObj["version"]->isDecimal());
+	ASSERT_EQ(1.1, infoObj["version"]->asDecimal());
 
 	delete dst;
 }
