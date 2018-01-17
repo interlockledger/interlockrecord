@@ -4,6 +4,9 @@
 #include <iostream>
 using namespace std;
 
+#define FLOAT_PI 3.1415927410f
+const static std::uint8_t FLOAT_PI_BIN[4] = {0x40, 0x49, 0x0f, 0xdb};
+
 const string & toBits(const void * buff, int buffSize, string & out) {
 	const uint8_t * p;
 	const uint8_t * pEnd;
@@ -30,7 +33,7 @@ int main() {
 	uint8_t v;
 	union {
 		float f;
-		uint32_t i;
+		std::uint8_t b[4];
 	} f;
 
 
@@ -42,7 +45,7 @@ int main() {
 	cout << toBits(&f.f, sizeof(f), s) << "\n";
 
 	s.clear();
-	cout << toBits(&f.i, sizeof(f), s) << "\n";
+	cout << toBits(f.b, sizeof(f), s) << "\n";
 
 	return 0;
 }
