@@ -16,6 +16,7 @@ add_library(ircommon STATIC
 	src/ilint.cpp
 	src/iltag.cpp
 	src/iralphab.cpp
+	src/irfp.cpp
 	src/ircodec.cpp
 	src/irjson.cpp
 	src/irbuffer.cpp

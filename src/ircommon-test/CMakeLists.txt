@@ -14,6 +14,7 @@ add_executable(ircommon-test
 	src/codec/IRGenericAlphabetTest.cpp
 	src/IRBufferTest.cpp
 	src/IRCodecTest.cpp
+	src/IRFloatingPointTest.cpp
 	src/IRIDGeneratorTest.cpp
 	src/IRSharedPtrHandleListTest.cpp
 	src/IRUtilsTest.cpp
