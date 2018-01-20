@@ -7,6 +7,30 @@ using namespace std;
 #define FLOAT_PI 3.1415927410f
 const static std::uint8_t FLOAT_PI_BIN[4] = {0x40, 0x49, 0x0f, 0xdb};
 
+bool IsBigEndian(){
+	float f;
+	std::uint8_t * b;
+	b = (std::uint8_t *)&f;
+	b[0] = 0x40;
+	b[1] = 0x49;
+	b[2] = 0x0f;
+	b[3] = 0xdb;
+	return f == FLOAT_PI;
+}
+
+bool IsLittleEndian(){
+	float f;
+	std::uint8_t * b;
+	b = (std::uint8_t *)&f;
+
+	b[3] = 0x40;
+	b[2] = 0x49;
+	b[1] = 0x0f;
+	b[0] = 0xdb;
+	return f == FLOAT_PI;
+}
+
+
 const string & toBits(const void * buff, int buffSize, string & out) {
 	const uint8_t * p;
 	const uint8_t * pEnd;
@@ -47,5 +71,7 @@ int main() {
 	s.clear();
 	cout << toBits(f.b, sizeof(f), s) << "\n";
 
+	cout << IsBigEndian() << "\n";
+	cout << IsLittleEndian() << "\n";
 	return 0;
 }
