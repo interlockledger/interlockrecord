@@ -308,6 +308,24 @@ public:
 	 * @since 2018.01.16
 	 */
 	bool shrink();
+
+	/**
+	 * Writes an ILInt64 value into the buffer.
+	 *
+	 * @param[in] v The value to be written.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.20
+	 */
+	bool writeILInt(std::uint64_t v);
+
+	/**
+	 * Reads an ILInt64 value from the buffer.
+	 *
+	 * @param[in] v The value read.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.20
+	 */
+	bool readILInt(std::uint64_t & v);
 };
 
 } //namespace ircommon

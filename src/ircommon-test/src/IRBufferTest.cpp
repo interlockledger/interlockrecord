@@ -26,6 +26,7 @@
  */
 #include "IRBufferTest.h"
 #include <ircommon/irbuffer.h>
+#include <ircommon/ilint.h>
 #include <cstring>
 using namespace ircommon;
 
@@ -570,4 +571,267 @@ TEST_F(IRBufferTest, shrink) {
 }
 
 //------------------------------------------------------------------------------
+TEST_F(IRBufferTest, writeILIntRO) {
+	IRBuffer b(IRBufferTest_SAMPLE, IRBufferTest_SAMPLE_SIZE);
+
+	ASSERT_FALSE(b.writeILInt(0));
+}
+
+//------------------------------------------------------------------------------
+#define IRBufferTest_ILINT_VALUES_COUNT 10
+const static std::uint8_t IRBufferTest_ILINT_VALUES_BIN[46] = {
+		0x00,
+		0xF7,
+		0xF8, 0x01,
+		0xF9, 0x01, 0x23,
+		0xFA, 0x01, 0x23, 0x45,
+		0xFB, 0x01, 0x23, 0x45, 0x67,
+		0xFC, 0x01, 0x23, 0x45, 0x67, 0x89,
+		0xFD, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB,
+		0xFE, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD,
+		0xFF, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
+
+const static std::uint64_t IRBufferTest_ILINT_VALUES[IRBufferTest_ILINT_VALUES_COUNT] = {
+		0x00ll,
+		0xF7ll,
+		0xF8ll + 0x01,
+		0xF8ll + 0x0123ll,
+		0xF8ll + 0x012345ll,
+		0xF8ll + 0x01234567ll,
+		0xF8ll + 0x0123456789ll,
+		0xF8ll + 0x0123456789ABll,
+		0xF8ll + 0x0123456789ABCDll,
+		0xF8ll + 0x0123456789ABCDEFll};
+
+TEST_F(IRBufferTest, writeILIntRW) {
+	IRBuffer b;
+	std::uint64_t v;
+	std::uint8_t buff[16];
+	int buffSize;
+
+	v = 0;
+	buffSize = ILInt::encode(v, buff, sizeof(buff));
+	b.setSize(0);
+	ASSERT_TRUE(b.writeILInt(v));
+	ASSERT_EQ(buffSize, b.size());
+	ASSERT_EQ(buffSize, b.position());
+	ASSERT_EQ(0, memcmp(b.roBuffer(), buff, buffSize));
+
+	b.setSize(16);
+	b.setPosition(0);
+	ASSERT_TRUE(b.writeILInt(v));
+	ASSERT_EQ(16, b.size());
+	ASSERT_EQ(buffSize, b.position());
+	ASSERT_EQ(0, memcmp(b.roBuffer(), buff, buffSize));
+
+	b.setSize(1);
+	b.setPosition(1);
+	ASSERT_TRUE(b.writeILInt(v));
+	ASSERT_EQ(1 + buffSize, b.size());
+	ASSERT_EQ(1 + buffSize, b.position());
+	ASSERT_EQ(0, memcmp(b.roBuffer() + 1, buff, buffSize));
+
+	b.setSize(16);
+	b.setPosition(1);
+	ASSERT_TRUE(b.writeILInt(v));
+	ASSERT_EQ(16, b.size());
+	ASSERT_EQ(1 + buffSize, b.position());
+	ASSERT_EQ(0, memcmp(b.roBuffer() + 1, buff, buffSize));
+
+	// Full ILInt
+	v = 0xFFFFFFFFFFFFFFFFl;
+	buffSize = ILInt::encode(v, buff, sizeof(buff));
+	b.setSize(0);
+	ASSERT_TRUE(b.writeILInt(v));
+	ASSERT_EQ(buffSize, b.size());
+	ASSERT_EQ(buffSize, b.position());
+	ASSERT_EQ(0, memcmp(b.roBuffer(), buff, buffSize));
+
+	b.setSize(16);
+	b.setPosition(0);
+	ASSERT_TRUE(b.writeILInt(v));
+	ASSERT_EQ(16, b.size());
+	ASSERT_EQ(buffSize, b.position());
+	ASSERT_EQ(0, memcmp(b.roBuffer(), buff, buffSize));
+
+	b.setSize(1);
+	b.setPosition(1);
+	ASSERT_TRUE(b.writeILInt(v));
+	ASSERT_EQ(1 + buffSize, b.size());
+	ASSERT_EQ(1 + buffSize, b.position());
+	ASSERT_EQ(0, memcmp(b.roBuffer() + 1, buff, buffSize));
+
+	b.setSize(16);
+	b.setPosition(1);
+	ASSERT_TRUE(b.writeILInt(v));
+	ASSERT_EQ(16, b.size());
+	ASSERT_EQ(1 + buffSize, b.position());
+	ASSERT_EQ(0, memcmp(b.roBuffer() + 1, buff, buffSize));
+
+	// Sequence of writes
+	b.setSize(0);
+	for (int i = 0; i < IRBufferTest_ILINT_VALUES_COUNT; i++) {
+		ASSERT_TRUE(b.writeILInt(IRBufferTest_ILINT_VALUES[i]));
+	}
+	ASSERT_EQ(sizeof(IRBufferTest_ILINT_VALUES_BIN), b.size());
+	ASSERT_EQ(0, std::memcmp(
+			IRBufferTest_ILINT_VALUES_BIN,
+			b.roBuffer(),
+			sizeof(IRBufferTest_ILINT_VALUES_BIN)));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, readILIntRO) {
+	IRBuffer b(IRBufferTest_ILINT_VALUES_BIN, sizeof(IRBufferTest_ILINT_VALUES_BIN));
+	std::uint64_t v;
+
+	for (int i = 0; i < IRBufferTest_ILINT_VALUES_COUNT; i++) {
+		ASSERT_TRUE(b.readILInt(v));
+		ASSERT_EQ(IRBufferTest_ILINT_VALUES[i], v);
+	}
+
+	// No fail with one
+	for (int prefix = 0; prefix < 0xF8; prefix++) {
+		std::uint8_t buff[16];
+		std::uint64_t v;
+		std::memset(buff, 0x01, sizeof(buff));
+		buff[0] = prefix;
+		IRBuffer c(buff, 1);
+		ASSERT_TRUE(c.readILInt(v));
+		ASSERT_EQ(prefix, v);
+
+		// With offset
+		std::memset(buff, 0x01, sizeof(buff));
+		buff[1] = prefix;
+		IRBuffer d(buff, 2);
+		d.skip(1);
+		ASSERT_TRUE(d.readILInt(v));
+		ASSERT_EQ(prefix, v);
+	}
+
+	// Multi-byte
+	std::uint64_t s = 0x01;
+	for (int prefix = 0xF8; prefix <= 0xFF; prefix++) {
+		std::uint8_t buff[16];
+		std::uint64_t v;
+
+		std::memset(buff, 0x01, sizeof(buff));
+		buff[0] = prefix;
+		IRBuffer c(buff, prefix - 0xF8 + 1 + 1);
+		ASSERT_TRUE(c.readILInt(v));
+		ASSERT_EQ(s + 0xF8, v);
+
+		std::memset(buff, 0x01, sizeof(buff));
+		buff[1] = prefix;
+		IRBuffer d(buff, prefix - 0xF8 + 1 + 1 + 1);
+		d.skip(1);
+		ASSERT_TRUE(d.readILInt(v));
+		ASSERT_EQ(s + 0xF8, v);
+		s = (s << 8) + 1;
+	}
+
+	for (int i = 0; i < 8; i++) {
+		std::uint8_t buff[16];
+		int prefix = 0xF8 + i;
+		std::memset(buff, 0x01, sizeof(buff));
+		buff[0] = prefix;
+		for (int size = 0; size <= i; size++) {
+			IRBuffer b(buff, size);
+			std::uint64_t v;
+			ASSERT_FALSE(b.readILInt(v));
+		}
+
+		std::memset(buff, 0x01, sizeof(buff));
+		buff[1] = prefix;
+		for (int size = 0; size <= i; size++) {
+			IRBuffer b(buff, size + 1);
+			b.skip(1);
+			std::uint64_t v;
+			ASSERT_FALSE(b.readILInt(v));
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, readILIntRW) {
+	IRBuffer b;
+	std::uint64_t v;
+
+	b.set(IRBufferTest_ILINT_VALUES_BIN, sizeof(IRBufferTest_ILINT_VALUES_BIN));
+	for (int i = 0; i < IRBufferTest_ILINT_VALUES_COUNT; i++) {
+		ASSERT_TRUE(b.readILInt(v));
+		ASSERT_EQ(IRBufferTest_ILINT_VALUES[i], v);
+	}
+
+	// No fail with one
+	for (int prefix = 0; prefix < 0xF8; prefix++) {
+		std::uint8_t buff[16];
+		std::uint64_t v;
+		std::memset(buff, 0x01, sizeof(buff));
+		buff[0] = prefix;
+		IRBuffer c;
+		c.set(buff, 1);
+		ASSERT_TRUE(c.readILInt(v));
+		ASSERT_EQ(prefix, v);
+
+		// With offset
+		std::memset(buff, 0x01, sizeof(buff));
+		buff[1] = prefix;
+		IRBuffer d;
+		d.set(buff, 2);
+		d.skip(1);
+		ASSERT_TRUE(d.readILInt(v));
+		ASSERT_EQ(prefix, v);
+	}
+
+	// Multi-byte
+	std::uint64_t s = 0x01;
+	for (int prefix = 0xF8; prefix <= 0xFF; prefix++) {
+		std::uint8_t buff[16];
+		std::uint64_t v;
+
+		std::memset(buff, 0x01, sizeof(buff));
+		buff[0] = prefix;
+		IRBuffer c;
+		c.set(buff, prefix - 0xF8 + 1 + 1);
+		ASSERT_TRUE(c.readILInt(v));
+		ASSERT_EQ(s + 0xF8, v);
+
+		std::memset(buff, 0x01, sizeof(buff));
+		buff[1] = prefix;
+		IRBuffer d;
+		d.set(buff, prefix - 0xF8 + 1 + 1 + 1);
+		d.skip(1);
+		ASSERT_TRUE(d.readILInt(v));
+		ASSERT_EQ(s + 0xF8, v);
+		s = (s << 8) + 1;
+	}
+
+	for (int i = 0; i < 8; i++) {
+		std::uint8_t buff[16];
+		int prefix = 0xF8 + i;
+		std::memset(buff, 0x01, sizeof(buff));
+		buff[0] = prefix;
+		for (int size = 0; size <= i; size++) {
+			IRBuffer b;
+			b.set(buff, size);
+			std::uint64_t v;
+			ASSERT_FALSE(b.readILInt(v));
+		}
+
+		std::memset(buff, 0x01, sizeof(buff));
+		buff[1] = prefix;
+		for (int size = 0; size <= i; size++) {
+			IRBuffer b;
+			b.set(buff, size + 1);
+			b.skip(1);
+			std::uint64_t v;
+			ASSERT_FALSE(b.readILInt(v));
+		}
+	}
+}
+
+
+//------------------------------------------------------------------------------
+
 

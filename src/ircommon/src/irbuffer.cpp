@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <ircommon/irbuffer.h>
+#include <ircommon/ilint.h>
 #include <ircommon/irutils.h>
 #include <cstring>
 #include <algorithm>
@@ -228,6 +229,40 @@ bool IRBuffer::shrink() {
 			this->_buff = newBuff;
 			return true;
 		}
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::writeILInt(std::uint64_t v) {
+	std::uint64_t newSize;
+	int vSize;
+
+	if (this->readOnly()) {
+		return false;
+	}
+
+	vSize = ILInt::size(v);
+	newSize = std::max(this->position() + vSize, this->size());
+	if (this->setSize(newSize)) {
+		ILInt::encode(v, this->buffer() + this->position(), vSize);
+		this->_position += vSize;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::readILInt(std::uint64_t & v) {
+	int read;
+
+	read = ILInt::decode(this->roBuffer() + this->position(),
+			this->available(), &v);
+	if (read == 0) {
+		return false;
+	} else {
+		this->_position += read;
+		return true;
 	}
 }
 
