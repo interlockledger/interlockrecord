@@ -85,4 +85,85 @@ bool ILRawTag::deserializeValue(const ILTagFactory & factory,
 	return this->_value.set(buff, size);
 }
 
+//==============================================================================
+// Class ILTagListTag
+//------------------------------------------------------------------------------
+ILTagListTag::ILTagListTag(std::uint64_t id): ILTag(id) {
+}
+
+//------------------------------------------------------------------------------
+bool ILTagListTag::serializeValue(ircommon::IRBuffer & out) const {
+
+	for (int i = 0; i < this->count(); i++) {
+		if (!this->_list[i]->serialize(out)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+//------------------------------------------------------------------------------
+std::uint64_t ILTagListTag::size() const {
+	std::uint64_t total;
+
+	total = 0;
+	for (int i = 0; i < this->count(); i++) {
+		total += this->_list[i]->size();
+	}
+	return total;
+}
+
+//------------------------------------------------------------------------------
+bool ILTagListTag::deserializeValue(const ILTagFactory & factory,
+			const void * buff, std::uint64_t size) {
+	IRBuffer inp(buff, size);
+	std::uint64_t count;
+
+	if (!inp.readILInt(count)) {
+		return false;
+	}
+
+	this->clear();
+	while(count > 0) {
+		ILTag * tag = factory.deserialize(inp);
+		if (!tag) {
+			return false;
+		}
+		if (!this->add(tag)) {
+			return false;
+		}
+	}
+	return (inp.available() == 0);
+}
+
+//------------------------------------------------------------------------------
+bool ILTagListTag::add(SharedPointer obj) {
+	this->_list.push_back(obj);
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool ILTagListTag::insert(int idx, SharedPointer obj) {
+
+	this->_list.insert(this->_list.begin() + idx, obj);
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool ILTagListTag::remove(int idx) {
+
+	this->_list.erase(this->_list.begin() + idx);
+	return true;
+}
+
+//------------------------------------------------------------------------------
+ILTagListTag::SharedPointer & ILTagListTag::operator [](int idx) {
+	return this->_list[idx];
+}
+
+//------------------------------------------------------------------------------
+const ILTagListTag::SharedPointer & ILTagListTag::operator [](int idx) const {
+	return this->_list[idx];
+}
+
 //------------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Open Communications Security
+ * Copyright (c) 2017-2018, Open Communications Security
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <memory>
 #include <ircommon/irbuffer.h>
 
 namespace ircommon {
@@ -183,7 +184,8 @@ public:
 };
 
 /**
- * This class implements the base class for all raw tags.
+ * This class implements the base class for all raw tags. The tag
+ * information will be stored inside a IRBuffer to allow manipulation.
  *
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @since 2017.12.27
@@ -203,18 +205,78 @@ public:
 	virtual bool deserializeValue(const ILTagFactory & factory,
 			const void * buff, std::uint64_t size);
 
+	/**
+	 * Grants read-only access to the internal buffer.
+	 *
+	 * @return The instance of the internal buffer.
+	 */
 	const ircommon::IRBuffer & value() const {
 		return this->_value;
 	}
 
+	/**
+	 * Grants read/write access to the internal buffer.
+	 *
+	 * @return The instance of the internal buffer.
+	 */
 	ircommon::IRBuffer & value() {
 		return this->_value;
 	}
 };
 
 /**
- * This class implements a factory that creates ILTag instances based on their
- * IDs.
+ * This class implements the base class for all tag-list tags.
+ *
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2018.01.22
+ */
+class ILTagListTag: public ILTag {
+public:
+	typedef std::shared_ptr<ILTag> SharedPointer;
+protected:
+	std::vector<SharedPointer> _list;
+
+	virtual bool serializeValue(ircommon::IRBuffer & out) const;
+public:
+	ILTagListTag(std::uint64_t id);
+
+	virtual ~ILTagListTag() = default;
+
+	int count() const {
+		return this->_list.size();
+	}
+
+	virtual std::uint64_t size() const;
+
+	virtual bool deserializeValue(const ILTagFactory & factory,
+			const void * buff, std::uint64_t size);
+
+	bool add(SharedPointer obj);
+
+	bool add(ILTag * obj) {
+		return this->add(SharedPointer(obj));
+	}
+
+	bool insert(int idx, SharedPointer obj);
+
+	bool insert(int idx, ILTag * obj) {
+		return this->insert(idx, SharedPointer(obj));
+	}
+
+	bool remove(int idx);
+
+	void clear() {
+		this->_list.clear();
+	}
+
+	SharedPointer & operator [](int idx);
+
+	const SharedPointer & operator [](int idx) const;
+};
+
+/**
+ * This abstract class implements a factory that creates ILTag instances
+ * based on their IDs.
  *
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @since 2018.01.20
@@ -232,13 +294,14 @@ public:
 	virtual ~ILTagFactory() = default;
 
 	/**
-	 * Creates a new instance of the tag.
+	 * Creates a new instance of the tag based on the ID.
 	 *
 	 * @param[in] tagId The tag id.
 	 * @return The instance of ILTag that implements this ID or NULL if the ID
 	 * is unsupported.
+	 * @note Custom factories must overwrite this method.
 	 */
-	virtual ILTag * create(std::uint64_t tagId) const = 0;
+	virtual ILTag * create(std::uint64_t tagId) const;
 
 	/**
 	 * Deserializes the first ILTag found inside the input.
@@ -247,6 +310,28 @@ public:
 	 * @return The extracted tag or NULL otherwise.
 	 */
 	ILTag * deserialize(IRBuffer & inp) const;
+};
+
+/**
+ * This class implements a factory that creates ILTag instances
+ * based on their IDs.
+ *
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2018.01.20
+ */
+class ILRawTagFactory: public ILTagFactory {
+public:
+	/**
+	 * Creates a new instance of this class.
+	 */
+	ILRawTagFactory();
+
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
+	virtual ~ILRawTagFactory() = default;
+
+	virtual ILTag * create(std::uint64_t tagId) const;
 };
 
 } //namespace iltags
