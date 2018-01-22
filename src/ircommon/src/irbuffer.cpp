@@ -267,3 +267,28 @@ bool IRBuffer::readILInt(std::uint64_t & v) {
 }
 
 //------------------------------------------------------------------------------
+bool IRBuffer::write(int v) {
+
+	if (this->readOnly()) {
+		return false;
+	}
+	if (!this->reserve(this->_position + 1)){
+		return false;
+	}
+	*(this->posBuffer()) = (std::uint8_t)v;
+	this->_position++;
+	this->_size = std::max(this->_size, this->_position);
+	return true;
+}
+
+//------------------------------------------------------------------------------
+int IRBuffer::read() {
+	if (this->position() < this->size()) {
+		this->_position++;
+		return *(this->roPosBuffer() - 1) & 0xFF;
+	} else {
+		return -1;
+	}
+}
+
+//------------------------------------------------------------------------------

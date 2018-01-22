@@ -350,6 +350,23 @@ public:
 			return this->buffer() + this->position();
 		}
 	}
+
+	/**
+	 * Writes a single byte to the buffer.
+	 *
+	 * @param[in] v The byte value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.22
+	 */
+	bool write(int v);
+
+	/**
+	 * Reads a single byte from the buffer.
+	 *
+	 * @return The byte read or -1 if no more bytes is available.
+	 * @since 2018.01.22
+	 */
+	int read();
 };
 
 } //namespace ircommon
