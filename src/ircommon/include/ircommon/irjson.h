@@ -271,6 +271,22 @@ public:
 	virtual IRJsonValue * clone() const {
 		return new IRJsonBaseValue(this->get());
 	}
+
+	virtual bool asBoolean() const {
+		return IRJsonValue::asBoolean();
+	}
+
+	virtual double asDecimal() const {
+		return IRJsonValue::asDecimal();
+	}
+
+	virtual std::uint64_t asInteger() const {
+		return IRJsonValue::asInteger();
+	}
+
+	virtual const std::string & asString() const {
+		return IRJsonValue::asString();
+	}
 };
 
 /**
@@ -280,16 +296,7 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-class IRJsonString: public IRJsonBaseValue<std::string, IRJsonValue::STRING> {
-public:
-	IRJsonString() = default;
-	IRJsonString(const std::string & v) :
-		IRJsonBaseValue<std::string, IRJsonValue::STRING>(v) {}
-	virtual ~IRJsonString() = default;
-	virtual const std::string & asString() const {
-		return this->get();
-	}
-};
+typedef IRJsonBaseValue<std::string, IRJsonValue::STRING> IRJsonString;
 
 /**
  * JSON integer. It uses std::int64_t as its basic type.
@@ -298,16 +305,7 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-class IRJsonInteger: public IRJsonBaseValue<std::int64_t, IRJsonValue::INTEGER> {
-public:
-	IRJsonInteger() = default;
-	IRJsonInteger(std::int64_t v) :
-		IRJsonBaseValue<std::int64_t, IRJsonValue::INTEGER>(v) {}
-	virtual ~IRJsonInteger() = default;
-	virtual std::uint64_t asInteger() const{
-		return this->get();
-	}
-};
+typedef IRJsonBaseValue<std::int64_t, IRJsonValue::INTEGER> IRJsonInteger;
 
 /**
  * JSON decimal. It uses double as its basic type.
@@ -316,16 +314,7 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-class IRJsonDecimal: public IRJsonBaseValue<double, IRJsonValue::DECIMAL> {
-public:
-	IRJsonDecimal() = default;
-	IRJsonDecimal(double v) :
-		IRJsonBaseValue<double, IRJsonValue::DECIMAL>(v) {}
-	virtual ~IRJsonDecimal() = default;
-	virtual double asDecimal() const{
-		return this->get();
-	}
-};
+typedef IRJsonBaseValue<double, IRJsonValue::DECIMAL> IRJsonDecimal;
 
 /**
  * JSON boolean. It uses bool as its basic type.
@@ -334,16 +323,7 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @note This class is not thread-safe.
  */
-class IRJsonBoolean: public IRJsonBaseValue<bool, IRJsonValue::BOOLEAN>{
-public:
-	IRJsonBoolean() = default;
-	IRJsonBoolean(bool v) :
-		IRJsonBaseValue<bool, IRJsonValue::BOOLEAN>(v) {}
-	virtual ~IRJsonBoolean() = default;
-	virtual bool asBoolean() const {
-		return this->get();
-	}
-};
+typedef IRJsonBaseValue<bool, IRJsonValue::BOOLEAN> IRJsonBoolean;
 
 /**
  * JSON null. It uses bool as its basic type.

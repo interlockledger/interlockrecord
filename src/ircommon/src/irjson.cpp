@@ -65,6 +65,34 @@ IRJsonValue * IRJsonValue::clone() const {
 }
 
 //==============================================================================
+// Class IRJsonBaseValue
+//------------------------------------------------------------------------------
+template <>
+const std::string &
+		IRJsonBaseValue<std::string, IRJsonValue::STRING>::asString() const {
+	return this->get();
+}
+
+//------------------------------------------------------------------------------
+template <>
+std::uint64_t
+		IRJsonBaseValue<std::int64_t, IRJsonValue::INTEGER>::asInteger() const {
+	return this->get();
+}
+
+//------------------------------------------------------------------------------
+template <>
+double IRJsonBaseValue<double, IRJsonValue::DECIMAL>::asDecimal() const {
+	return this->get();
+}
+
+//------------------------------------------------------------------------------
+template <>
+bool IRJsonBaseValue<bool, IRJsonValue::BOOLEAN>::asBoolean() const {
+	return this->get();
+}
+
+//==============================================================================
 // Class IRJsonObject
 //------------------------------------------------------------------------------
 void IRJsonObject::set(const std::string & name, SharedPointer value) {
