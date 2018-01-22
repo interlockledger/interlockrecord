@@ -831,7 +831,39 @@ TEST_F(IRBufferTest, readILIntRW) {
 	}
 }
 
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, roPosBuffer) {
+	IRBuffer b(IRBufferTest_ILINT_VALUES_BIN, sizeof(IRBufferTest_ILINT_VALUES_BIN));
 
+	while (b.available() > 0) {
+		ASSERT_EQ(b.roBuffer() + b.position(), b.roPosBuffer());
+		b.skip(1);
+	}
+
+	IRBuffer brw;
+	brw.set(IRBufferTest_ILINT_VALUES_BIN, sizeof(IRBufferTest_ILINT_VALUES_BIN));
+	while (brw.available() > 0) {
+		ASSERT_EQ(brw.roBuffer() + brw.position(), brw.roPosBuffer());
+		brw.skip(1);
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, posBuffer) {
+	IRBuffer b(IRBufferTest_ILINT_VALUES_BIN, sizeof(IRBufferTest_ILINT_VALUES_BIN));
+
+	while (b.available() > 0) {
+		ASSERT_EQ(nullptr, b.posBuffer());
+		b.skip(1);
+	}
+
+	IRBuffer brw;
+	brw.set(IRBufferTest_ILINT_VALUES_BIN, sizeof(IRBufferTest_ILINT_VALUES_BIN));
+	while (brw.available() > 0) {
+		ASSERT_EQ(brw.buffer() + brw.position(), brw.posBuffer());
+		brw.skip(1);
+	}
+}
 //------------------------------------------------------------------------------
 
 

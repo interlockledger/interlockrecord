@@ -326,6 +326,30 @@ public:
 	 * @since 2018.01.20
 	 */
 	bool readILInt(std::uint64_t & v);
+
+	/**
+	 * Returns a read-only pointer to the buffer at the current position.
+	 *
+	 * @return The pointer in the buffer at the current position.
+	 * @since 2018.01.22
+	 */
+	const std::uint8_t * roPosBuffer() const {
+		return this->roBuffer() + this->position();
+	}
+
+	/**
+	 * Returns a read/write pointer to the buffer at the current position.
+	 *
+	 * @return The pointer in the buffer at the current position.
+	 * @since 2018.01.22
+	 */
+	std::uint8_t * posBuffer() {
+		if (this->readOnly()) {
+			return nullptr;
+		} else {
+			return this->buffer() + this->position();
+		}
+	}
 };
 
 } //namespace ircommon
