@@ -27,6 +27,7 @@
 #include <ircommon/iltag.h>
 #include <ircommon/ilint.h>
 
+using namespace ircommon;
 using namespace ircommon::iltags;
 
 //==============================================================================
@@ -36,47 +37,52 @@ ILTag::ILTag(std::uint64_t id): _tagID(id) {
 }
 
 //------------------------------------------------------------------------------
-ILTag::~ILTag() {
+std::uint64_t ILTag::tagSize() const {
+	std::uint64_t ret;
+
+	ret = ILInt::size(this->getID()) + this->size();
+	if (!this->isImplicit()) {
+		ret += ILInt::size(this->size());
+	}
+	return ret;
 }
 
 //------------------------------------------------------------------------------
-std::uint64_t ILTag::getSerializedSize() const {
+bool ILTag::serialize(ircommon::IRBuffer & out) const {
 
-	// ILInt + ILInt + Payload
-	return ILInt::size(this->getID()) +
-			ILInt::size(this->getSize()) +
-			this->getSize();
+	// Add the ID.
+	if (!out.writeILInt(this->getID())) {
+		return false;
+	}
+	// Add the size if required
+	if ((!this->isImplicit()) && (!out.writeILInt(this->size()))) {
+		return false;
+	}
+	// Add the body
+	return this->serializeValue(out);
 }
 
 //==============================================================================
 // Class ILRawTag
 //------------------------------------------------------------------------------
-ILRawTag::ILRawTag(std::uint64_t id, std::uint64_t size, bool secure): ILTag(id) {
-	this->_data = new std::uint8_t[size];
-	this->_size = size;
-	this->_secure = secure;
+ILRawTag::ILRawTag(std::uint64_t id, bool secure): ILTag(id),
+		_value(0, 16, secure) {
 }
 
 //------------------------------------------------------------------------------
-ILRawTag::~ILRawTag() {
-
+std::uint64_t ILRawTag::size() const {
+	return this->value().size();
 }
 
 //------------------------------------------------------------------------------
-uint64_t ILRawTag::getSize() const {
-	return this->_size;
+bool ILRawTag::serializeValue(ircommon::IRBuffer & out) const {
+	return out.write(this->value().roBuffer(), this->value().size());
 }
 
 //------------------------------------------------------------------------------
-std::uint64_t ILRawTag::serialize(std::vector<std::uint8_t> & out) const {
-	uint8_t tmp[9];
-
-
-	return 0;
+bool ILRawTag::deserializeValue(const ILTagFactory & factory,
+		const void * buff, std::uint64_t size) {
+	return this->_value.set(buff, size);
 }
 
 //------------------------------------------------------------------------------
-bool ILRawTag::resize(std::uint64_t newSize) {
-	return false;
-}
-
