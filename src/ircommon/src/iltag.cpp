@@ -60,7 +60,7 @@ ILTag::ILTag(std::uint64_t id): _tagID(id) {
 std::uint64_t ILTag::tagSize() const {
 	std::uint64_t ret;
 
-	ret = ILInt::size(this->getID()) + this->size();
+	ret = ILInt::size(this->id()) + this->size();
 	if (!this->isImplicit()) {
 		ret += ILInt::size(this->size());
 	}
@@ -81,7 +81,7 @@ std::uint64_t ILTag::getImplicitValueSize(std::uint64_t tagId) {
 bool ILTag::serialize(ircommon::IRBuffer & out) const {
 
 	// Add the ID.
-	if (!out.writeILInt(this->getID())) {
+	if (!out.writeILInt(this->id())) {
 		return false;
 	}
 	// Add the size if required

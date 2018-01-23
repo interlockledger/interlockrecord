@@ -187,7 +187,7 @@ public:
 	 *
 	 * @return The tag ID.
 	 */
-	uint64_t getID() const {
+	uint64_t id() const {
 		return this->_tagID;
 	}
 
