@@ -134,6 +134,20 @@ public:
 		return this->value();
 	}
 
+	/**
+	 * Returns the size of the encoded value based on the first encoded byte.
+	 *
+	 * @param[in] prefix The value of the first byte.
+	 * @return The number bytes of te encoded data.
+	 * @since 2018.01.22
+	 */
+	inline static int encodedSize(int prefix) {
+		if (prefix < ILINT_BASE) {
+			return 1;
+		} else {
+			return 2 + (prefix & 0x07);
+		}
+	}
 };
 
 } //namespace ircommon

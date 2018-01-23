@@ -216,5 +216,21 @@ TEST_F(ILIntTest, ILIntEncodeDecode) {
 		ASSERT_EQ(v, vDec);
 	}
 }
+
+//------------------------------------------------------------------------------
+TEST_F(ILIntTest, encodedSize) {
+
+	for (int prefix = 0; prefix < 0xF8; prefix++) {
+		ASSERT_EQ(1, ILInt::encodedSize(prefix));
+	}
+	ASSERT_EQ(2, ILInt::encodedSize(0xF8));
+	ASSERT_EQ(3, ILInt::encodedSize(0xF9));
+	ASSERT_EQ(4, ILInt::encodedSize(0xFA));
+	ASSERT_EQ(5, ILInt::encodedSize(0xFB));
+	ASSERT_EQ(6, ILInt::encodedSize(0xFC));
+	ASSERT_EQ(7, ILInt::encodedSize(0xFD));
+	ASSERT_EQ(8, ILInt::encodedSize(0xFE));
+	ASSERT_EQ(9, ILInt::encodedSize(0xFF));
+}
 //------------------------------------------------------------------------------
 
