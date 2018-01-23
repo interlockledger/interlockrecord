@@ -33,6 +33,26 @@ using namespace ircommon::iltags;
 //==============================================================================
 // Class ILTag
 //------------------------------------------------------------------------------
+static const std::uint64_t ILTag_STANDARD_SIZES[16] = {
+		0,  // TAG_NULL
+		1,  // TAG_BOOL
+		1,  // TAG_INT8
+		1,  // TAG_UINT8
+		2,  // TAG_INT16
+		2,  // TAG_UINT16
+		4,  // TAG_INT32
+		4,  // TAG_UINT32
+		8,  // TAG_INT64
+		8,  // TAG_UINT64
+		0,  // TAG_ILINT64 - Not defined in this table
+		4,  // TAG_BINARY32
+		8,  // TAG_BINARY64
+		16, // TAG_BINARY128
+		0,  // Reserved
+		0   // Reserved
+};
+
+//------------------------------------------------------------------------------
 ILTag::ILTag(std::uint64_t id): _tagID(id) {
 }
 
@@ -45,6 +65,16 @@ std::uint64_t ILTag::tagSize() const {
 		ret += ILInt::size(this->size());
 	}
 	return ret;
+}
+
+//------------------------------------------------------------------------------
+std::uint64_t ILTag::getImplicitValueSize(std::uint64_t tagId) {
+
+	if (tagId < 16) {
+		return ILTag_STANDARD_SIZES[tagId];
+	} else {
+		return 0;
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -70,11 +100,6 @@ ILRawTag::ILRawTag(std::uint64_t id, bool secure): ILTag(id),
 }
 
 //------------------------------------------------------------------------------
-std::uint64_t ILRawTag::size() const {
-	return this->value().size();
-}
-
-//------------------------------------------------------------------------------
 bool ILRawTag::serializeValue(ircommon::IRBuffer & out) const {
 	return out.write(this->value().roBuffer(), this->value().size());
 }
@@ -94,9 +119,17 @@ ILTagListTag::ILTagListTag(std::uint64_t id): ILTag(id) {
 //------------------------------------------------------------------------------
 bool ILTagListTag::serializeValue(ircommon::IRBuffer & out) const {
 
+	out.writeILInt(this->count());
 	for (int i = 0; i < this->count(); i++) {
-		if (!this->_list[i]->serialize(out)) {
-			return false;
+		if (this->_list[i] == nullptr) {
+			// Shortcut to write a TAG_NULL that is a single 0.
+			if (!out.write(0)) {
+				return false;
+			}
+		} else {
+			if (!this->_list[i]->serialize(out)) {
+				return false;
+			}
 		}
 	}
 	return true;
@@ -106,9 +139,13 @@ bool ILTagListTag::serializeValue(ircommon::IRBuffer & out) const {
 std::uint64_t ILTagListTag::size() const {
 	std::uint64_t total;
 
-	total = 0;
+	total = ILInt::size(this->count());
 	for (int i = 0; i < this->count(); i++) {
-		total += this->_list[i]->size();
+		if (this->_list[i] == nullptr) {
+			total += 1;
+		} else {
+			total += this->_list[i]->size();
+		}
 	}
 	return total;
 }
@@ -171,10 +208,6 @@ const ILTagListTag::SharedPointer & ILTagListTag::operator [](int idx) const {
 //------------------------------------------------------------------------------
 bool ILTagFactory::getTagSize(std::uint64_t tagId, IRBuffer & inp,
 		 std::uint64_t & size) {
-	const std::uint64_t SIZES[16] = {0, 1, 1, 1,
-									2, 2, 4, 4,
-									8, 8, 0, 4,
-									8, 16, 0, 0};
 	if (ILTag::isImplicit(tagId)) {
 		if (tagId == ILTag::TAG_ILINT64) {
 			if (inp.available() == 0) {
@@ -183,7 +216,7 @@ bool ILTagFactory::getTagSize(std::uint64_t tagId, IRBuffer & inp,
 			size = ILInt::encodedSize(*inp.roPosBuffer());
 			return true;
 		} else {
-			size = SIZES[tagId];
+			size = ILTag::getImplicitValueSize(tagId);
 			return true;
 		}
 	} else {
@@ -208,8 +241,20 @@ ILTag * ILTagFactory::deserialize(IRBuffer & inp) const {
 	if (!ILTagFactory::getTagSize(tagId, inp, tagSize)) {
 		return nullptr;
 	}
-	//TODO
-	return nullptr;
+	if (inp.available() < tagSize) {
+		return nullptr;
+	}
+	tag = this->create(tagId);
+	if (tag == nullptr) {
+		return nullptr;
+	}
+	if (tag->deserializeValue(*this, inp.roPosBuffer(), tagSize)) {
+		inp.skip(tagSize);
+		return tag;
+	} else {
+		delete tag;
+		return nullptr;
+	}
 }
 
 //------------------------------------------------------------------------------

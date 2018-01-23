@@ -47,29 +47,111 @@ class ILTagFactory;
  */
 class ILTag {
 public:
-	// TODO Add documentation to those constants
-	enum {
+	/**
+	 * IDs of all known standard tags.
+	 */
+	typedef enum {
+		/**
+		 * The NULL tag. It contains no payload.
+		 */
 		TAG_NULL = 0,
+		/**
+		 * The boolean tag. It contains a single byte that represents true (1)
+		 * or false (0).
+		 */
 		TAG_BOOL = 1,
+		/**
+		 * The signed 8-bit integer tag. It contains a single byte that
+		 * represents the value.
+		 */
 		TAG_INT8 = 2,
+		/**
+		 * The unsigned 8-bit integer tag. It contains a single byte that
+		 * represents the value.
+		 */
 		TAG_UINT8 = 3,
+		/**
+		 * The signed 16-bit integer tag. It contains 2 bytes that represents
+		 * the value in Big Endian.
+		 */
 		TAG_INT16 = 4,
+		/**
+		 * The unsigned 16-bit integer tag. It contains 2 bytes that represents
+		 * the value in Big Endian.
+		 */
 		TAG_UINT16 = 5,
+		/**
+		 * The signed 32-bit integer tag. It contains 4 bytes that represents
+		 * the value in Big Endian.
+		 */
 		TAG_INT32 = 6,
+		/**
+		 * The unsigned 32-bit integer tag. It contains 4 bytes that represents
+		 * the value in Big Endian.
+		 */
 		TAG_UINT32 = 7,
+		/**
+		 * The signed 64-bit integer tag. It contains 8 bytes that represents
+		 * the value in Big Endian.
+		 */
 		TAG_INT64 = 8,
+		/**
+		 * The unsigned 64-bit integer tag. It contains 8 bytes that
+		 * represents the value in Big Endian.
+		 */
 		TAG_UINT64 = 9,
+		/**
+		 * The ILInt64 tag. It contains 1 to 9 bytes that represents a 64-bit
+		 * integer encoded as an ILInt.
+		 */
 		TAG_ILINT64 = 10,
+		/**
+		 * The single precision floating point tag. It contains a 4 bytes that
+		 * represents the value encoded as IEEE-754 in Big Endian.
+		 */
 		TAG_BINARY32 = 11,
+		/**
+		 * The double precision floating point tag. It contains a 8 bytes that
+		 * represents the value encoded as IEEE-754 in Big Endian.
+		 */
 		TAG_BINARY64 = 12,
+		/**
+		 * The quadruple precision floating point tag. It contains a 16 bytes
+		 * that represents the value encoded as IEEE-754 in Big Endian. The
+		 * support for this tag is optional.
+		 */
 		TAG_BINARY128 = 13,
+		/**
+		 * The byte array tag. It contains a byte array with 0 or more bytes.
+		 */
 		TAG_BYTE_ARRAY = 16,
+		/**
+		 * The string tag. It contains a UTF-8 string with 0 or more caracters.
+		 */
 		TAG_STRING = 17,
+		/**
+		 * The big integer tag. It contains the value encoded as
+		 * two's complement big endian value.
+		 */
 		TAG_BINT = 18,
+		/**
+		 * The big decimal tag. It contains an arbitrary precision decimal
+		 * encoded as an ILInt64 for the precision and the integral part as
+		 * encoded as two's complement big endian value.
+		 */
 		TAG_BDEC = 19,
+		/**
+		 * The ILnt64 array tag. It contains an array of 64-bit integers encoded
+		 * as ILInt64 values. It is composed by an ILInt64 that encodes the
+		 * number of entries followed by the entries themselves.
+		 */
 		TAG_ILINT64_ARRAY = 20,
+		/**
+		 * The ILTag array tag. It contains an ILInt64 value that encodes the
+		 * number of objects followed by the serialization of the tags.
+		 */
 		TAG_ILTAG_ARRAY = 21
-	};
+	} KnownStandardTagID;
 private:
 	/**
 	 * The tag ID.
@@ -181,6 +263,16 @@ public:
 	static bool isStandard(std::uint64_t tagId) {
 		return (tagId < 32);
 	}
+
+	/**
+	 * Returns the size of the values for all implicit tags that have a fixed
+	 * size. This means that the size of TAG_ILINT64 is not covered by this
+	 * method.
+	 *
+	 * @param[in] tagId The tag Id.
+	 * @return The implicit tag size.
+	 */
+	static std::uint64_t getImplicitValueSize(std::uint64_t tagId);
 };
 
 
@@ -198,11 +290,22 @@ protected:
 
 	virtual bool serializeValue(ircommon::IRBuffer & out) const;
 public:
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] id The tag ID.
+	 * @param[in] secure If true, uses an internal secure buffer.
+	 */
 	ILRawTag(std::uint64_t id, bool secure = false);
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~ILRawTag() = default;
 
-	virtual std::uint64_t size() const;
+	virtual std::uint64_t size() const {
+		return this->value().size();
+	}
 
 	virtual bool deserializeValue(const ILTagFactory & factory,
 			const void * buff, std::uint64_t size);
@@ -227,10 +330,12 @@ public:
 };
 
 /**
- * This class implements the base class for all tag-list tags.
+ * This class implements the base class for all tag-list tags. It follows the
+ * syntax of the TAG_ILTAG_ARRAY.
  *
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @since 2018.01.22
+ * @note As a safeguard, entries set to nullptr will be encoded as TAG_NULL.
  */
 class ILTagListTag: public ILTag {
 public:
@@ -240,10 +345,23 @@ protected:
 
 	virtual bool serializeValue(ircommon::IRBuffer & out) const;
 public:
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] id The tag ID.
+	 */
 	ILTagListTag(std::uint64_t id);
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~ILTagListTag() = default;
 
+	/**
+	 * Returns the number of tags.
+	 *
+	 * @return The number of tags.
+	 */
 	int count() const {
 		return this->_list.size();
 	}
@@ -253,26 +371,77 @@ public:
 	virtual bool deserializeValue(const ILTagFactory & factory,
 			const void * buff, std::uint64_t size);
 
+	/**
+	 * Adds a new tag to the end of the array.
+	 *
+	 * @param[in] obj The tag to be added.
+	 * @return true for success or false otherwise.
+	 */
 	bool add(SharedPointer obj);
 
+	/**
+	 * Adds a new tag to the end of the array.
+	 *
+	 * @param[in] obj The tag to be added. This method will claim the ownership
+	 * of this instance.
+	 * @return true for success or false otherwise.
+	 */
 	bool add(ILTag * obj) {
 		return this->add(SharedPointer(obj));
 	}
 
+	/**
+	 * Inserts a new tag in a given position.
+	 *
+	 * @param[in] idx The insert position.
+	 * @param[in] obj The tag to be added.
+	 * @return true for success or false otherwise.
+	 */
 	bool insert(int idx, SharedPointer obj);
 
+	/**
+	 * Inserts a new tag in a given position.
+	 *
+	 * @param[in] idx The insert position.
+	 * @param[in] obj The tag to be added. This method will claim the ownership
+	 * of this instance.
+	 * @return true for success or false otherwise.
+	 */
 	bool insert(int idx, ILTag * obj) {
 		return this->insert(idx, SharedPointer(obj));
 	}
 
+	/**
+	 * Removes the tag at a given index.
+	 *
+	 * @param[in] idx The position.
+	 * @return true for success or false otherwise.
+	 */
 	bool remove(int idx);
 
+	/**
+	 * Removes all tags.
+	 *
+	 * @return true for success or false otherwise.
+	 */
 	void clear() {
 		this->_list.clear();
 	}
 
+	/**
+	 * Grants read/write access to the tag a given postion.
+	 *
+	 * @param[in] idx The position.
+	 * @return A reference to the SharedPointer that holds the tag.
+	 */
 	SharedPointer & operator [](int idx);
 
+	/**
+	 * Grants read-only access to the tag a given postion.
+	 *
+	 * @param[in] idx The position.
+	 * @return A reference to the SharedPointer that holds the tag.
+	 */
 	const SharedPointer & operator [](int idx) const;
 };
 

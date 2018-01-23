@@ -147,9 +147,9 @@ public:
 	virtual ~IRBigIntTag() = default;
 };
 
-//BigDecimal
-//ILIntArray
-//ILTagArray
+//IRBigDecimalTag
+//IRILIntArrayTag
+//IRILTagArrayTag
 
 /**
  * This class implements a factory that handle all standard tag types.
