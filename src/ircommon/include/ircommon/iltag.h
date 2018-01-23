@@ -461,7 +461,7 @@ public:
 	/**
 	 * Creates a new instance of this class.
 	 */
-	ILTagFactory(bool secure): _secure(secure) {};
+	ILTagFactory(bool secure = false): _secure(secure) {};
 
 	/**
 	 * Disposes this instance and releases all associated resources.
