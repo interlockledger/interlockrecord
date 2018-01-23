@@ -5,6 +5,33 @@ project (ircommon-test
 enable_testing()
 find_package(GTest REQUIRED)
 add_executable(ircommon-test
+	src/iltags/ILStringTagTest.cpp
+	src/iltags/ILInt8TagTest.cpp
+	src/iltags/ILInt16TagTest.cpp
+	src/iltags/IRILTagArrayTagTest.cpp
+	src/iltags/ILBasicTagTest.cpp
+	src/iltags/ILInt64TagTest.cpp
+	src/iltags/ILStandardTagFactoryTest.cpp
+	src/iltags/ILBinary32TagTest.cpp
+	src/iltags/ILUInt8TagTest.cpp
+	src/iltags/ILTagFactoryTest.cpp
+	src/iltags/ILTagTest.cpp
+	src/iltags/ILBinary128TagTest.cpp
+	src/iltags/IRBigDecimalTagTest.cpp
+	src/iltags/IRByteArrayTagTest.cpp
+	src/iltags/IRILIntArrayTagTest.cpp
+	src/iltags/ILBinary64TagTest.cpp
+	src/iltags/IRBigIntTagTest.cpp
+	src/iltags/ILUInt64TagTest.cpp
+	src/iltags/ILRawTagTest.cpp
+	src/iltags/ILUInt32TagTest.cpp
+	src/iltags/ILUInt16TagTest.cpp
+	src/iltags/ILBoolTagTest.cpp
+	src/iltags/ILNullTagTest.cpp
+	src/iltags/ILTagListTagTest.cpp
+	src/iltags/ILBasicFixedOpaqueTagTest.cpp
+	src/iltags/ILInt32TagTest.cpp
+	src/iltags/ILILIntTagTest.cpp
 	src/codec/IRBase64AlphabetTest.cpp
 	src/codec/IRAlphabetTest.cpp
 	src/codec/IRHexAlphabetTest.cpp
