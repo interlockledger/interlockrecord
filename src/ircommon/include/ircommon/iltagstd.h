@@ -135,21 +135,21 @@ public:
 
 typedef ILBasicFixedOpaqueTag<ILTag::TAG_BINARY128, 16> ILBinary128Tag;
 
-class IRByteArrayTag: public ILRawTag {
+class ILByteArrayTag: public ILRawTag {
 public:
-	IRByteArrayTag(bool secure = false) : ILRawTag(ILTag::TAG_BYTE_ARRAY, secure){}
-	virtual ~IRByteArrayTag() = default;
+	ILByteArrayTag(bool secure = false) : ILRawTag(ILTag::TAG_BYTE_ARRAY, secure){}
+	virtual ~ILByteArrayTag() = default;
 };
 
-class IRBigIntTag: public ILRawTag {
+class ILBigIntTag: public ILRawTag {
 public:
-	IRBigIntTag() : ILRawTag(ILTag::TAG_BINT, true){}
-	virtual ~IRBigIntTag() = default;
+	ILBigIntTag() : ILRawTag(ILTag::TAG_BINT, true){}
+	virtual ~ILBigIntTag() = default;
 };
 
-//IRBigDecimalTag
-//IRILIntArrayTag
-//IRILTagArrayTag
+//ILBigDecimalTag
+//ILILIntArrayTag
+//ILILTagArrayTag
 
 /**
  * This class implements a factory that handle all standard tag types.

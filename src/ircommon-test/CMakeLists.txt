@@ -8,7 +8,7 @@ add_executable(ircommon-test
 	src/iltags/ILStringTagTest.cpp
 	src/iltags/ILInt8TagTest.cpp
 	src/iltags/ILInt16TagTest.cpp
-	src/iltags/IRILTagArrayTagTest.cpp
+	src/iltags/ILILTagArrayTagTest.cpp
 	src/iltags/ILBasicTagTest.cpp
 	src/iltags/ILInt64TagTest.cpp
 	src/iltags/ILStandardTagFactoryTest.cpp
@@ -17,11 +17,11 @@ add_executable(ircommon-test
 	src/iltags/ILTagFactoryTest.cpp
 	src/iltags/ILTagTest.cpp
 	src/iltags/ILBinary128TagTest.cpp
-	src/iltags/IRBigDecimalTagTest.cpp
-	src/iltags/IRByteArrayTagTest.cpp
-	src/iltags/IRILIntArrayTagTest.cpp
+	src/iltags/ILBigDecimalTagTest.cpp
+	src/iltags/ILByteArrayTagTest.cpp
+	src/iltags/ILILIntArrayTagTest.cpp
 	src/iltags/ILBinary64TagTest.cpp
-	src/iltags/IRBigIntTagTest.cpp
+	src/iltags/ILBigIntTagTest.cpp
 	src/iltags/ILUInt64TagTest.cpp
 	src/iltags/ILRawTagTest.cpp
 	src/iltags/ILUInt32TagTest.cpp

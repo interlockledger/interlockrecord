@@ -24,17 +24,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __IRILTAGARRAYTAGTEST_H__
-#define __IRILTAGARRAYTAGTEST_H__
+#include "ILBigDecimalTagTest.h"
 
-#include <gtest/gtest.h>
+//==============================================================================
+// class IRBigDecimalTagTest
+//------------------------------------------------------------------------------
+ILBigDecimalTagTest::ILBigDecimalTagTest() {
+}
 
-class IRILTagArrayTagTest : public testing::Test {
-public:
-	IRILTagArrayTagTest();
-	virtual ~IRILTagArrayTagTest();
-	virtual void SetUp();
-	virtual void TearDown();
-};
-#endif //__IRILTAGARRAYTAGTEST_H__
+//------------------------------------------------------------------------------
+ILBigDecimalTagTest::~ILBigDecimalTagTest() {
+}
+
+//------------------------------------------------------------------------------
+void ILBigDecimalTagTest::SetUp() {
+}
+
+//------------------------------------------------------------------------------
+void ILBigDecimalTagTest::TearDown() {
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILBigDecimalTagTest,Constructor) {
+
+	//TODO Implementation required!
+	std::cout << "Implementation required!";
+}
+//------------------------------------------------------------------------------
 

@@ -24,28 +24,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "IRILTagArrayTagTest.h"
+#include "ILILIntArrayTagTest.h"
 
 //==============================================================================
-// class IRILTagArrayTagTest
+// class IRILIntArrayTagTest
 //------------------------------------------------------------------------------
-IRILTagArrayTagTest::IRILTagArrayTagTest() {
+ILILIntArrayTagTest::ILILIntArrayTagTest() {
 }
 
 //------------------------------------------------------------------------------
-IRILTagArrayTagTest::~IRILTagArrayTagTest() {
+ILILIntArrayTagTest::~ILILIntArrayTagTest() {
 }
 
 //------------------------------------------------------------------------------
-void IRILTagArrayTagTest::SetUp() {
+void ILILIntArrayTagTest::SetUp() {
 }
 
 //------------------------------------------------------------------------------
-void IRILTagArrayTagTest::TearDown() {
+void ILILIntArrayTagTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRILTagArrayTagTest,Constructor) {
+TEST_F(ILILIntArrayTagTest,Constructor) {
 
 	//TODO Implementation required!
 	std::cout << "Implementation required!";

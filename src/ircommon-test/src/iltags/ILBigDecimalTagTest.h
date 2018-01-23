@@ -24,17 +24,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __IRBIGINTTAGTEST_H__
-#define __IRBIGINTTAGTEST_H__
+#ifndef __ILBIGDECIMALTAGTEST_H__
+#define __ILBIGDECIMALTAGTEST_H__
 
 #include <gtest/gtest.h>
 
-class IRBigIntTagTest : public testing::Test {
+class ILBigDecimalTagTest : public testing::Test {
 public:
-	IRBigIntTagTest();
-	virtual ~IRBigIntTagTest();
+	ILBigDecimalTagTest();
+	virtual ~ILBigDecimalTagTest();
 	virtual void SetUp();
 	virtual void TearDown();
 };
-#endif //__IRBIGINTTAGTEST_H__
+#endif //__ILBIGDECIMALTAGTEST_H__
 

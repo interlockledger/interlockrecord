@@ -24,28 +24,28 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "IRByteArrayTagTest.h"
+#include "ILBigIntTagTest.h"
 
 //==============================================================================
-// class IRByteArrayTagTest
+// class IRBigIntTagTest
 //------------------------------------------------------------------------------
-IRByteArrayTagTest::IRByteArrayTagTest() {
+ILBigIntTagTest::ILBigIntTagTest() {
 }
 
 //------------------------------------------------------------------------------
-IRByteArrayTagTest::~IRByteArrayTagTest() {
+ILBigIntTagTest::~ILBigIntTagTest() {
 }
 
 //------------------------------------------------------------------------------
-void IRByteArrayTagTest::SetUp() {
+void ILBigIntTagTest::SetUp() {
 }
 
 //------------------------------------------------------------------------------
-void IRByteArrayTagTest::TearDown() {
+void ILBigIntTagTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRByteArrayTagTest,Constructor) {
+TEST_F(ILBigIntTagTest,Constructor) {
 
 	//TODO Implementation required!
 	std::cout << "Implementation required!";
