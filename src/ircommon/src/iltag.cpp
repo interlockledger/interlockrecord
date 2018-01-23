@@ -166,4 +166,50 @@ const ILTagListTag::SharedPointer & ILTagListTag::operator [](int idx) const {
 	return this->_list[idx];
 }
 
+//==============================================================================
+// Class ILTagFactory
+//------------------------------------------------------------------------------
+bool ILTagFactory::getTagSize(std::uint64_t tagId, IRBuffer & inp,
+		 std::uint64_t & size) {
+	const std::uint64_t SIZES[16] = {0, 1, 1, 1,
+									2, 2, 4, 4,
+									8, 8, 0, 4,
+									8, 16, 0, 0};
+	if (ILTag::isImplicit(tagId)) {
+		if (tagId == ILTag::TAG_ILINT64) {
+			if (inp.available() == 0) {
+				return false;
+			}
+			size = ILInt::encodedSize(*inp.roPosBuffer());
+			return true;
+		} else {
+			size = SIZES[tagId];
+			return true;
+		}
+	} else {
+		return inp.readILInt(size);
+	}
+}
+
+//------------------------------------------------------------------------------
+ILTag * ILTagFactory::create(std::uint64_t tagId) const {
+	return nullptr;
+}
+
+//------------------------------------------------------------------------------
+ILTag * ILTagFactory::deserialize(IRBuffer & inp) const {
+	ILTag * tag;
+	std::uint64_t tagId;
+	std::uint64_t tagSize;
+
+	if (!inp.readILInt(tagId)) {
+		return nullptr;
+	}
+	if (!ILTagFactory::getTagSize(tagId, inp, tagSize)) {
+		return nullptr;
+	}
+	//TODO
+	return nullptr;
+}
+
 //------------------------------------------------------------------------------

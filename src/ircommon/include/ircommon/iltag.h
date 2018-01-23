@@ -59,7 +59,7 @@ public:
 		TAG_UINT32 = 7,
 		TAG_INT64 = 8,
 		TAG_UINT64 = 9,
-		TAG_LINT64 = 10,
+		TAG_ILINT64 = 10,
 		TAG_BINARY32 = 11,
 		TAG_BINARY64 = 12,
 		TAG_BINARY128 = 13,
@@ -183,6 +183,8 @@ public:
 	}
 };
 
+
+
 /**
  * This class implements the base class for all raw tags. The tag
  * information will be stored inside a IRBuffer to allow manipulation.
@@ -282,11 +284,15 @@ public:
  * @since 2018.01.20
  */
 class ILTagFactory {
+private:
+	bool _secure;
+
+	static bool getTagSize(std::uint64_t tagId, IRBuffer & inp, std::uint64_t & size);
 public:
 	/**
 	 * Creates a new instance of this class.
 	 */
-	ILTagFactory() = default;
+	ILTagFactory(bool secure): _secure(secure) {};
 
 	/**
 	 * Disposes this instance and releases all associated resources.
@@ -310,28 +316,15 @@ public:
 	 * @return The extracted tag or NULL otherwise.
 	 */
 	ILTag * deserialize(IRBuffer & inp) const;
-};
-
-/**
- * This class implements a factory that creates ILTag instances
- * based on their IDs.
- *
- * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
- * @since 2018.01.20
- */
-class ILRawTagFactory: public ILTagFactory {
-public:
-	/**
-	 * Creates a new instance of this class.
-	 */
-	ILRawTagFactory();
 
 	/**
-	 * Disposes this instance and releases all associated resources.
+	 * Verifies if this instance is working in secure mode.
+	 *
+	 * @return true if it is in secure mode or false otherwise.
 	 */
-	virtual ~ILRawTagFactory() = default;
-
-	virtual ILTag * create(std::uint64_t tagId) const;
+	bool secure() const{
+		return this->_secure;
+	}
 };
 
 } //namespace iltags

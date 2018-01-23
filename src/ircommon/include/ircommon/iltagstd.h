@@ -28,6 +28,7 @@
 #define _IRCOMMON_ILTAGSTD_H_
 
 #include <ircommon/iltag.h>
+#include <cstring>
 
 namespace ircommon {
 namespace iltags {
@@ -67,9 +68,7 @@ public:
 	}
 
 	virtual bool deserializeValue(const ILTagFactory & factory,
-			const void * buff, std::uint64_t size) {
-		return (size == size());
-	}
+			const void * buff, std::uint64_t size);
 
 	ValueType get() const {
 		return this->_value;
@@ -80,43 +79,98 @@ public:
 	}
 };
 
-template <class ValueType, std::uint64_t TagID>
-bool ILBasicTag<ValueType, TagID>::serializeValue(ircommon::IRBuffer & out) const {
-	return false;
-}
-
-template <class ValueType, std::uint64_t TagID>
-bool ILBasicTag<ValueType, TagID>::deserializeValue(const ILTagFactory & factory,
-		const void * buff, std::uint64_t size) {
-	return false;
-}
-
-template <class ValueType, std::uint64_t TagID>
-std::uint64_t ILBasicTag<ValueType, TagID>::size() const {
-	return sizeof(ValueType);
-}
-
-//==============================================================================
-// Class ILBoolTag
-//------------------------------------------------------------------------------
 typedef ILBasicTag<bool, ILTag::TAG_BOOL> ILBoolTag;
 
-template <>
-bool ILBasicTag<bool, ILTag::TAG_BOOL>::serializeValue(ircommon::IRBuffer & out) const {
-	return out.write(this->get()?1:0);
-}
+typedef ILBasicTag<std::int8_t, ILTag::TAG_INT8> ILInt8Tag;
 
-template <>
-bool ILBasicTag<bool, ILTag::TAG_BOOL>::deserializeValue(const ILTagFactory & factory,
-		const void * buff, std::uint64_t size) {
-	return false;
-}
+typedef ILBasicTag<std::uint8_t, ILTag::TAG_UINT8> ILUInt8Tag;
 
-template <>
-std::uint64_t ILBasicTag<bool, ILTag::TAG_BOOL>::size() const {
-	return 1;
-}
+typedef ILBasicTag<std::int16_t, ILTag::TAG_INT16> ILInt16Tag;
 
+typedef ILBasicTag<std::uint16_t, ILTag::TAG_UINT16> ILUInt16Tag;
+
+typedef ILBasicTag<std::int32_t, ILTag::TAG_INT32> ILInt32Tag;
+
+typedef ILBasicTag<std::uint32_t, ILTag::TAG_UINT32> ILUInt32Tag;
+
+typedef ILBasicTag<std::int64_t, ILTag::TAG_INT64> ILInt64Tag;
+
+typedef ILBasicTag<std::uint64_t, ILTag::TAG_UINT64> ILUInt64Tag;
+
+typedef ILBasicTag<std::uint64_t, ILTag::TAG_ILINT64> ILILIntTag;
+
+typedef ILBasicTag<float, ILTag::TAG_BINARY32> ILBinary32Tag;
+
+typedef ILBasicTag<double, ILTag::TAG_BINARY64> ILBinary64Tag;
+
+typedef ILBasicTag<std::string, ILTag::TAG_STRING> ILStringTag;
+
+template <std::uint64_t TagID, std::uint64_t ValueSize>
+class ILBasicFixedOpaqueTag : public ILTag {
+protected:
+	std::uint8_t _value[ValueSize];
+
+	virtual bool serializeValue(ircommon::IRBuffer & out) const;
+public:
+	ILBasicFixedOpaqueTag() : ILTag(TagID){}
+	virtual ~ILBasicFixedOpaqueTag() = default;
+
+	virtual std::uint64_t size() const {
+		return ValueSize;
+	}
+
+	virtual bool deserializeValue(const ILTagFactory & factory,
+			const void * buff, std::uint64_t size) {
+		if (size != ValueSize) {
+			return false;
+		}
+		std::memcpy(this->_value, buff, ValueSize);
+		return true;
+	}
+
+	const void * get() const {
+		return this->_value;
+	}
+};
+
+typedef ILBasicFixedOpaqueTag<ILTag::TAG_BINARY128, 16> ILBinary128Tag;
+
+class IRByteArrayTag: public ILRawTag {
+public:
+	IRByteArrayTag(bool secure = false) : ILRawTag(ILTag::TAG_BYTE_ARRAY, secure){}
+	virtual ~IRByteArrayTag() = default;
+};
+
+class IRBigIntTag: public ILRawTag {
+public:
+	IRBigIntTag() : ILRawTag(ILTag::TAG_BINT, true){}
+	virtual ~IRBigIntTag() = default;
+};
+
+//BigDecimal
+//ILIntArray
+//ILTagArray
+
+/**
+ * This class implements a factory that handle all standard tag types.
+ *
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2018.01.22
+ */
+class ILStandardTagFactory: public ILTagFactory {
+public:
+	/**
+	 * Creates a new instance of this class.
+	 */
+	ILStandardTagFactory(bool secure): ILTagFactory(secure) {};
+
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
+	virtual ~ILStandardTagFactory() = default;
+
+	virtual ILTag * create(std::uint64_t tagId) const;
+};
 
 } // namespace iltags
 } // namespace ircommon
