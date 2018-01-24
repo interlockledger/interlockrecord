@@ -379,6 +379,156 @@ std::uint64_t ILBasicTag<std::string, ILTag::TAG_STRING>::size() const {
 	return this->_value.size();
 }
 
+//==============================================================================
+// Class ILBigDecimalTag
+//------------------------------------------------------------------------------
+std::uint64_t ILBigDecimalTag::size() const {
+	return sizeof(this->_scale) + this->_integral.size();
+}
+
+//------------------------------------------------------------------------------
+bool ILBigDecimalTag::deserializeValue(const ILTagFactory & factory,
+		const void * buff, std::uint64_t size) {
+	std::uint64_t v;
+
+	if (size < sizeof(this->_scale)){
+		return false;
+	}
+	IRUtils::BE2Int(buff, this->_scale);
+	return this->_integral.set(
+			((const std::uint8_t *)buff) + sizeof(this->_scale),
+			size - sizeof(this->_scale));
+}
+
+//------------------------------------------------------------------------------
+bool ILBigDecimalTag::serializeValue(ircommon::IRBuffer & out) const {
+
+	if (!out.reserve(out.position() + sizeof(this->_scale))) {
+		return false;
+	}
+	IRUtils::int2BE(this->_scale, out.posBuffer());
+	out.skip(sizeof(this->_scale));
+	return out.write(this->_integral.roBuffer(), this->_integral.size());
+}
+
+//==============================================================================
+// Class ILILIntArrayTag
+//------------------------------------------------------------------------------
+bool ILILIntArrayTag::serializeValue(ircommon::IRBuffer & out) const {
+
+	if (!out.writeILInt(this->count())) {
+		return false;
+	}
+	for (std::uint64_t i = 0; i < this->count(); i++) {
+		if (!out.writeILInt(this->get(i))) {
+			return false;
+		}
+	}
+	return true;
+}
+
+//------------------------------------------------------------------------------
+std::uint64_t ILILIntArrayTag::size() const {
+	std::uint64_t s;
+
+	s = ILInt::size(this->count());
+	for (std::uint64_t i = 0; i < this->count(); i++) {
+		s += ILInt::size(this->get(i));
+	}
+	return s;
+}
+
+//------------------------------------------------------------------------------
+bool ILILIntArrayTag::deserializeValue(const ILTagFactory & factory,
+		const void * buff, std::uint64_t size) {
+	IRBuffer inp(buff, size);
+	std::uint64_t count;
+	std::uint64_t v;
+
+	if (!inp.readILInt(count)) {
+		return false;
+	}
+	for(; count > 0; count--) {
+		if (!inp.readILInt(v)) {
+			return false;
+		}
+		this->add(v);
+	}
+	return (inp.available() == 0);
+}
+
+//------------------------------------------------------------------------------
+bool ILILIntArrayTag::add(std::uint64_t v) {
+
+	this->_values.push_back(v);
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool ILILIntArrayTag::insert(std::uint64_t idx, std::uint64_t v) {
+
+	this->_values.insert(this->_values.begin() + idx, v);
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool ILILIntArrayTag::remove(std::uint64_t idx) {
+
+	this->_values.erase(this->_values.begin() + idx);
+	return true;
+}
+
+//==============================================================================
+// Class ILStandardTagFactory
+//------------------------------------------------------------------------------
+ILTag * ILStandardTagFactory::create(std::uint64_t tagId) const {
+
+	switch (tagId) {
+	case ILTag::TAG_NULL:
+		return new ILNullTag();
+	case ILTag::TAG_BOOL:
+		return new ILBoolTag();
+	case ILTag::TAG_INT8:
+		return new ILInt8Tag();
+	case ILTag::TAG_UINT8:
+		return new ILUInt8Tag();
+	case ILTag::TAG_INT16:
+		return new ILInt16Tag();
+	case ILTag::TAG_UINT16:
+		return new ILUInt16Tag();
+	case ILTag::TAG_INT32:
+		return new ILInt32Tag();
+	case ILTag::TAG_UINT32:
+		return new ILUInt32Tag();
+	case ILTag::TAG_INT64:
+		return new ILInt64Tag();
+	case ILTag::TAG_UINT64:
+		return new ILUInt64Tag();
+	case ILTag::TAG_ILINT64:
+		return new ILILIntTag();
+	case ILTag::TAG_BINARY32:
+		return new ILBinary32Tag();
+	case ILTag::TAG_BINARY64:
+		return new ILBinary64Tag();
+	case ILTag::TAG_BINARY128:
+		return new ILBinary128Tag();
+	case ILTag::TAG_BYTE_ARRAY:
+		return new ILByteArrayTag(this->secure());
+	case ILTag::TAG_STRING:
+		return new ILStringTag();
+	case ILTag::TAG_BINT:
+		return new ILBigIntTag();
+	case ILTag::TAG_BDEC:
+		return new ILBigDecimalTag();
+	case ILTag::TAG_ILINT64_ARRAY:
+		return new ILILIntArrayTag();
+	case ILTag::TAG_ILTAG_ARRAY:
+		return new ILILTagArrayTag();
+	default:
+		return nullptr;
+	}
+}
+
 //------------------------------------------------------------------------------
 
 

@@ -279,16 +279,21 @@ public:
 /**
  * This class implements the ILTag big decimal.
  *
+ * <p>The big decimal is represented as an integer part multiplied by
+ * 10^(-scale).</p>
+ *
  * @author Fabio Jun Takada Chinbo (fchino at opencs.com.br)
  * @since 2018.01.24
  */
-class ILBigDecimalTag: public ILRawTag {
+class ILBigDecimalTag: public ILTag {
 private:
-	std::uint64_t _scale;
+	IRBuffer _integral;
+
+	std::int32_t _scale;
 protected:
 	virtual bool serializeValue(ircommon::IRBuffer & out) const;
 public:
-	ILBigDecimalTag() : ILRawTag(ILTag::TAG_BDEC, false),_scale(0) {}
+	ILBigDecimalTag() : ILTag(ILTag::TAG_BDEC), _integral(0, false), _scale(0) {}
 
 	virtual ~ILBigDecimalTag() = default;
 
@@ -297,12 +302,33 @@ public:
 	virtual bool deserializeValue(const ILTagFactory & factory,
 			const void * buff, std::uint64_t size);
 
-	std::uint64_t scale() const {
+	/**
+	 * Returns the scale of this big decimal.
+	 *
+	 * @return The scale.
+	 */
+	std::int32_t scale() const {
 		return this->_scale;
 	}
 
-	void setScale(std::uint64_t v){
+	/**
+	 * Sets the scale of this big decimal.
+	 *
+	 * @param[in] v The scale.
+	 */
+	void setScale(std::int32_t v){
 		this->_scale = v;
+	}
+
+	/**
+	 * Sets the
+	 */
+	bool setIntegral(const void * value, std::uint64_t size) {
+		return this->_integral.set(value, size);
+	}
+
+	const IRBuffer & getIntegral() const {
+		return this->_integral;
 	}
 };
 
@@ -371,7 +397,7 @@ public:
 };
 
 /**
- * This class implements a factory that handle all standard tag types.
+ * This class implements a factory that handles all standard tag types.
  *
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @since 2018.01.22
