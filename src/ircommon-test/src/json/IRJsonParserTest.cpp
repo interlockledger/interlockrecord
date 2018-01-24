@@ -88,6 +88,7 @@ TEST_F(IRJsonParserTest, reset) {
 	o = p1.parseObject();
 	ASSERT_TRUE(o != NULL);
 	ASSERT_FALSE(p1.hasMore());
+	delete o;
 }
 
 //------------------------------------------------------------------------------
