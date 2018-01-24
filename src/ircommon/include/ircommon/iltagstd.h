@@ -33,11 +33,15 @@
 namespace ircommon {
 namespace iltags {
 
+/**
+ * This class implements the ILTag null.
+ *
+ * @author Fabio Jun Takada Chinbo (fchino at opencs.com.br)
+ * @since 2018.01.24
+ */
 class ILNullTag : public ILTag {
 protected:
-	virtual bool serializeValue(ircommon::IRBuffer & out) const {
-		return true;
-	}
+	virtual bool serializeValue(ircommon::IRBuffer & out) const;
 public:
 	ILNullTag() : ILTag(ILTag::TAG_NULL){}
 
@@ -48,11 +52,21 @@ public:
 	}
 
 	virtual bool deserializeValue(const ILTagFactory & factory,
-			const void * buff, std::uint64_t size) {
-		return (size == 0);
-	}
+			const void * buff, std::uint64_t size);
 };
 
+/**
+ * This class template implements the generic ILTag that handles a simple value.
+ *
+ * <p>It is important to notice that the methods serializeValue() and
+ * deserializeValue() must be implemented by the specializations. Furthermore,
+ * some types may also replace the default implementation of size().</p>
+ *
+ * @author Fabio Jun Takada Chinbo (fchino at opencs.com.br)
+ * @since 2018.01.24
+ * @tparam ValueType The value type.
+ * @tparam TagID The tag id.
+ */
 template <class ValueType, std::uint64_t TagID>
 class ILBasicTag : public ILTag {
 protected:
@@ -70,41 +84,129 @@ public:
 	virtual bool deserializeValue(const ILTagFactory & factory,
 			const void * buff, std::uint64_t size);
 
-	ValueType get() const {
+	inline const ValueType & get() const {
 		return this->_value;
 	}
 
-	void set(ValueType v) {
+	inline void set(const ValueType & v) {
 		this->_value = v;
 	}
 };
 
+/**
+ * This class implements the ILTag boolean.
+ *
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicTag.
+ */
 typedef ILBasicTag<bool, ILTag::TAG_BOOL> ILBoolTag;
 
+/**
+ * This class implements the ILTag 8-bit integer.
+ *
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicTag.
+ */
 typedef ILBasicTag<std::int8_t, ILTag::TAG_INT8> ILInt8Tag;
 
+/**
+ * This class implements the ILTag 8-bit unsigned integer.
+ *
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicTag.
+ */
 typedef ILBasicTag<std::uint8_t, ILTag::TAG_UINT8> ILUInt8Tag;
 
+/**
+ * This class implements the ILTag 16-bit integer.
+ *
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicTag.
+ */
 typedef ILBasicTag<std::int16_t, ILTag::TAG_INT16> ILInt16Tag;
 
+/**
+ * This class implements the ILTag 16-bit unsigned integer.
+ *
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicTag.
+ */
 typedef ILBasicTag<std::uint16_t, ILTag::TAG_UINT16> ILUInt16Tag;
 
+/**
+ * This class implements the ILTag 32-bit integer.
+ *
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicTag.
+ */
 typedef ILBasicTag<std::int32_t, ILTag::TAG_INT32> ILInt32Tag;
 
+/**
+ * This class implements the ILTag 32-bit unsigned integer.
+ *
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicTag.
+ */
 typedef ILBasicTag<std::uint32_t, ILTag::TAG_UINT32> ILUInt32Tag;
 
+/**
+ * This class implements the ILTag 64-bit integer.
+ *
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicTag.
+ */
 typedef ILBasicTag<std::int64_t, ILTag::TAG_INT64> ILInt64Tag;
 
+/**
+ * This class implements the ILTag 64-bit unsigned integer.
+ *
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicTag.
+ */
 typedef ILBasicTag<std::uint64_t, ILTag::TAG_UINT64> ILUInt64Tag;
 
+/**
+ * This class implements the ILTag ILInt64.
+ *
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicTag.
+ */
 typedef ILBasicTag<std::uint64_t, ILTag::TAG_ILINT64> ILILIntTag;
 
+/**
+ * This class implements the ILTag single precision floating point.
+ *
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicTag.
+ */
 typedef ILBasicTag<float, ILTag::TAG_BINARY32> ILBinary32Tag;
 
+/**
+ * This class implements the ILTag double precision floating point.
+ *
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicTag.
+ */
 typedef ILBasicTag<double, ILTag::TAG_BINARY64> ILBinary64Tag;
 
+/**
+ * This class implements the ILTag string.
+ *
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicTag.
+ */
 typedef ILBasicTag<std::string, ILTag::TAG_STRING> ILStringTag;
 
+/**
+ * This class template implements a ILTag that holds a fixed size opaque value.
+ * It is similar to the class ILRawTag but it does not allow the resize of the
+ * data.
+ *
+ * @author Fabio Jun Takada Chinbo (fchino at opencs.com.br)
+ * @since 2018.01.24
+ * @tparam TagID The tag ID.
+ * @tparam ValueSize The size of the value in bytes.
+ */
 template <std::uint64_t TagID, std::uint64_t ValueSize>
 class ILBasicFixedOpaqueTag : public ILTag {
 protected:
@@ -131,25 +233,142 @@ public:
 	const void * get() const {
 		return this->_value;
 	}
+
+	void * get() {
+		return this->_value;
+	}
 };
 
+/**
+ * This class implements the ILTag quadruple precision floating point.
+ *
+ * <p>Since most C++ compilers doesn't implement the quadruple precision
+ * floating point, this class does not provide methods to handle this type
+ * directly.</p>
+ *
+ * @author Fabio Jun Takada Chinbo (fchino at opencs.com.br)
+ * @since 2018.01.24
+ * @note This type is a specialization of ILBasicFixedOpaqueTag.
+ */
 typedef ILBasicFixedOpaqueTag<ILTag::TAG_BINARY128, 16> ILBinary128Tag;
 
+/**
+ * This class implements the ILTag byte array.
+ *
+ * @author Fabio Jun Takada Chinbo (fchino at opencs.com.br)
+ * @since 2018.01.24
+ */
 class ILByteArrayTag: public ILRawTag {
 public:
 	ILByteArrayTag(bool secure = false) : ILRawTag(ILTag::TAG_BYTE_ARRAY, secure){}
 	virtual ~ILByteArrayTag() = default;
 };
 
+/**
+ * This class implements the ILTag big integer.
+ *
+ * @author Fabio Jun Takada Chinbo (fchino at opencs.com.br)
+ * @since 2018.01.24
+ */
 class ILBigIntTag: public ILRawTag {
 public:
 	ILBigIntTag() : ILRawTag(ILTag::TAG_BINT, true){}
 	virtual ~ILBigIntTag() = default;
 };
 
-//ILBigDecimalTag
-//ILILIntArrayTag
-//ILILTagArrayTag
+/**
+ * This class implements the ILTag big decimal.
+ *
+ * @author Fabio Jun Takada Chinbo (fchino at opencs.com.br)
+ * @since 2018.01.24
+ */
+class ILBigDecimalTag: public ILRawTag {
+private:
+	std::uint64_t _scale;
+protected:
+	virtual bool serializeValue(ircommon::IRBuffer & out) const;
+public:
+	ILBigDecimalTag() : ILRawTag(ILTag::TAG_BDEC, false),_scale(0) {}
+
+	virtual ~ILBigDecimalTag() = default;
+
+	virtual std::uint64_t size() const;
+
+	virtual bool deserializeValue(const ILTagFactory & factory,
+			const void * buff, std::uint64_t size);
+
+	std::uint64_t scale() const {
+		return this->_scale;
+	}
+
+	void setScale(std::uint64_t v){
+		this->_scale = v;
+	}
+};
+
+/**
+ * This class implements the ILTag array of ILInt64.
+ *
+ * @author Fabio Jun Takada Chinbo (fchino at opencs.com.br)
+ * @since 2018.01.24
+ */
+class ILILIntArrayTag: public ILTag{
+private:
+	std::vector<std::uint64_t> _values;
+protected:
+	virtual bool serializeValue(ircommon::IRBuffer & out) const;
+public:
+	ILILIntArrayTag() : ILTag(ILTag::TAG_ILINT64_ARRAY) {}
+
+	virtual ~ILILIntArrayTag() = default;
+
+	virtual std::uint64_t size() const;
+
+	virtual bool deserializeValue(const ILTagFactory & factory,
+			const void * buff, std::uint64_t size);
+
+	/**
+	 * Number of elements.
+	 */
+	std::uint64_t count() const {
+		return this->_values.size();
+	}
+
+	bool add(std::uint64_t v);
+
+	bool insert(std::uint64_t idx, std::uint64_t v);
+
+	bool remove(std::uint64_t idx);
+
+	std::uint64_t get(std::uint64_t idx) const {
+		return this->_values[idx];
+	}
+
+	void set(std::uint64_t idx, std::uint64_t v){
+		this->_values[idx], v;
+	}
+
+	std::uint64_t & operator [](std::uint64_t idx) {
+		return this->_values[idx];
+	}
+
+	std::uint64_t operator [](std::uint64_t idx) const {
+		return this->_values[idx];
+	}
+};
+
+/**
+ * This class implements the ILTag array of tags.
+ *
+ * @author Fabio Jun Takada Chinbo (fchino at opencs.com.br)
+ * @since 2018.01.24
+ */
+class ILILTagArrayTag: public ILTagListTag {
+public:
+	ILILTagArrayTag(): ILTagListTag(ILTag::TAG_ILTAG_ARRAY) {}
+
+	virtual ~ILILTagArrayTag() = default;
+};
 
 /**
  * This class implements a factory that handle all standard tag types.
