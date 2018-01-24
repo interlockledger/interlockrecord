@@ -459,17 +459,18 @@ public:
 };
 
 /**
- * This abstract class implements a factory that creates ILTag instances
- * based on their IDs.
+ * This class implements a factory that creates ILTag instances
+ * based on their IDs. This implementation cannot handle
  *
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @since 2018.01.20
  */
 class ILTagFactory {
 private:
+	/**
+	 * Secure flag.
+	 */
 	bool _secure;
-
-	static bool getTagSize(std::uint64_t tagId, IRBuffer & inp, std::uint64_t & size);
 public:
 	/**
 	 * Creates a new instance of this class.
@@ -507,6 +508,19 @@ public:
 	bool secure() const{
 		return this->_secure;
 	}
+
+	/**
+	 * This method extracts the tag header from an IRBuffer. The header will
+	 * be read from the input buffer current position. On success, the position
+	 * will of the buffer will be pointing to the end of the tag header.
+	 *
+	 * @param[in] inp The input buffer.
+	 * @param[out] tagId The ID of the tag.
+	 * @param[out] tagSize The size of the tag.
+	 * @return true for success or false otherwise.
+	 */
+	static bool extractTagHeader(IRBuffer & inp,
+			std::uint64_t & tagId, std::uint64_t & tagSize);
 };
 
 } //namespace iltags
