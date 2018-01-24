@@ -103,7 +103,7 @@ int ILInt::decode(const void * inp, int inpSize, uint64_t * v) {
 		for (; p < pEnd; p++) {
 			*v = ((*v) << 8) | ((*p) & 0xFF);
 		}
-		if (*v >= (0xFFFFFFFFFFFFFFFFl - ILINT_BASE)) {
+		if (*v > (0xFFFFFFFFFFFFFFFFll - ILINT_BASE)) {
 			return 0;
 		}
 		*v += ILINT_BASE;

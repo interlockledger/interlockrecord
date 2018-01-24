@@ -79,7 +79,7 @@ TEST_F(ILIntTest, Size) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILIntTest, ILIntEncode_SingleByte) {
+TEST_F(ILIntTest, encode_SingleByte) {
 	uint8_t enc[16];
 	int encSize;
 
@@ -99,7 +99,7 @@ TEST_F(ILIntTest, ILIntEncode_SingleByte) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILIntTest, ILIntEncode_MultiByte) {
+TEST_F(ILIntTest, encode_MultiByte) {
 	uint8_t enc[16];
 	int encSize;
 	int i;
@@ -167,7 +167,7 @@ TEST_F(ILIntTest, ILIntEncode_MultiByte) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILIntTest, ILIntDecode_SingleByte) {
+TEST_F(ILIntTest, decode_SingleByte) {
 	uint8_t enc[16];
 	uint64_t v;
 
@@ -177,7 +177,6 @@ TEST_F(ILIntTest, ILIntDecode_SingleByte) {
 		enc[1] = i;
 		ASSERT_EQ(1, ILInt::decode(enc + 1, 1, &v));
 		ASSERT_EQ(i, v);
-
 	}
 
 	ASSERT_EQ(0, ILInt::decode(enc + 1, 0, &v));
@@ -187,12 +186,33 @@ TEST_F(ILIntTest, ILIntDecode_SingleByte) {
 		ASSERT_EQ(0, ILInt::decode(enc + 1, 1, &v));
 
 	}
-
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILIntTest, ILIntDecode_MultiByte) {
-	//TODO Implement it later
+TEST_F(ILIntTest, decode_MultiByte) {
+	uint8_t enc[16];
+	uint64_t v;
+
+	memset(enc, 0xA5, sizeof(enc));
+	int size = 2;
+	uint64_t exp = 0xA5;
+	for (int i = 0xF8; i <= 0xFF; i++, size++) {
+		enc[1] = i;
+		ASSERT_EQ(size, ILInt::decode(enc + 1, size, &v));
+		ASSERT_EQ(exp + 0xF8, v);
+		exp = (exp << 8) | 0xA5;
+		// Fail
+		ASSERT_EQ(0, ILInt::decode(enc + 1, size - 1, &v));
+	}
+
+	// Borderline
+	memset(enc, 0xFF, sizeof(enc));
+	enc[9] = 0x07;
+	ASSERT_EQ(9, ILInt::decode(enc + 1, 9, &v));
+	ASSERT_EQ(0xFFFFFFFFFFFFFFFFll, v);
+
+	enc[9] = 0x08;
+	ASSERT_EQ(0, ILInt::decode(enc + 1, 9, &v));
 }
 
 //------------------------------------------------------------------------------
