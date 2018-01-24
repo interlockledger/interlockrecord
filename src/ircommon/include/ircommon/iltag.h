@@ -295,8 +295,11 @@ public:
 	 *
 	 * @param[in] id The tag ID.
 	 * @param[in] secure If true, uses an internal secure buffer.
+	 * @param[in] inc The increment of the internal buffer.
 	 */
-	ILRawTag(std::uint64_t id, bool secure = false);
+	ILRawTag(std::uint64_t id, bool secure = false,
+			std::uint64_t inc = ircommon::IRBuffer::DEFAULT_INCREMENT) :
+			ILTag(id), _value(0, secure, inc) {}
 
 	/**
 	 * Disposes this instance and releases all associated resources.
@@ -315,7 +318,7 @@ public:
 	 *
 	 * @return The instance of the internal buffer.
 	 */
-	const ircommon::IRBuffer & value() const {
+	inline const ircommon::IRBuffer & value() const {
 		return this->_value;
 	}
 
@@ -324,8 +327,18 @@ public:
 	 *
 	 * @return The instance of the internal buffer.
 	 */
-	ircommon::IRBuffer & value() {
+	inline ircommon::IRBuffer & value() {
 		return this->_value;
+	}
+
+	/**
+	 * Verifies if this instance is secure.
+	 *
+	 * @return true if the instance is secure or false otherwise.
+	 * @since 2018.01.23
+	 */
+	inline bool secure() const {
+		return this->_value.secure();
 	}
 };
 

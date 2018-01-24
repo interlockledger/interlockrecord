@@ -95,11 +95,6 @@ bool ILTag::serialize(ircommon::IRBuffer & out) const {
 //==============================================================================
 // Class ILRawTag
 //------------------------------------------------------------------------------
-ILRawTag::ILRawTag(std::uint64_t id, bool secure): ILTag(id),
-		_value(0, 16, secure) {
-}
-
-//------------------------------------------------------------------------------
 bool ILRawTag::serializeValue(ircommon::IRBuffer & out) const {
 	return out.write(this->value().roBuffer(), this->value().size());
 }
