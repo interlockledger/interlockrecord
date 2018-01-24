@@ -87,6 +87,14 @@ protected:
 	 */
 	void dispose(std::uint8_t * buff, std::uint64_t buffSize);
 public:
+	enum {
+		/**
+		 * Default increment of this buffer.
+		 * @since 2018.01.23
+		 */
+		DEFAULT_INCREMENT = 16
+	};
+
 	/**
 	 * Creates a new instance of this class. It wraps the constant byte array
 	 * pointed by buff. The resulting instance will be read-only.
@@ -107,7 +115,8 @@ public:
 	 * @param[in] inc The size of the increment. Must be a value larger than 0.
 	 * @exception std::invalid_argument If inc is 0.
 	 */
-	IRBuffer(std::uint64_t reserved = 0, bool secure = false, std::uint64_t inc = 16);
+	IRBuffer(std::uint64_t reserved = 0, bool secure = false,
+			std::uint64_t inc = DEFAULT_INCREMENT);
 
 	/**
 	 * Disposes this instance and releases all associated resources.
@@ -367,6 +376,16 @@ public:
 	 * @since 2018.01.22
 	 */
 	int read();
+
+	/**
+	 * The increment step of this instance.
+	 *
+	 * @return The size of the increment.
+	 * @since 2018.01.23
+	 */
+	std::uint64_t increment() const {
+		return this->_inc;
+	}
 };
 
 } //namespace ircommon

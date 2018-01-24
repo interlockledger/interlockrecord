@@ -79,41 +79,45 @@ TEST_F(IRBufferTest, ConstructorRW) {
 	ASSERT_FALSE(b->readOnly());
 	ASSERT_FALSE(b->secure());
 	ASSERT_EQ(0, b->position());
+	ASSERT_EQ(IRBuffer::DEFAULT_INCREMENT, b->increment());
 	ASSERT_EQ(0, b->available());
-	ASSERT_EQ(16, b->bufferSize());
+	ASSERT_EQ(IRBuffer::DEFAULT_INCREMENT, b->bufferSize());
 	ASSERT_EQ(0, b->size());
 	ASSERT_TRUE(b->buffer() != nullptr);
 	ASSERT_TRUE(b->roBuffer() == b->buffer());
 	delete b;
 
-	b = new IRBuffer(16);
+	b = new IRBuffer(IRBuffer::DEFAULT_INCREMENT);
 	ASSERT_FALSE(b->readOnly());
 	ASSERT_FALSE(b->secure());
 	ASSERT_EQ(0, b->position());
+	ASSERT_EQ(IRBuffer::DEFAULT_INCREMENT, b->increment());
 	ASSERT_EQ(0, b->available());
-	ASSERT_EQ(32, b->bufferSize());
+	ASSERT_EQ(IRBuffer::DEFAULT_INCREMENT * 2, b->bufferSize());
 	ASSERT_EQ(0, b->size());
 	ASSERT_TRUE(b->buffer() != nullptr);
 	ASSERT_TRUE(b->roBuffer() == b->buffer());
 	delete b;
 
-	b = new IRBuffer(16, false);
+	b = new IRBuffer(IRBuffer::DEFAULT_INCREMENT, false);
 	ASSERT_FALSE(b->readOnly());
 	ASSERT_FALSE(b->secure());
 	ASSERT_EQ(0, b->position());
+	ASSERT_EQ(IRBuffer::DEFAULT_INCREMENT, b->increment());
 	ASSERT_EQ(0, b->available());
-	ASSERT_EQ(32, b->bufferSize());
+	ASSERT_EQ(IRBuffer::DEFAULT_INCREMENT * 2, b->bufferSize());
 	ASSERT_EQ(0, b->size());
 	ASSERT_TRUE(b->buffer() != nullptr);
 	ASSERT_TRUE(b->roBuffer() == b->buffer());
 	delete b;
 
-	b = new IRBuffer(16, true);
+	b = new IRBuffer(IRBuffer::DEFAULT_INCREMENT, true);
 	ASSERT_FALSE(b->readOnly());
 	ASSERT_TRUE(b->secure());
 	ASSERT_EQ(0, b->position());
+	ASSERT_EQ(IRBuffer::DEFAULT_INCREMENT, b->increment());
 	ASSERT_EQ(0, b->available());
-	ASSERT_EQ(32, b->bufferSize());
+	ASSERT_EQ(IRBuffer::DEFAULT_INCREMENT * 2, b->bufferSize());
 	ASSERT_EQ(0, b->size());
 	ASSERT_TRUE(b->buffer() != nullptr);
 	ASSERT_TRUE(b->roBuffer() == b->buffer());
@@ -123,6 +127,7 @@ TEST_F(IRBufferTest, ConstructorRW) {
 	ASSERT_FALSE(b->readOnly());
 	ASSERT_FALSE(b->secure());
 	ASSERT_EQ(0, b->position());
+	ASSERT_EQ(32, b->increment());
 	ASSERT_EQ(0, b->available());
 	ASSERT_EQ(32, b->bufferSize());
 	ASSERT_EQ(0, b->size());
@@ -134,12 +139,19 @@ TEST_F(IRBufferTest, ConstructorRW) {
 	ASSERT_FALSE(b->readOnly());
 	ASSERT_TRUE(b->secure());
 	ASSERT_EQ(0, b->position());
+	ASSERT_EQ(32, b->increment());
 	ASSERT_EQ(0, b->available());
 	ASSERT_EQ(32, b->bufferSize());
 	ASSERT_EQ(0, b->size());
 	ASSERT_TRUE(b->buffer() != nullptr);
 	ASSERT_TRUE(b->roBuffer() == b->buffer());
 	delete b;
+
+
+	try {
+		b = new IRBuffer(16, true, 0);
+		FAIL();
+	} catch(std::invalid_argument & e) {}
 }
 
 //------------------------------------------------------------------------------
@@ -863,6 +875,26 @@ TEST_F(IRBufferTest, posBuffer) {
 		ASSERT_EQ(brw.buffer() + brw.position(), brw.posBuffer());
 		brw.skip(1);
 	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, increment) {
+
+	for (std::uint64_t inc = 1; inc < 32; inc++) {
+		IRBuffer b(0, false, inc);
+		ASSERT_EQ(inc, b.increment());
+	}
+
+	for (std::uint64_t inc = 1; inc < 32; inc++) {
+		IRBuffer b(0, true, inc);
+		ASSERT_EQ(inc, b.increment());
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, CONSTANTS) {
+
+	ASSERT_EQ(16, IRBuffer::DEFAULT_INCREMENT);
 }
 //------------------------------------------------------------------------------
 
