@@ -389,11 +389,11 @@ public:
  * @author Fabio Jun Takada Chinbo (fchino at opencs.com.br)
  * @since 2018.01.24
  */
-class ILILTagArrayTag: public ILTagListTag {
+class ILTagArrayTag: public ILTagListTag {
 public:
-	ILILTagArrayTag(): ILTagListTag(ILTag::TAG_ILTAG_ARRAY) {}
+	ILTagArrayTag(): ILTagListTag(ILTag::TAG_ILTAG_ARRAY) {}
 
-	virtual ~ILILTagArrayTag() = default;
+	virtual ~ILTagArrayTag() = default;
 };
 
 /**

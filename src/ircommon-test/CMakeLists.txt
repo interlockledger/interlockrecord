@@ -28,7 +28,7 @@ add_executable(ircommon-test
 	src/iltags/ILUInt16TagTest.cpp
 	src/iltags/ILBoolTagTest.cpp
 	src/iltags/ILNullTagTest.cpp
-	src/iltags/ILTagListTagTest.cpp
+	src/iltags/ILTagArrayTagTest.cpp
 	src/iltags/ILBasicFixedOpaqueTagTest.cpp
 	src/iltags/ILInt32TagTest.cpp
 	src/iltags/ILILIntTagTest.cpp

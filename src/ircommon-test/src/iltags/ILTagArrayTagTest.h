@@ -24,31 +24,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "ILTagListTagTest.h"
+#ifndef __ILTAGARRAYTAGTEST_H__
+#define __ILTAGARRAYTAGTEST_H__
 
-//==============================================================================
-// class ILTagListTagTest
-//------------------------------------------------------------------------------
-ILTagListTagTest::ILTagListTagTest() {
-}
+#include <gtest/gtest.h>
 
-//------------------------------------------------------------------------------
-ILTagListTagTest::~ILTagListTagTest() {
-}
-
-//------------------------------------------------------------------------------
-void ILTagListTagTest::SetUp() {
-}
-
-//------------------------------------------------------------------------------
-void ILTagListTagTest::TearDown() {
-}
-
-//------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest,Constructor) {
-
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
-}
-//------------------------------------------------------------------------------
+class ILTagArrayTagTest : public testing::Test {
+public:
+	ILTagArrayTagTest();
+	virtual ~ILTagArrayTagTest();
+	virtual void SetUp();
+	virtual void TearDown();
+};
+#endif //__ILTAGARRAYTAGTEST_H__
 
