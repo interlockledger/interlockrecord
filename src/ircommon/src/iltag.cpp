@@ -203,7 +203,11 @@ const ILTagListTag::SharedPointer & ILTagListTag::operator [](int idx) const {
 //------------------------------------------------------------------------------
 ILTag * ILTagFactory::create(std::uint64_t tagId) const {
 
-	return nullptr;
+	if (this->strictMode()) {
+		return nullptr;
+	} else {
+		return new ILRawTag(tagId, this->secure());
+	}
 }
 
 //------------------------------------------------------------------------------

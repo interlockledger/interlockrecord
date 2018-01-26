@@ -34,23 +34,6 @@ using namespace ircommon::iltags;
 //==============================================================================
 // class ILTagFactoryTest
 //------------------------------------------------------------------------------
-class ILDummyTagFactory: public ILTagFactory{
-public:
-	ILDummyTagFactory(): ILTagFactory(false) {}
-
-	virtual ~ILDummyTagFactory() = default;
-
-	virtual ILTag * create(std::uint64_t tagId) const;
-};
-
-//------------------------------------------------------------------------------
-ILTag * ILDummyTagFactory::create(std::uint64_t tagId) const {
-	return new ILRawTag(tagId);
-}
-
-//==============================================================================
-// class ILTagFactoryTest
-//------------------------------------------------------------------------------
 ILTagFactoryTest::ILTagFactoryTest() {
 }
 
@@ -72,14 +55,37 @@ TEST_F(ILTagFactoryTest,Constructor) {
 
 	f = new ILTagFactory();
 	ASSERT_FALSE(f->secure());
+	ASSERT_FALSE(f->strictMode());
 	delete f;
 
 	f = new ILTagFactory(false);
 	ASSERT_FALSE(f->secure());
+	ASSERT_FALSE(f->strictMode());
 	delete f;
 
 	f = new ILTagFactory(true);
 	ASSERT_TRUE(f->secure());
+	ASSERT_FALSE(f->strictMode());
+	delete f;
+
+	f = new ILTagFactory(false, false);
+	ASSERT_FALSE(f->secure());
+	ASSERT_FALSE(f->strictMode());
+	delete f;
+
+	f = new ILTagFactory(true, false);
+	ASSERT_TRUE(f->secure());
+	ASSERT_FALSE(f->strictMode());
+	delete f;
+
+	f = new ILTagFactory(false, true);
+	ASSERT_FALSE(f->secure());
+	ASSERT_TRUE(f->strictMode());
+	delete f;
+
+	f = new ILTagFactory(true, true);
+	ASSERT_TRUE(f->secure());
+	ASSERT_TRUE(f->strictMode());
 	delete f;
 }
 
@@ -87,6 +93,36 @@ TEST_F(ILTagFactoryTest,Constructor) {
 TEST_F(ILTagFactoryTest, create) {
 	ILTagFactory f;
 
+	f.setSecure(false);
+	f.setStrictMode(false);
+	for (int tagId = 0; tagId < 256; tagId++) {
+		ILTag * tag = f.create(tagId);
+		ASSERT_TRUE(tag != nullptr);
+		ASSERT_EQ(tagId, tag->id());
+		ASSERT_EQ(typeid(*tag), typeid(ILRawTag));
+		ASSERT_FALSE(static_cast<ILRawTag*>(tag)->secure());
+		delete tag;
+	}
+
+	f.setSecure(false);
+	f.setStrictMode(true);
+	for (int tagId = 0; tagId < 256; tagId++) {
+		ASSERT_EQ(nullptr, f.create(tagId));
+	}
+
+	f.setSecure(true);
+	f.setStrictMode(false);
+	for (int tagId = 0; tagId < 256; tagId++) {
+		ILTag * tag = f.create(tagId);
+		ASSERT_TRUE(tag != nullptr);
+		ASSERT_EQ(tagId, tag->id());
+		ASSERT_EQ(typeid(*tag), typeid(ILRawTag));
+		ASSERT_TRUE(static_cast<ILRawTag*>(tag)->secure());
+		delete tag;
+	}
+
+	f.setSecure(true);
+	f.setStrictMode(true);
 	for (int tagId = 0; tagId < 256; tagId++) {
 		ASSERT_EQ(nullptr, f.create(tagId));
 	}
@@ -103,7 +139,7 @@ TEST_F(ILTagFactoryTest, secure) {
 
 //------------------------------------------------------------------------------
 TEST_F(ILTagFactoryTest, deserialize) {
-	ILDummyTagFactory f;
+	ILTagFactory f;
 	IRBuffer b;
 	std::uint8_t buff[256];
 	ILTag * t;
@@ -214,7 +250,88 @@ TEST_F(ILTagFactoryTest, deserialize) {
 
 		exp = (exp << 8) | 0xFF;
 	}
+}
 
+//------------------------------------------------------------------------------
+TEST_F(ILTagFactoryTest, deserializeStrict) {
+	ILTagFactory f;
+	IRBuffer b;
+	std::uint8_t buff[256];
+	ILTag * t;
+	ILRawTag * r;
+
+	f.setStrictMode(true);
+
+	for (int i = 0; i < sizeof(buff); i++) {
+		buff[i] = i;
+	}
+
+	// Empty
+	b.setSize(0);
+	t = f.deserialize(b);
+	ASSERT_TRUE(t == nullptr);
+
+	// Implicity tags
+	for (int tagId = 0; tagId < 16; tagId++) {
+		if (tagId != ILTag::TAG_ILINT64) {
+			b.setSize(0);
+			b.writeILInt(tagId);
+			b.write(buff, ILTag::getImplicitValueSize(tagId));
+
+			b.beginning();
+			ASSERT_TRUE(f.deserialize(b) == nullptr);
+
+			// Incomplete
+			b.setSize(b.size() - 1);
+			b.beginning();
+			t = f.deserialize(b);
+			ASSERT_TRUE(t == nullptr);
+		}
+	}
+
+	// Explicit tags
+	for (int tagId = 16; tagId < 256; tagId++) {
+		if (tagId != ILTag::TAG_ILINT64) {
+			b.setSize(0);
+			b.writeILInt(tagId);
+			b.writeILInt(tagId);
+			b.write(buff, tagId);
+
+			b.beginning();
+			ASSERT_TRUE(f.deserialize(b) == nullptr);
+
+			// Incomplete
+			b.setSize(b.size() - 1);
+			b.beginning();
+			t = f.deserialize(b);
+			ASSERT_TRUE(t == nullptr);
+		}
+	}
+
+	// TAG_ILINT64
+	b.setSize(0);
+	b.writeILInt(ILTag::TAG_ILINT64);
+	b.writeILInt(0);
+	b.beginning();
+	ASSERT_TRUE(f.deserialize(b) == nullptr);
+
+	std::uint64_t exp = 0xFF;
+	for (int i = 1; i < 9; i++) {
+		// TAG_ILINT64
+		b.setSize(0);
+		b.writeILInt(ILTag::TAG_ILINT64);
+		b.writeILInt(exp);
+		b.beginning();
+		ASSERT_TRUE(f.deserialize(b) == nullptr);
+
+		// Fail
+		// Incomplete
+		b.setSize(b.size() - 1);
+		b.beginning();
+		t = f.deserialize(b);
+		ASSERT_TRUE(t == nullptr);
+		exp = (exp << 8) | 0xFF;
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -286,6 +403,19 @@ TEST_F(ILTagFactoryTest, extractTagHeader) {
 			ASSERT_FALSE(ILTagFactory::extractTagHeader(b, rTagId, rTagSize));
 		}
 	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILTagFactoryTest, strictMode) {
+	ILTagFactory f;
+
+	ASSERT_FALSE(f.strictMode());
+
+	f.setStrictMode(true);
+	ASSERT_TRUE(f.strictMode());
+
+	f.setStrictMode(false);
+	ASSERT_FALSE(f.strictMode());
 }
 
 //------------------------------------------------------------------------------

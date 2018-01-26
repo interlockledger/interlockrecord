@@ -459,8 +459,26 @@ public:
 };
 
 /**
- * This class implements a factory that creates ILTag instances
- * based on their IDs. This implementation cannot handle
+ * This class implements a factory that creates ILTag instances based on their
+ * IDs. Furthermore it can be used to deserialize tags from their byte
+ * representation.
+ *
+ * <p>This class has two distinct operation modes, one that controls the
+ * security of the newly created instances and other that controls how unknown
+ * tags are handled.</p>
+ *
+ * <p>When secure mode is enabled, all inner classes, whenever possible, are
+ * created in secure mode when available (defaults to false).</p>
+ *
+ * <p>When strict mode is enabled, all unknown classes are treated as errors
+ * during the deserialization. Otherwise, all unknown IDs are deserialized to
+ * an instance of ILRawTag.</p>
+ *
+ * <p>This default implementation knows no specialized classes. This means that
+ * the method ILTagFactory::create() will always return null when strict mode
+ * is true or an instance of ILRawTag otherwise. Subclasses of the this class
+ * must override the ILTagFactory::create() method to handle specialized classes
+ * and call the super class create() implementation for all unknown IDs.</p>
  *
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @since 2018.01.20
@@ -471,11 +489,19 @@ private:
 	 * Secure flag.
 	 */
 	bool _secure;
+	/**
+	 * Flag that indicates the state of the strict mode.
+	 */
+	bool _strictMode;
 public:
 	/**
 	 * Creates a new instance of this class.
+	 *
+	 * @param[in] secureMode The secure mode state.
+	 * @param[in] strictMode The strict mode state.
 	 */
-	ILTagFactory(bool secure = false): _secure(secure) {};
+	ILTagFactory(bool secureMode = false, bool strictMode = false):
+		_secure(secureMode),_strictMode(strictMode) {};
 
 	/**
 	 * Disposes this instance and releases all associated resources.
@@ -486,9 +512,10 @@ public:
 	 * Creates a new instance of the tag based on the ID.
 	 *
 	 * @param[in] tagId The tag id.
-	 * @return The instance of ILTag that implements this ID or NULL if the ID
-	 * is unsupported.
-	 * @note Custom factories must overwrite this method.
+	 * @return The instance of ILTag that implements this ID or NULL if it is
+	 * unknown.
+	 * @note Custom factories must overwrite this method in order to provide
+	 * additional or custom implementations of a given ID.
 	 */
 	virtual ILTag * create(std::uint64_t tagId) const;
 
@@ -510,6 +537,40 @@ public:
 	}
 
 	/**
+	 * Sets the state of secure mode.
+	 *
+	 * @param[in] v true to enable it or false otherwise.
+	 * @since 2018.01.25
+	 */
+	void setSecure(bool v) {
+		this->_secure = v;
+	}
+
+	/**
+	 * Returns the strict mode status. If true, all unknown tags will be treated
+	 * as errors during the deserialization process. Otherwise, unknown tags
+	 * will be deserialized as instances of ILRawTag.
+	 *
+	 * <p>The strict mode is disabled by default.</p>
+	 *
+	 * @return The value of flag strict.
+	 * @since 2018.01.25
+	 */
+	bool strictMode() const {
+		return this->_strictMode;
+	}
+
+	/**
+	 * Sets the state of the strict mode.
+	 *
+	 * @param[in] v Use true to enable it or false otherwise.
+	 * @since 2018.01.25
+	 */
+	void setStrictMode(bool v) {
+		this->_strictMode = v;
+	}
+
+	/**
 	 * This method extracts the tag header from an IRBuffer. The header will
 	 * be read from the input buffer current position. On success, the position
 	 * will of the buffer will be pointing to the end of the tag header.
@@ -518,6 +579,7 @@ public:
 	 * @param[out] tagId The ID of the tag.
 	 * @param[out] tagSize The size of the tag.
 	 * @return true for success or false otherwise.
+	 * @since 2018.01.24
 	 */
 	static bool extractTagHeader(IRBuffer & inp,
 			std::uint64_t & tagId, std::uint64_t & tagSize);
