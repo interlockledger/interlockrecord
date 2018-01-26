@@ -8,7 +8,7 @@ add_executable(ircommon-test
 	src/iltags/ILStringTagTest.cpp
 	src/iltags/ILInt8TagTest.cpp
 	src/iltags/ILInt16TagTest.cpp
-	src/iltags/ILILTagArrayTagTest.cpp
+	src/iltags/ILTagListTagTest.cpp
 	src/iltags/ILBasicTagTest.cpp
 	src/iltags/ILInt64TagTest.cpp
 	src/iltags/ILStandardTagFactoryTest.cpp

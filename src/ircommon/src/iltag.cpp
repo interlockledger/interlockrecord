@@ -139,7 +139,7 @@ std::uint64_t ILTagListTag::size() const {
 		if (this->_list[i] == nullptr) {
 			total += 1;
 		} else {
-			total += this->_list[i]->size();
+			total += this->_list[i]->tagSize();
 		}
 	}
 	return total;
@@ -156,7 +156,7 @@ bool ILTagListTag::deserializeValue(const ILTagFactory & factory,
 	}
 
 	this->clear();
-	while(count > 0) {
+	for(; count > 0; count--) {
 		ILTag * tag = factory.deserialize(inp);
 		if (!tag) {
 			return false;
