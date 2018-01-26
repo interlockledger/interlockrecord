@@ -25,9 +25,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "ILTagArrayTagTest.h"
-
-
-
 #include <ircommon/iltag.h>
 #include <ircommon/iltagstd.h>
 using namespace ircommon;
