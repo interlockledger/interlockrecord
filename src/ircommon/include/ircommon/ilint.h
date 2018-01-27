@@ -148,6 +148,19 @@ public:
 			return 2 + (prefix & 0x07);
 		}
 	}
+
+	/**
+	 * Decodes the ILInt values.
+	 *
+	 * @param[in] inp The value to be decoded.
+	 * @param[in] inpSize The size of inp.
+	 * @param[out] v The output value.
+	 * @return The number of bytes read from inp or 0 in case of failure.
+	 * @since 2018.01.27
+	 */
+	static int decode(const void * inp, int inpSize, uint64_t & v) {
+		return decode(inp, inpSize, &v);
+	}
 };
 
 } //namespace ircommon
