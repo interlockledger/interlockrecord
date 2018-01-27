@@ -135,6 +135,7 @@ public:
 	 * otherwise.
 	 * @param[in] buff The input buffer. Must have at least 4 bytes.
 	 * @param[out] v The value.
+	 * @since 2018.01.27
 	 */
 	static void toFloat(bool bigEndian, const void * buff, float & v) {
 		v = toSingle(bigEndian, buff);
@@ -147,6 +148,7 @@ public:
 	 * otherwise.
 	 * @param[in] buff The input buffer. Must have at least 4 bytes.
 	 * @param[out] v The value.
+	 * @since 2018.01.27
 	 */
 	static void toFloat(bool bigEndian, const void * buff, double & v) {
 		v = toDouble(bigEndian, buff);
