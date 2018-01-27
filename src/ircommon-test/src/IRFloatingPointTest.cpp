@@ -164,3 +164,31 @@ TEST_F(IRFloatingPointTest, toBytesDouble) {
 }
 
 //------------------------------------------------------------------------------
+TEST_F(IRFloatingPointTest, toFloatSingle) {
+	const std::uint8_t srcBE[sizeof(float)] = {0x01, 0x23, 0x45, 0x67};
+	const std::uint8_t srcLE[sizeof(float)] = {0x67, 0x45, 0x23, 0x01};
+	float f;
+	float v;
+
+	f = IRFloatingPointTest::GetFloatSample(0x01234567);
+	IRFloatingPoint::toFloat(true, srcBE, v);
+	ASSERT_EQ(f, v);
+	IRFloatingPoint::toFloat(false, srcLE, v);
+	ASSERT_EQ(f, v);
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRFloatingPointTest, toFloatDouble) {
+	const std::uint8_t srcBE[sizeof(double)] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
+	const std::uint8_t srcLE[sizeof(double)] = {0xEF, 0xCD, 0xAB, 0x89, 0x67, 0x45, 0x23, 0x01};
+	double d;
+	double v;
+
+	d = IRFloatingPointTest::GetDoubleSample(0x0123456789ABCDEFl);
+	IRFloatingPoint::toFloat(true, srcBE, v);
+	ASSERT_EQ(d, v);
+	IRFloatingPoint::toFloat(false, srcLE, v);
+	ASSERT_EQ(d, v);
+}
+
+//------------------------------------------------------------------------------

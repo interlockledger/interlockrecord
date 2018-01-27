@@ -89,6 +89,8 @@ public:
 	/**
 	 * Converts the buffer into a IEEE754 single precision (Big Endian).
 	 *
+	 * @param[in] bigEndian Assume big endian if true or little endian
+	 * otherwise.
 	 * @param[in] buff The input buffer. Must have at least 4 bytes.
 	 * @return The floating point value.
 	 */
@@ -97,6 +99,8 @@ public:
 	/**
 	 * Converts the buffer into a IEEE754 double precision.
 	 *
+	 * @param[in] bigEndian Assume big endian if true or little endian
+	 * otherwise.
 	 * @param[in] buff The input buffer. Must have at least 8 bytes.
 	 * @return The floating point value.
 	 */
@@ -105,6 +109,8 @@ public:
 	/**
 	 * Converts the given float value into a IEEE754 single precision.
 	 *
+	 * @param[in] bigEndian Assume big endian if true or little endian
+	 * otherwise.
 	 * @param[in] v The value to be converted.
 	 * @param[out] buff The buffer that will receive the value. Must have at
 	 * least 4 bytes.
@@ -112,14 +118,39 @@ public:
 	static void toBytes(bool bigEndian, float v, void * buff);
 
 	/**
-	 * Converts the given float value into a IEEE754 double precision
-	 * (Big Endian).
+	 * Converts the given float value into a IEEE754 double precision.
 	 *
+	 * @param[in] bigEndian Assume big endian if true or little endian
+	 * otherwise.
 	 * @param[in] v The value to be converted.
 	 * @param[out] buff The buffer that will receive the value. Must have at
 	 * least 8 bytes.
 	 */
 	static void toBytes(bool bigEndian, double v, void * buff);
+
+	/**
+	 * Converts the buffer into a IEEE754 single precision.
+	 *
+	 * @param[in] bigEndian Assume big endian if true or little endian
+	 * otherwise.
+	 * @param[in] buff The input buffer. Must have at least 4 bytes.
+	 * @param[out] v The value.
+	 */
+	static void toFloat(bool bigEndian, const void * buff, float & v) {
+		v = toSingle(bigEndian, buff);
+	}
+
+	/**
+	 * Converts the buffer into a IEEE754 double precision.
+	 *
+	 * @param[in] bigEndian Assume big endian if true or little endian
+	 * otherwise.
+	 * @param[in] buff The input buffer. Must have at least 4 bytes.
+	 * @param[out] v The value.
+	 */
+	static void toFloat(bool bigEndian, const void * buff, double & v) {
+		v = toDouble(bigEndian, buff);
+	}
 };
 
 }
