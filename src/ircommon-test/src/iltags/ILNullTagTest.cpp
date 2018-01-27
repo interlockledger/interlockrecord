@@ -25,6 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "ILNullTagTest.h"
+#include <ircommon/iltagstd.h>
+using namespace ircommon;
+using namespace ircommon::iltags;
 
 //==============================================================================
 // class ILNullTagTest
@@ -46,9 +49,29 @@ void ILNullTagTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(ILNullTagTest,Constructor) {
+	ILNullTag * t;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	t = new ILNullTag();
+	ASSERT_EQ(ILTag::TAG_NULL, t->id());
+	delete t;
 }
+
+//------------------------------------------------------------------------------
+TEST_F(ILNullTagTest, size) {
+	ILNullTag t;
+
+	ASSERT_EQ(0, t.size());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILNullTagTest, serializeValue) {
+	ILNullTag t;
+	IRBuffer out;
+
+	ASSERT_TRUE(t.serialize(out));
+	ASSERT_EQ(1, out.size());
+	ASSERT_EQ(0, out.roBuffer()[0]);
+}
+
 //------------------------------------------------------------------------------
 
