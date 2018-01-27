@@ -25,6 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "ILBinary128TagTest.h"
+#include "ILBigDecimalTagTest.h"
+#include <ircommon/iltagstd.h>
+#include <cstring>
+using namespace ircommon;
+using namespace ircommon::iltags;
 
 //==============================================================================
 // class ILBinary128TagTest
@@ -46,9 +51,33 @@ void ILBinary128TagTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(ILBinary128TagTest,Constructor) {
+	ILBinary128Tag * t;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	t = new ILBinary128Tag();
+	ASSERT_EQ(ILTag::TAG_BINARY128, t->id());
+	ASSERT_EQ(16, t->size());
+	delete t;
 }
+
+//------------------------------------------------------------------------------
+TEST_F(ILBinary128TagTest, serialize) {
+	ILBinary128Tag t;
+	IRBuffer out;
+	IRBuffer exp;
+	std::uint8_t buff[16];
+
+	for (int i = 0; i < sizeof(buff); i++) {
+		buff[i] = i;
+	}
+	ASSERT_TRUE(t.setValue(buff, sizeof(buff)));
+	ASSERT_TRUE(t.serialize(out));
+
+	ASSERT_TRUE(exp.writeILInt(ILTag::TAG_BINARY128));
+	ASSERT_TRUE(exp.write(buff, sizeof(buff)));
+
+	ASSERT_EQ(exp.size(), out.size());
+	ASSERT_EQ(0, std::memcmp(exp.roBuffer(), out.roBuffer(), exp.size()));
+}
+
 //------------------------------------------------------------------------------
 
