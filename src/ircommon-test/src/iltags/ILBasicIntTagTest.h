@@ -24,31 +24,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "ILBasicTagTest.h"
+#ifndef __ILBASICINTTAGTEST_H__
+#define __ILBASICINTTAGTEST_H__
 
-//==============================================================================
-// class ILBasicTagTest
-//------------------------------------------------------------------------------
-ILBasicTagTest::ILBasicTagTest() {
-}
+#include <gtest/gtest.h>
 
-//------------------------------------------------------------------------------
-ILBasicTagTest::~ILBasicTagTest() {
-}
-
-//------------------------------------------------------------------------------
-void ILBasicTagTest::SetUp() {
-}
-
-//------------------------------------------------------------------------------
-void ILBasicTagTest::TearDown() {
-}
-
-//------------------------------------------------------------------------------
-TEST_F(ILBasicTagTest,Constructor) {
-
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
-}
-//------------------------------------------------------------------------------
+class ILBasicIntTagTest : public testing::Test {
+public:
+	ILBasicIntTagTest();
+	virtual ~ILBasicIntTagTest();
+	virtual void SetUp();
+	virtual void TearDown();
+};
+#endif //__ILBASICINTTAGTEST_H__
 

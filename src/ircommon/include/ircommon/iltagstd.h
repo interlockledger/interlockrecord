@@ -119,7 +119,7 @@ protected:
 		return out.writeInt(this->_value);
 	}
 public:
-	ILBasicIntTag() : ILTag(TagID){}
+	ILBasicIntTag() : ILTag(TagID), _value(0) {}
 	virtual ~ILBasicIntTag() = default;
 
 	virtual std::uint64_t size() const {
