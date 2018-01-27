@@ -397,7 +397,10 @@ public:
 /**
  * This class template implements a ILTag that holds a fixed size opaque value.
  * It is similar to the class ILRawTag but it does not allow the resize of the
- * data.
+ * value.
+ *
+ * <p>Due to optimization reasons, the constructor will not initialize the the
+ * contents of the value.</p>
  *
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @since 2018.01.24
@@ -423,11 +426,7 @@ public:
 
 	virtual bool deserializeValue(const ILTagFactory & factory,
 			const void * buff, std::uint64_t size) {
-		if (size != ValueSize) {
-			return false;
-		}
-		std::memcpy(this->_value, buff, ValueSize);
-		return true;
+		return this->setValue(buff, size);
 	}
 
 	/**
