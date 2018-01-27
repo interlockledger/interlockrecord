@@ -369,7 +369,7 @@ TEST_F(ILBasicIntTagTest, deserializeValue8u) {
 
 	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() - 1));
 	ASSERT_TRUE(src.write(0));
-	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() + 1));
+	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size()));
 }
 
 //------------------------------------------------------------------------------
@@ -387,7 +387,7 @@ TEST_F(ILBasicIntTagTest, deserializeValue16) {
 
 	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() - 1));
 	ASSERT_TRUE(src.write(0));
-	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() + 1));
+	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size()));
 }
 
 //------------------------------------------------------------------------------
@@ -405,7 +405,7 @@ TEST_F(ILBasicIntTagTest, deserializeValue16u) {
 
 	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() - 1));
 	ASSERT_TRUE(src.write(0));
-	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() + 1));
+	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size()));
 }
 
 //------------------------------------------------------------------------------
@@ -423,7 +423,7 @@ TEST_F(ILBasicIntTagTest, deserializeValue32) {
 
 	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() - 1));
 	ASSERT_TRUE(src.write(0));
-	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() + 1));
+	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size()));
 }
 
 //------------------------------------------------------------------------------
@@ -441,7 +441,7 @@ TEST_F(ILBasicIntTagTest, deserializeValue32u) {
 
 	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() - 1));
 	ASSERT_TRUE(src.write(0));
-	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() + 1));
+	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size()));
 }
 
 //------------------------------------------------------------------------------
@@ -459,7 +459,7 @@ TEST_F(ILBasicIntTagTest, deserializeValue64) {
 
 	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() - 1));
 	ASSERT_TRUE(src.write(0));
-	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() + 1));
+	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size()));
 }
 
 //------------------------------------------------------------------------------
@@ -477,7 +477,7 @@ TEST_F(ILBasicIntTagTest, deserializeValue64u) {
 
 	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() - 1));
 	ASSERT_TRUE(src.write(0));
-	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() + 1));
+	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size()));
 }
 
 //------------------------------------------------------------------------------
