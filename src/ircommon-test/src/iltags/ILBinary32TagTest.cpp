@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "ILBinary32TagTest.h"
+#include <ircommon/iltagstd.h>
+#include <cstring>
+using namespace ircommon;
+using namespace ircommon::iltags;
 
 //==============================================================================
 // class ILBinary32TagTest
@@ -46,9 +50,33 @@ void ILBinary32TagTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(ILBinary32TagTest,Constructor) {
+	ILBinary32Tag * t;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	t = new ILBinary32Tag();
+	ASSERT_EQ(ILTag::TAG_BINARY32, t->id());
+	ASSERT_EQ(float(0), t->value());
+	ASSERT_EQ(sizeof(float), t->size());
+	ASSERT_EQ(typeid(float), typeid(t->value()));
+	delete t;
 }
+
+//------------------------------------------------------------------------------
+TEST_F(ILBinary32TagTest, serialize) {
+	ILBinary32Tag t;
+	IRBuffer out;
+	IRBuffer exp;
+	float v;
+
+	v = -1.234567;
+	t.setValue(v);
+	ASSERT_TRUE(t.serialize(out));
+
+	ASSERT_TRUE(exp.writeILInt(ILTag::TAG_BINARY32));
+	ASSERT_TRUE(exp.writeFloat(v));
+
+	ASSERT_EQ(exp.size(), out.size());
+	ASSERT_EQ(0, std::memcmp(exp.roBuffer(), out.roBuffer(), exp.size()));
+}
+
 //------------------------------------------------------------------------------
 
