@@ -489,7 +489,7 @@ public:
  */
 class ILBigIntTag: public ILRawTag {
 public:
-	ILBigIntTag() : ILRawTag(ILTag::TAG_BINT, true){}
+	ILBigIntTag(bool secureMode = true): ILRawTag(ILTag::TAG_BINT, secureMode){}
 	virtual ~ILBigIntTag() = default;
 };
 
@@ -510,7 +510,8 @@ private:
 protected:
 	virtual bool serializeValue(ircommon::IRBuffer & out) const;
 public:
-	ILBigDecimalTag() : ILTag(ILTag::TAG_BDEC), _integral(0, false), _scale(0) {}
+	ILBigDecimalTag(bool secureMode = false) : ILTag(ILTag::TAG_BDEC),
+			_integral(0, secureMode), _scale(0) {}
 
 	virtual ~ILBigDecimalTag() = default;
 
@@ -544,7 +545,7 @@ public:
 		return this->_integral.set(value, size);
 	}
 
-	const IRBuffer & getIntegral() const {
+	const IRBuffer & integral() const {
 		return this->_integral;
 	}
 };

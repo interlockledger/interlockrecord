@@ -139,11 +139,9 @@ bool ILBigDecimalTag::deserializeValue(const ILTagFactory & factory,
 //------------------------------------------------------------------------------
 bool ILBigDecimalTag::serializeValue(ircommon::IRBuffer & out) const {
 
-	if (!out.reserve(out.position() + sizeof(this->_scale))) {
+	if (!out.writeInt(this->_scale)) {
 		return false;
 	}
-	IRUtils::int2BE(this->_scale, out.posBuffer());
-	out.skip(sizeof(this->_scale));
 	return out.write(this->_integral.roBuffer(), this->_integral.size());
 }
 
@@ -255,7 +253,7 @@ ILTag * ILStandardTagFactory::create(std::uint64_t tagId) const {
 	case ILTag::TAG_BINT:
 		return new ILBigIntTag();
 	case ILTag::TAG_BDEC:
-		return new ILBigDecimalTag();
+		return new ILBigDecimalTag(this->secure());
 	case ILTag::TAG_ILINT64_ARRAY:
 		return new ILILIntArrayTag();
 	case ILTag::TAG_ILTAG_ARRAY:
