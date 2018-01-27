@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "ILBigIntTagTest.h"
+#include <ircommon/iltagstd.h>
+#include <cstring>
+using namespace ircommon;
+using namespace ircommon::iltags;
 
 //==============================================================================
 // class IRBigIntTagTest
@@ -46,9 +50,45 @@ void ILBigIntTagTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(ILBigIntTagTest,Constructor) {
+	ILBigIntTag * t;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	t = new ILBigIntTag();
+	ASSERT_EQ(ILTag::TAG_BINT, t->id());
+	ASSERT_EQ(0, t->value().size());
+	ASSERT_TRUE(t->value().secure());
+	delete t;
+
+	t = new ILBigIntTag(false);
+	ASSERT_EQ(ILTag::TAG_BINT, t->id());
+	ASSERT_EQ(0, t->value().size());
+	ASSERT_FALSE(t->value().secure());
+	delete t;
+
+	t = new ILBigIntTag(true);
+	ASSERT_EQ(ILTag::TAG_BINT, t->id());
+	ASSERT_EQ(0, t->value().size());
+	ASSERT_TRUE(t->value().secure());
+	delete t;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILBigIntTagTest, serialize) {
+	ILBigIntTag t;
+	IRBuffer out;
+	IRBuffer exp;
+	std::uint8_t buff[16];
+
+	for (int i = 0; i < sizeof(buff); i++) {
+		buff[i] = i;
+	}
+	ASSERT_TRUE(t.value().set(buff, sizeof(buff)));
+	ASSERT_TRUE(t.serialize(out));
+
+	ASSERT_TRUE(exp.writeILInt(ILTag::TAG_BINT));
+	ASSERT_TRUE(exp.writeILInt(sizeof(buff)));
+	ASSERT_TRUE(exp.write(buff, sizeof(buff)));
+
+	ASSERT_EQ(exp.size(), out.size());
+	ASSERT_EQ(0, std::memcmp(exp.roBuffer(), out.roBuffer(), exp.size()));
 }
 //------------------------------------------------------------------------------
-
