@@ -281,7 +281,7 @@ protected:
 		return out.writeFloat(this->_value);
 	}
 public:
-	ILBasicFloatTag() : ILTag(TagID){}
+	ILBasicFloatTag() : ILTag(TagID),_value(0){}
 	virtual ~ILBasicFloatTag() = default;
 
 	virtual std::uint64_t size() const {
