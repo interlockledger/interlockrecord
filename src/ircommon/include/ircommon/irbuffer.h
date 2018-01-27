@@ -386,6 +386,206 @@ public:
 	std::uint64_t increment() const {
 		return this->_inc;
 	}
+
+	/**
+	 * Writes an unsigned 8-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool writeInt(std::uint8_t v);
+
+	/**
+	 * Writes a signed 8-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool writeInt(std::int8_t v) {
+		return this->writeInt(std::uint8_t(v));
+	}
+
+	/**
+	 * Writes an unsigned 16-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool writeInt(std::uint16_t v);
+
+	/**
+	 * Writes a signed 16-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool writeInt(std::int16_t v) {
+		return writeInt(std::uint16_t(v));
+	}
+
+	/**
+	 * Writes an unsigned 32-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool writeInt(std::uint32_t v);
+
+	/**
+	 * Writes a signed 32-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool writeInt(std::int32_t v) {
+		return writeInt(std::uint32_t(v));
+	}
+
+	/**
+	 * Writes an unsigned 8-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool writeInt(std::uint64_t v);
+
+	/**
+	 * Writes a signed 16-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool writeInt(std::int64_t v) {
+		return writeInt(std::uint64_t(v));
+	}
+
+	/**
+	 * Reads a unsigned 8-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool readInt(std::uint8_t & v);
+
+	/**
+	 * Reads a signed 8-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool readInt(std::int8_t & v) {
+		return readInt(reinterpret_cast<std::uint8_t&>(v));
+	}
+
+	/**
+	 * Reads a unsigned 8-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool readInt(std::uint16_t & v);
+
+	/**
+	 * Reads a signed 16-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool readInt(std::int16_t & v) {
+		return readInt(reinterpret_cast<std::uint16_t&>(v));
+	}
+
+	/**
+	 * Reads a unsigned 8-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool readInt(std::uint32_t & v);
+
+	/**
+	 * Reads a signed 32-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool readInt(std::int32_t & v) {
+		return readInt(reinterpret_cast<std::uint32_t&>(v));
+	}
+
+	/**
+	 * Reads a unsigned 8-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool readInt(std::uint64_t & v);
+
+	/**
+	 * Reads a signed 64-bit integer using the big endian encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool readInt(std::int64_t & v) {
+		return readInt(reinterpret_cast<std::uint64_t&>(v));
+	}
+
+	/**
+	 * Writes a single precision floating point using IEEE754 in the big endian
+	 * encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool writeFloat(float v);
+
+	/**
+	 * Writes a double precision floating point using IEEE754 in the big endian
+	 * encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool writeFloat(double v);
+
+	/**
+	 * Reads a single precision floating point  using IEEE754 in the big endian
+	 * encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool readFloat(float & v);
+
+	/**
+	 * Reads a double precision floating point  using IEEE754 in the big endian
+	 * encoding.
+	 *
+	 * @param[in] v The value.
+	 * @return true for success or false otherwise.
+	 * @since 2018.01.26
+	 */
+	bool readFloat(double & v);
 };
 
 } //namespace ircommon

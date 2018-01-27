@@ -27,6 +27,7 @@
 #include "IRBufferTest.h"
 #include <ircommon/irbuffer.h>
 #include <ircommon/ilint.h>
+#include <ircommon/irfp.h>
 #include <cstring>
 using namespace ircommon;
 
@@ -896,6 +897,577 @@ TEST_F(IRBufferTest, CONSTANTS) {
 
 	ASSERT_EQ(16, IRBuffer::DEFAULT_INCREMENT);
 }
+
+//------------------------------------------------------------------------------
+const static std::uint8_t IRBufferTest_INT_SAMPLE[32] = {
+		0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,
+		0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF};
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, writeInt8) {
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(IRBufferTest_INT_SAMPLE));
+	std::int8_t v;
+
+	v = 0x45;
+	ASSERT_FALSE(rob.writeInt(v));
+
+	ASSERT_EQ(0, b.size());
+	ASSERT_EQ(0, b.position());
+
+	v = 0x01;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v), b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+
+	v = 0x23;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v) * 2, b.position());
+
+	ASSERT_EQ(0, std::memcmp(IRBufferTest_INT_SAMPLE, b.roBuffer(), b.size()));
+
+	b.beginning();
+	v = 0x23;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, writeIntU8) {
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(IRBufferTest_INT_SAMPLE));
+	std::uint8_t v;
+
+	v = 0x45;
+	ASSERT_FALSE(rob.writeInt(v));
+
+	ASSERT_EQ(0, b.size());
+	ASSERT_EQ(0, b.position());
+
+	v = 0x01;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v), b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+
+	v = 0x23;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v) * 2, b.position());
+
+	ASSERT_EQ(0, std::memcmp(IRBufferTest_INT_SAMPLE, b.roBuffer(), b.size()));
+
+	b.beginning();
+	v = 0x23;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, writeInt16) {
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(IRBufferTest_INT_SAMPLE));
+	std::int16_t v;
+
+	v = 0x4567;
+	ASSERT_FALSE(rob.writeInt(v));
+
+	ASSERT_EQ(0, b.size());
+	ASSERT_EQ(0, b.position());
+
+	v = 0x0123;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v), b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+
+	v = 0x4567;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v) * 2, b.position());
+
+	ASSERT_EQ(0, std::memcmp(IRBufferTest_INT_SAMPLE, b.roBuffer(), b.size()));
+
+	b.beginning();
+	v = 0x2345;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, writeIntU16) {
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(IRBufferTest_INT_SAMPLE));
+	std::uint16_t v;
+
+	v = 0x4567;
+	ASSERT_FALSE(rob.writeInt(v));
+
+	ASSERT_EQ(0, b.size());
+	ASSERT_EQ(0, b.position());
+
+	v = 0x0123;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v), b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+
+	v = 0x4567;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v) * 2, b.position());
+
+	ASSERT_EQ(0, std::memcmp(IRBufferTest_INT_SAMPLE, b.roBuffer(), b.size()));
+
+	b.beginning();
+	v = 0x2345;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, writeInt32) {
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(IRBufferTest_INT_SAMPLE));
+	std::int32_t v;
+
+	v = 0x456789AB;
+	ASSERT_FALSE(rob.writeInt(v));
+
+	ASSERT_EQ(0, b.size());
+	ASSERT_EQ(0, b.position());
+
+	v = 0x01234567;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v), b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+
+	v = 0x89ABCDEF;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v) * 2, b.position());
+
+	ASSERT_EQ(0, std::memcmp(IRBufferTest_INT_SAMPLE, b.roBuffer(), b.size()));
+
+	b.beginning();
+	v = 0x23456789;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+}
+
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, writeIntU32) {
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(IRBufferTest_INT_SAMPLE));
+	std::uint32_t v;
+
+	v = 0x456789AB;
+	ASSERT_FALSE(rob.writeInt(v));
+
+	ASSERT_EQ(0, b.size());
+	ASSERT_EQ(0, b.position());
+
+	v = 0x01234567;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v), b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+
+	v = 0x89ABCDEF;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v) * 2, b.position());
+
+	ASSERT_EQ(0, std::memcmp(IRBufferTest_INT_SAMPLE, b.roBuffer(), b.size()));
+
+	b.beginning();
+	v = 0x23456789;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, writeInt64) {
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(IRBufferTest_INT_SAMPLE));
+	std::int64_t v;
+
+	v = 0x456789AB;
+	ASSERT_FALSE(rob.writeInt(v));
+
+	ASSERT_EQ(0, b.size());
+	ASSERT_EQ(0, b.position());
+
+	v = 0x0123456789ABCDEFll;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v), b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+
+	v = 0x0123456789ABCDEFll;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v) * 2, b.position());
+
+	ASSERT_EQ(0, std::memcmp(IRBufferTest_INT_SAMPLE, b.roBuffer(), b.size()));
+
+	b.beginning();
+	v = 0x23456789;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+}
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, writeUInt64) {
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(IRBufferTest_INT_SAMPLE));
+	std::uint64_t v;
+
+	v = 0x456789AB;
+	ASSERT_FALSE(rob.writeInt(v));
+
+	ASSERT_EQ(0, b.size());
+	ASSERT_EQ(0, b.position());
+
+	v = 0x0123456789ABCDEFll;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v), b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+
+	v = 0x0123456789ABCDEFll;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v) * 2, b.position());
+
+	ASSERT_EQ(0, std::memcmp(IRBufferTest_INT_SAMPLE, b.roBuffer(), b.size()));
+
+	b.beginning();
+	v = 0x23456789;
+	ASSERT_TRUE(b.writeInt(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, readInt8) {
+	std::int8_t v;
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(v) * 2);
+
+	b.set(rob.roBuffer(), rob.size());
+	b.beginning();
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x01, v);
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x23, v);
+	ASSERT_FALSE(b.readInt(v));
+
+	rob.beginning();
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x01, v);
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x23, v);
+	ASSERT_FALSE(rob.readInt(v));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, readIntU8) {
+	std::uint8_t v;
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(v) * 2);
+
+	b.set(rob.roBuffer(), rob.size());
+	b.beginning();
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x01, v);
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x23, v);
+	ASSERT_FALSE(b.readInt(v));
+
+	rob.beginning();
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x01, v);
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x23, v);
+	ASSERT_FALSE(rob.readInt(v));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, readInt16) {
+	std::int16_t v;
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(v) * 2);
+
+	b.set(rob.roBuffer(), rob.size());
+	b.beginning();
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x0123, v);
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x4567, v);
+	ASSERT_FALSE(b.readInt(v));
+
+	rob.beginning();
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x0123, v);
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x4567, v);
+	ASSERT_FALSE(rob.readInt(v));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, readIntU16) {
+	std::uint16_t v;
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(v) * 2);
+
+	b.set(rob.roBuffer(), rob.size());
+	b.beginning();
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x0123, v);
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x4567, v);
+	ASSERT_FALSE(b.readInt(v));
+
+	rob.beginning();
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x0123, v);
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x4567, v);
+	ASSERT_FALSE(rob.readInt(v));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, readInt32) {
+	std::int32_t v;
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(v) * 2);
+
+	b.set(rob.roBuffer(), rob.size());
+	b.beginning();
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x01234567, v);
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x89ABCDEF, v);
+	ASSERT_FALSE(b.readInt(v));
+
+	rob.beginning();
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x01234567, v);
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x89ABCDEF, v);
+	ASSERT_FALSE(rob.readInt(v));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, readIntU32) {
+	std::uint32_t v;
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(v) * 2);
+
+	b.set(rob.roBuffer(), rob.size());
+	b.beginning();
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x01234567, v);
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x89ABCDEF, v);
+	ASSERT_FALSE(b.readInt(v));
+
+	rob.beginning();
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x01234567, v);
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x89ABCDEF, v);
+	ASSERT_FALSE(rob.readInt(v));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, readInt64) {
+	std::int64_t v;
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(v) * 2);
+
+	b.set(rob.roBuffer(), rob.size());
+	b.beginning();
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x0123456789ABCDEFll, v);
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x0123456789ABCDEFll, v);
+	ASSERT_FALSE(b.readInt(v));
+
+	rob.beginning();
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x0123456789ABCDEFll, v);
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x0123456789ABCDEFll, v);
+	ASSERT_FALSE(rob.readInt(v));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, readIntU64) {
+	std::uint64_t v;
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(v) * 2);
+
+	b.set(rob.roBuffer(), rob.size());
+	b.beginning();
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x0123456789ABCDEFll, v);
+	ASSERT_TRUE(b.readInt(v));
+	ASSERT_EQ(0x0123456789ABCDEFll, v);
+	ASSERT_FALSE(b.readInt(v));
+
+	rob.beginning();
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x0123456789ABCDEFll, v);
+	ASSERT_TRUE(rob.readInt(v));
+	ASSERT_EQ(0x0123456789ABCDEFll, v);
+	ASSERT_FALSE(rob.readInt(v));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, writeFloatSingle) {
+	float v;
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(v) * 2);
+	std::uint8_t exp[sizeof(v) * 2];
+
+	v = 0;
+	ASSERT_FALSE(rob.writeFloat(v));
+
+	ASSERT_EQ(0, b.size());
+	ASSERT_EQ(0, b.position());
+
+	v = 1.23456;
+	ASSERT_TRUE(b.writeFloat(v));
+	ASSERT_EQ(sizeof(v), b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+
+	v = -1.23456;
+	ASSERT_TRUE(b.writeFloat(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v) * 2, b.position());
+
+	// Check value
+	v = 1.23456;
+	IRFloatingPoint::toBytes(true, v, exp);
+	v = -1.23456;
+	IRFloatingPoint::toBytes(true, v, exp + sizeof(v));
+	ASSERT_EQ(0, std::memcmp(exp, b.roBuffer(), sizeof(exp)));
+
+	//
+	v = -1.23456;
+	b.beginning();
+	ASSERT_TRUE(b.writeFloat(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, writeFloatDouble) {
+	double v;
+	IRBuffer b;
+	IRBuffer rob(IRBufferTest_INT_SAMPLE, sizeof(v) * 2);
+	std::uint8_t exp[sizeof(v) * 2];
+
+	v = 0;
+	ASSERT_FALSE(rob.writeFloat(v));
+
+	ASSERT_EQ(0, b.size());
+	ASSERT_EQ(0, b.position());
+
+	v = 1.23456;
+	ASSERT_TRUE(b.writeFloat(v));
+	ASSERT_EQ(sizeof(v), b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+
+	v = -1.23456;
+	ASSERT_TRUE(b.writeFloat(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v) * 2, b.position());
+
+	// Check value
+	v = 1.23456;
+	IRFloatingPoint::toBytes(true, v, exp);
+	v = -1.23456;
+	IRFloatingPoint::toBytes(true, v, exp + sizeof(v));
+	ASSERT_EQ(0, std::memcmp(exp, b.roBuffer(), sizeof(exp)));
+
+	v = -1.23456;
+	b.beginning();
+	ASSERT_TRUE(b.writeFloat(v));
+	ASSERT_EQ(sizeof(v) * 2, b.size());
+	ASSERT_EQ(sizeof(v), b.position());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, readFloatSingle) {
+	float v;
+	float e;
+	std::uint8_t exp[sizeof(v) * 2];
+
+	// Prepare the values to be checked
+	v = 1.23456;
+	IRFloatingPoint::toBytes(true, v, exp);
+	v = -1.23456;
+	IRFloatingPoint::toBytes(true, v, exp + sizeof(v));
+
+	IRBuffer b;
+	ASSERT_TRUE(b.set(exp, sizeof(exp)));
+	IRBuffer rob(exp, sizeof(exp));
+
+	ASSERT_TRUE(b.readFloat(v));
+	e = 1.23456;
+	ASSERT_EQ(e, v);
+	ASSERT_TRUE(b.readFloat(v));
+	e = -1.23456;
+	ASSERT_EQ(e, v);
+	ASSERT_FALSE(b.readFloat(v));
+
+	ASSERT_TRUE(rob.readFloat(v));
+	e = 1.23456;
+	ASSERT_EQ(e, v);
+	ASSERT_TRUE(rob.readFloat(v));
+	e = -1.23456;
+	ASSERT_EQ(e, v);
+	ASSERT_FALSE(rob.readFloat(v));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, readFloatDouble) {
+	double v;
+	double e;
+	std::uint8_t exp[sizeof(v) * 2];
+
+	// Prepare the values to be checked
+	v = 1.23456;
+	IRFloatingPoint::toBytes(true, v, exp);
+	v = -1.23456;
+	IRFloatingPoint::toBytes(true, v, exp + sizeof(v));
+
+	IRBuffer b;
+	ASSERT_TRUE(b.set(exp, sizeof(exp)));
+	IRBuffer rob(exp, sizeof(exp));
+
+	ASSERT_TRUE(b.readFloat(v));
+	e = 1.23456;
+	ASSERT_EQ(e, v);
+	ASSERT_TRUE(b.readFloat(v));
+	e = -1.23456;
+	ASSERT_EQ(e, v);
+	ASSERT_FALSE(b.readFloat(v));
+
+	ASSERT_TRUE(rob.readFloat(v));
+	e = 1.23456;
+	ASSERT_EQ(e, v);
+	ASSERT_TRUE(rob.readFloat(v));
+	e = -1.23456;
+	ASSERT_EQ(e, v);
+	ASSERT_FALSE(rob.readFloat(v));
+}
+
 //------------------------------------------------------------------------------
 
 

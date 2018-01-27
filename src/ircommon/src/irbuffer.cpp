@@ -26,6 +26,7 @@
  */
 #include <ircommon/irbuffer.h>
 #include <ircommon/ilint.h>
+#include <ircommon/irfp.h>
 #include <ircommon/irutils.h>
 #include <cstring>
 #include <algorithm>
@@ -288,6 +289,174 @@ int IRBuffer::read() {
 		return *(this->roPosBuffer() - 1) & 0xFF;
 	} else {
 		return -1;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::writeInt(std::uint8_t v) {
+
+	if (this->readOnly()) {
+		return false;
+	}
+	if (this->reserve(this->position() + sizeof(v))) {
+		IRUtils::int2BE(v, this->posBuffer());
+		this->_position += sizeof(v);
+		this->_size = std::max(this->_size, this->_position);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::writeInt(std::uint16_t v) {
+
+	if (this->readOnly()) {
+		return false;
+	}
+	if (this->reserve(this->position() + sizeof(v))) {
+		IRUtils::int2BE(v, this->posBuffer());
+		this->_position += sizeof(v);
+		this->_size = std::max(this->_size, this->_position);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::writeInt(std::uint32_t v) {
+
+	if (this->readOnly()) {
+		return false;
+	}
+	if (this->reserve(this->position() + sizeof(v))) {
+		IRUtils::int2BE(v, this->posBuffer());
+		this->_position += sizeof(v);
+		this->_size = std::max(this->_size, this->_position);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::writeInt(std::uint64_t v) {
+
+	if (this->readOnly()) {
+		return false;
+	}
+	if (this->reserve(this->position() + sizeof(v))) {
+		IRUtils::int2BE(v, this->posBuffer());
+		this->_position += sizeof(v);
+		this->_size = std::max(this->_size, this->_position);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::readInt(std::uint8_t & v) {
+
+	if (this->available() >= sizeof(v)) {
+		IRUtils::BE2Int(this->roPosBuffer(), v);
+		this->_position += sizeof(v);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::readInt(std::uint16_t & v) {
+
+	if (this->available() >= sizeof(v)) {
+		IRUtils::BE2Int(this->roPosBuffer(), v);
+		this->_position += sizeof(v);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::readInt(std::uint32_t & v) {
+
+	if (this->available() >= sizeof(v)) {
+		IRUtils::BE2Int(this->roPosBuffer(), v);
+		this->_position += sizeof(v);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::readInt(std::uint64_t & v) {
+
+	if (this->available() >= sizeof(v)) {
+		IRUtils::BE2Int(this->roPosBuffer(), v);
+		this->_position += sizeof(v);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::writeFloat(float v) {
+
+	if (this->readOnly()) {
+		return false;
+	}
+	if (this->reserve(this->position() + sizeof(v))) {
+		IRFloatingPoint::toBytes(true, v, this->posBuffer());
+		this->_position += sizeof(v);
+		this->_size = std::max(this->_size, this->_position);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::writeFloat(double v) {
+
+	if (this->readOnly()) {
+		return false;
+	}
+	if (this->reserve(this->position() + sizeof(v))) {
+		IRFloatingPoint::toBytes(true, v, this->posBuffer());
+		this->_position += sizeof(v);
+		this->_size = std::max(this->_size, this->_position);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::readFloat(float & v) {
+
+	if (this->available() >= sizeof(v)) {
+		v = IRFloatingPoint::toSingle(true, this->roPosBuffer());
+		this->_position += sizeof(v);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
+bool IRBuffer::readFloat(double & v) {
+
+	if (this->available() >= sizeof(v)) {
+		v = IRFloatingPoint::toDouble(true, this->roPosBuffer());
+		this->_position += sizeof(v);
+		return true;
+	} else {
+		return false;
 	}
 }
 
