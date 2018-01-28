@@ -182,6 +182,7 @@ bool ILILIntArrayTag::deserializeValue(const ILTagFactory & factory,
 	if (!inp.readILInt(count)) {
 		return false;
 	}
+	this->clear();
 	for(; count > 0; count--) {
 		if (!inp.readILInt(v)) {
 			return false;

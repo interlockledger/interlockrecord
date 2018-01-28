@@ -558,12 +558,21 @@ public:
  */
 class ILILIntArrayTag: public ILTag{
 private:
+	/**
+	 * List of values.
+	 */
 	std::vector<std::uint64_t> _values;
 protected:
 	virtual bool serializeValue(ircommon::IRBuffer & out) const;
 public:
+	/**
+	 * Creates a new instance of this class.
+	 */
 	ILILIntArrayTag() : ILTag(ILTag::TAG_ILINT64_ARRAY) {}
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~ILILIntArrayTag() = default;
 
 	virtual std::uint64_t size() const;
@@ -572,30 +581,82 @@ public:
 			const void * buff, std::uint64_t size);
 
 	/**
-	 * Number of elements.
+	 * Returns the number of elements.
+	 *
+	 * @return The number of elements.
 	 */
 	std::uint64_t count() const {
 		return this->_values.size();
 	}
 
+	/**
+	 * Adds a value to the end of the list.
+	 *
+	 * @param[in] v The value to be added.
+	 * @return true on success or false otherwise.
+	 */
 	bool add(std::uint64_t v);
 
+	/**
+	 * Inserts a value into a given position.
+	 *
+	 * @param[in] idx The position.
+	 * @param[in] v The value to be added.
+	 * @return true on success or false otherwise.
+	 */
 	bool insert(std::uint64_t idx, std::uint64_t v);
 
+	/**
+	 * Removes the value at the given position.
+	 *
+	 * @param[in] idx The position.
+	 * @return true on success or false otherwise.
+	 */
 	bool remove(std::uint64_t idx);
 
+	/**
+	 * Returns the value at the given position.
+	 *
+	 * @param[in] idx The position.
+	 * @return The value.
+	 */
 	std::uint64_t get(std::uint64_t idx) const {
 		return this->_values[idx];
 	}
 
+	/**
+	 * Sets the value at the given position.
+	 *
+	 * @param[in] idx The position.
+	 * @param[in] v The new value.
+	 */
 	void set(std::uint64_t idx, std::uint64_t v){
-		this->_values[idx], v;
+		this->_values[idx] = v;
 	}
 
+	/**
+	 * Removes all elements of this list.
+	 */
+	void clear(){
+		this->_values.clear();
+	}
+
+	/**
+	 * Returns the value at the given position for reading.
+	 *
+	 * @param[in] idx The position.
+	 * @return The value.
+	 */
 	std::uint64_t & operator [](std::uint64_t idx) {
 		return this->_values[idx];
 	}
 
+	/**
+	 * Returns the value at the given position for reading and writing.
+	 *
+	 * @param[in] idx The position.
+	 * @return The value.
+	 */
 	std::uint64_t operator [](std::uint64_t idx) const {
 		return this->_values[idx];
 	}
