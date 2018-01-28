@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "ILByteArrayTagTest.h"
+#include <ircommon/iltagstd.h>
+#include <cstring>
+using namespace ircommon;
+using namespace ircommon::iltags;
 
 //==============================================================================
 // class IRByteArrayTagTest
@@ -45,10 +49,26 @@ void ILByteArrayTagTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILByteArrayTagTest,Constructor) {
+TEST_F(ILByteArrayTagTest, Constructor) {
+	ILByteArrayTag * t;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	t = new ILByteArrayTag();
+	ASSERT_EQ(ILTag::TAG_BYTE_ARRAY, t->id());
+	ASSERT_EQ(0, t->value().size());
+	ASSERT_FALSE(t->value().secure());
+	delete t;
+
+	t = new ILByteArrayTag(false);
+	ASSERT_EQ(ILTag::TAG_BYTE_ARRAY, t->id());
+	ASSERT_EQ(0, t->value().size());
+	ASSERT_FALSE(t->value().secure());
+	delete t;
+
+	t = new ILByteArrayTag(true);
+	ASSERT_EQ(ILTag::TAG_BYTE_ARRAY, t->id());
+	ASSERT_EQ(0, t->value().size());
+	ASSERT_TRUE(t->value().secure());
+	delete t;
 }
 //------------------------------------------------------------------------------
 
