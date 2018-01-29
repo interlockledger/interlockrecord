@@ -25,6 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "ILILIntTagTest.h"
+#include <ircommon/iltagstd.h>
+#include <ircommon/ilint.h>
+#include <cstring>
+using namespace ircommon;
+using namespace ircommon::iltags;
 
 //==============================================================================
 // class ILILIntTagTest
@@ -46,9 +51,96 @@ void ILILIntTagTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(ILILIntTagTest,Constructor) {
+	ILILIntTag * t;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	t = new ILILIntTag();
+	ASSERT_EQ(ILTag::TAG_ILINT64, t->id());
+	ASSERT_EQ(0, t->value());
+	ASSERT_EQ(1, t->size());
+	delete t;
 }
+
+//------------------------------------------------------------------------------
+TEST_F(ILILIntTagTest, getSetValue) {
+	ILILIntTag t;
+
+	ASSERT_EQ(0, t.value());
+
+	std::uint64_t v = 0xFF;
+	for (int i = 0; i < 8; i++) {
+		t.setValue(v);
+		ASSERT_EQ(v, t.value());
+		v = (v << 8) | 0xFF;
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILILIntTagTest, size) {
+	ILILIntTag t;
+
+	ASSERT_EQ(0, t.value());
+
+	std::uint64_t v = 0xFF;
+	for (int i = 0; i < 8; i++) {
+		t.setValue(v);
+		ASSERT_EQ(ILInt::size(v), t.size());
+		v = (v << 8) | 0xFF;
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILILIntTagTest, serialize) {
+	ILILIntTag t;
+	IRBuffer out;
+	IRBuffer exp;
+
+	ASSERT_EQ(0, t.value());
+	ASSERT_TRUE(t.serialize(out));
+	ASSERT_TRUE(exp.writeILInt(ILTag::TAG_ILINT64));
+	ASSERT_TRUE(exp.writeILInt(0));
+	ASSERT_EQ(exp.size(), out.size());
+	ASSERT_EQ(0, std::memcmp(exp.roBuffer(), out.roBuffer(), exp.size()));
+
+	std::uint64_t v = 0xFF;
+	for (int i = 0; i < 8; i++) {
+		out.setSize(0);
+		exp.setSize(0);
+
+		t.setValue(v);
+
+		ASSERT_TRUE(t.serialize(out));
+		ASSERT_TRUE(exp.writeILInt(ILTag::TAG_ILINT64));
+		ASSERT_TRUE(exp.writeILInt(v));
+		ASSERT_EQ(exp.size(), out.size());
+		ASSERT_EQ(0, std::memcmp(exp.roBuffer(), out.roBuffer(), exp.size()));
+		v = (v << 8) | 0xFF;
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILILIntTagTest, deserializeValue) {
+	ILILIntTag t;
+	IRBuffer src;
+	ILTagFactory f;
+
+	ASSERT_TRUE(src.writeILInt(0));
+	t.setValue(1);
+	ASSERT_TRUE(t.deserializeValue(f, src.roBuffer(), src.size()));
+	ASSERT_EQ(0, t.value());
+
+	std::uint64_t v = 0xFF;
+	for (int i = 0; i < 8; i++) {
+		src.setSize(0);
+		ASSERT_TRUE(src.writeILInt(v));
+		ASSERT_TRUE(t.deserializeValue(f, src.roBuffer(), src.size()));
+		ASSERT_EQ(v, t.value());
+		v = (v << 8) | 0xFF;
+	}
+
+	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size() - 1));
+	src.write(0);
+	ASSERT_FALSE(t.deserializeValue(f, src.roBuffer(), src.size()));
+}
+
 //------------------------------------------------------------------------------
 
