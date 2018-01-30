@@ -136,6 +136,34 @@ void int2BE(INT_TYPE v, void * buff) {
  */
 void clearMemory(void * buff, std::uint64_t buffSize);
 
+/**
+ * Locks memory segments into RAM. It should prevent the memory page from being
+ * removed from the memory and be transfered to disk.
+ *
+ * <p>On Posix systems, it calls mlock() to achieve this feature. On Windows,
+ * it uses VirtualLock() to achieve the same effect.</p>
+ *
+ * @param[in] addr The address.
+ * @param[in] size The size.
+ * @return true for success or false otherwise.
+ * @since 2018.01.30
+ * @see unlockMemory()
+ * @note This method may generate great overhead in the system. Do not forget to
+ * release all locked memory when it is no longer required.
+ */
+bool lockMemory(void * addr, std::uint64_t size);
+
+/**
+ * Unlocks memory segments locked by lockMemory().
+ *
+ * @param[in] addr The address.
+ * @param[in] size The size.
+ * @return true for success or false otherwise.
+ * @since 2018.01.30
+ * @see lockMemory()
+ */
+bool unlockMemory(void * addr, std::uint64_t size);
+
 } // namespace IRUtils
 
 } //namespace ircommon

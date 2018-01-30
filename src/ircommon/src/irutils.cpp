@@ -29,6 +29,8 @@
 #include <cstring>
 #ifdef _WIN32
 #include <windows.h>
+#else
+#include <sys/mman.h>
 #endif // _WIN32
 
 namespace ircommon {
@@ -51,6 +53,24 @@ void clearMemory(void * buff, std::uint64_t buffSize) {
 		}
 #endif //__WIN32
 	}
+}
+
+//------------------------------------------------------------------------------
+bool lockMemory(void * addr, std::uint64_t size) {
+#ifdef _WIN32
+	return (VirtualLock(addr, size) == TRUE);
+#else
+	return (mlock(addr, size) == 0);
+#endif //_WIN32
+}
+
+//------------------------------------------------------------------------------
+bool unlockMemory(void * addr, std::uint64_t size) {
+#ifdef _WIN32
+	return (VirtualUnlock(addr, size) == TRUE);
+#else
+	return (munlock(addr, size) == 0);
+#endif //_WIN32
 }
 
 //------------------------------------------------------------------------------
