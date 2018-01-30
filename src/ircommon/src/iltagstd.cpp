@@ -252,7 +252,7 @@ ILTag * ILStandardTagFactory::create(std::uint64_t tagId) const {
 	case ILTag::TAG_STRING:
 		return new ILStringTag();
 	case ILTag::TAG_BINT:
-		return new ILBigIntTag();
+		return new ILBigIntTag(this->secure());
 	case ILTag::TAG_BDEC:
 		return new ILBigDecimalTag(this->secure());
 	case ILTag::TAG_ILINT64_ARRAY:
@@ -260,7 +260,7 @@ ILTag * ILStandardTagFactory::create(std::uint64_t tagId) const {
 	case ILTag::TAG_ILTAG_ARRAY:
 		return new ILTagArrayTag();
 	default:
-		return nullptr;
+		return ILTagFactory::create(tagId);
 	}
 }
 
