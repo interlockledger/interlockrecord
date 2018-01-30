@@ -25,9 +25,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "ILStringTagTest.h"
+#include <ircommon/iltag.h>
+#include <ircommon/iltagstd.h>
+#include <cstring>
+using namespace ircommon;
+using namespace ircommon::iltags;
 
 //==============================================================================
 // class ILStringTagTest
+//------------------------------------------------------------------------------
+const static char * ILStringTagTest_SAMPLE = "The truth points to itself.";
+
 //------------------------------------------------------------------------------
 ILStringTagTest::ILStringTagTest() {
 }
@@ -46,9 +54,96 @@ void ILStringTagTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(ILStringTagTest,Constructor) {
+	ILStringTag * t;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	t = new ILStringTag();
+	ASSERT_EQ(ILTag::TAG_STRING, t->id());
+	ASSERT_EQ(0, t->value().size());
+	delete t;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILStringTagTest, size) {
+	ILStringTag t;
+
+	for (int size = 0; size < std::strlen(ILStringTagTest_SAMPLE); size++) {
+		t.setValue(ILStringTagTest_SAMPLE, size);
+		ASSERT_EQ(size, t.size());
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILStringTagTest, getSetValueString) {
+	ILStringTag t;
+	std::string s;
+
+	s = ILStringTagTest_SAMPLE;
+	t.setValue(s);
+	ASSERT_STREQ(ILStringTagTest_SAMPLE, t.value().c_str());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILStringTagTest, getSetValueCStr) {
+	ILStringTag t;
+
+	t.setValue(ILStringTagTest_SAMPLE);
+	ASSERT_STREQ(ILStringTagTest_SAMPLE, t.value().c_str());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILStringTagTest, getSetValueCStrInt) {
+	ILStringTag t;
+	std::string s;
+
+	for (int size = 0; size < std::strlen(ILStringTagTest_SAMPLE); size++) {
+		t.setValue(ILStringTagTest_SAMPLE, size);
+		s.assign(ILStringTagTest_SAMPLE, size);
+		ASSERT_STREQ(s.c_str(), t.value().c_str());
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILStringTagTest, serialize) {
+	ILStringTag t;
+	IRBuffer out;
+	IRBuffer exp;
+
+	// Empty
+	ASSERT_TRUE(t.serialize(out));
+
+	ASSERT_TRUE(exp.writeILInt(ILTag::TAG_STRING));
+	ASSERT_TRUE(exp.writeILInt(0));
+	ASSERT_EQ(exp.size(), out.size());
+	ASSERT_EQ(0, std::memcmp(exp.roBuffer(), out.roBuffer(), exp.size()));
+
+	// Non-empty
+	out.setSize(0);
+	exp.setSize(0);
+	t.setValue(ILStringTagTest_SAMPLE);
+	ASSERT_TRUE(t.serialize(out));
+
+	ASSERT_TRUE(exp.writeILInt(ILTag::TAG_STRING));
+	ASSERT_TRUE(exp.writeILInt(std::strlen(ILStringTagTest_SAMPLE)));
+	ASSERT_TRUE(exp.write(ILStringTagTest_SAMPLE,
+			std::strlen(ILStringTagTest_SAMPLE)));
+
+	ASSERT_EQ(exp.size(), out.size());
+	ASSERT_EQ(0, std::memcmp(exp.roBuffer(), out.roBuffer(), exp.size()));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILStringTagTest, deserializeValue) {
+	ILStringTag t;
+	ILTagFactory f;
+
+	// Empty
+	ASSERT_TRUE(t.deserializeValue(f, ILStringTagTest_SAMPLE, 0));
+	ASSERT_STREQ("", t.value().c_str());
+
+	// Non-empty
+	ASSERT_TRUE(t.deserializeValue(f, ILStringTagTest_SAMPLE,
+			std::strlen(ILStringTagTest_SAMPLE)));
+	ASSERT_STREQ(ILStringTagTest_SAMPLE, t.value().c_str());
 }
 //------------------------------------------------------------------------------
 
