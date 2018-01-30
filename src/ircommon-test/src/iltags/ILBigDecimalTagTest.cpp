@@ -70,7 +70,7 @@ TEST_F(ILBigDecimalTagTest,Constructor) {
 	ASSERT_EQ(ILTag::TAG_BDEC, t->id());
 	ASSERT_EQ(0, t->scale());
 	ASSERT_EQ(0, t->integral().size());
-	ASSERT_FALSE(t->integral().secure());
+	ASSERT_TRUE(t->integral().secure());
 	delete t;
 }
 
@@ -131,7 +131,7 @@ TEST_F(ILBigDecimalTagTest, deserializeValue) {
 
 	for (int i = 0; i < sizeof(buff); i++) {
 		exp.setSize(0);
-		ASSERT_TRUE(exp.writeInt(t.scale()));
+		ASSERT_TRUE(exp.writeInt((std::int32_t)i));
 		ASSERT_TRUE(exp.write(t.integral().roBuffer(), t.integral().size()));
 
 		ASSERT_TRUE(t.deserializeValue(f, exp.roBuffer(), exp.size()));
