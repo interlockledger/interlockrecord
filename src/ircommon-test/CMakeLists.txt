@@ -40,6 +40,9 @@ add_executable(ircommon-test
 	src/codec/IRBase32AlphabetTest.cpp
 	src/codec/IRBase2NCodecTest.cpp
 	src/codec/IRGenericAlphabetTest.cpp
+	src/crypto/I32FeistelObfuscatorTest.cpp
+	src/crypto/I32ObfuscatorTest.cpp
+	src/crypto/IRARC4Test.cpp
 	src/IRBufferTest.cpp
 	src/IRCodecTest.cpp
 	src/IRFloatingPointTest.cpp
@@ -61,8 +64,6 @@ add_executable(ircommon-test
 	src/json/IRJsonIntegerTest.cpp
 	src/threading/IRRWLockTest.cpp
 	src/threading/IRSemaphoreTest.cpp
-	src/crypto/I32FeistelObfuscatorTest.cpp
-	src/crypto/I32ObfuscatorTest.cpp
 	src/ILIntTest.cpp
 	src/IRHandleListTest.cpp
 	src/main.cpp)

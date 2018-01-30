@@ -57,6 +57,12 @@ private:
 	State _state[2];
 public:
 	/**
+	 * Creates a new instance of this class. This instance will not be
+	 * initialized.
+	 */
+	IRARC4();
+
+	/**
 	 * Creates a new instance of this class.
 	 *
 	 * @param[in] key The key.

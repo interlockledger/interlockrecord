@@ -33,8 +33,14 @@ using namespace ircommon::crypto;
 //==============================================================================
 // class IRARC4
 //------------------------------------------------------------------------------
-IRARC4::IRARC4(const void * key, int keySize) {
+IRARC4::IRARC4() {
+
 	std::memset(&(this->_state), 0, sizeof(this->_state));
+}
+
+//------------------------------------------------------------------------------
+IRARC4::IRARC4(const void * key, int keySize): IRARC4() {
+
 	this->setKey(key, keySize);
 }
 
@@ -81,7 +87,7 @@ void IRARC4::save() {
 //------------------------------------------------------------------------------
 void IRARC4::load() {
 
-	std::memcpy(&(this->_state[SAVED]), &(this->_state[CURR]), sizeof(State));
+	std::memcpy(&(this->_state[CURR]), &(this->_state[SAVED]), sizeof(State));
 }
 
 //------------------------------------------------------------------------------
