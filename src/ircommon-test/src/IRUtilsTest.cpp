@@ -273,7 +273,7 @@ TEST_F(IRUtilsTest, lockUnlockMemory) {
 	buff = new std::uint8_t[size];
 	ASSERT_TRUE(IRUtils::lockMemory(buff, size));
 	ASSERT_TRUE(IRUtils::unlockMemory(buff, size));
-	delete buff;
+	delete [] buff;
 }
 
 
