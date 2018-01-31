@@ -26,7 +26,7 @@
  */
 #include "IRProtectedMemoryTest.h"
 #include <ircommon/irpmem.h>
-
+#include <cstring>
 using namespace ircommon;
 using namespace ircommon::crypto;
 
