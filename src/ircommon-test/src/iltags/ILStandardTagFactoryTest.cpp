@@ -196,7 +196,6 @@ TEST_F(ILStandardTagFactoryTest, createFalseFalse) {
 	t = f.create(ILTag::TAG_ILTAG_ARRAY);
 	ASSERT_TRUE(t != nullptr);
 	ASSERT_EQ(typeid(ILTagArrayTag), typeid(*t));
-	ASSERT_FALSE(static_cast<ILRawTag*>(t)->secure());
 	delete t;
 
 	// Reserved tags
@@ -336,7 +335,6 @@ TEST_F(ILStandardTagFactoryTest, createTrueFalse) {
 	t = f.create(ILTag::TAG_ILTAG_ARRAY);
 	ASSERT_TRUE(t != nullptr);
 	ASSERT_EQ(typeid(ILTagArrayTag), typeid(*t));
-	ASSERT_TRUE(static_cast<ILRawTag*>(t)->secure());
 	delete t;
 
 	// Reserved tags
@@ -476,7 +474,6 @@ TEST_F(ILStandardTagFactoryTest, createFalseTrue) {
 	t = f.create(ILTag::TAG_ILTAG_ARRAY);
 	ASSERT_TRUE(t != nullptr);
 	ASSERT_EQ(typeid(ILTagArrayTag), typeid(*t));
-	ASSERT_FALSE(static_cast<ILRawTag*>(t)->secure());
 	delete t;
 
 	// Reserved tags
@@ -604,7 +601,6 @@ TEST_F(ILStandardTagFactoryTest, createTrueTrue) {
 	t = f.create(ILTag::TAG_ILTAG_ARRAY);
 	ASSERT_TRUE(t != nullptr);
 	ASSERT_EQ(typeid(ILTagArrayTag), typeid(*t));
-	ASSERT_TRUE(static_cast<ILRawTag*>(t)->secure());
 	delete t;
 
 	// Reserved tags
