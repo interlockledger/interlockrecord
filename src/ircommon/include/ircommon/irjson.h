@@ -289,6 +289,21 @@ public:
 	}
 };
 
+// Explicity specialized implementations
+template<>
+bool IRJsonBaseValue<bool, IRJsonValue::BOOLEAN>::asBoolean() const;
+
+template <>
+const std::string &
+IRJsonBaseValue<std::string, IRJsonValue::STRING>::asString() const;
+
+template <>
+std::uint64_t
+IRJsonBaseValue<std::int64_t, IRJsonValue::INTEGER>::asInteger() const;
+
+template <>
+double IRJsonBaseValue<double, IRJsonValue::DECIMAL>::asDecimal() const;
+
 /**
  * JSON string. It uses std::string as its basic type.
  *
