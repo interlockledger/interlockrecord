@@ -68,6 +68,10 @@ protected:
 	
 	std::mutex _mutex;
 
+	#ifndef _WIN32
+	IRARC4 * _arc4;
+	#endif //_WIN32
+
 	bool protect();
 
 	bool unprotect();

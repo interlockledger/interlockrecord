@@ -34,6 +34,8 @@ using namespace ircommon::crypto;
 
 #ifdef _WIN32
 	#include <windows.h>
+#else
+	#include <chrono>
 #endif //_WIN32
 
 //==============================================================================
@@ -47,6 +49,10 @@ IRProtectedMemory::IRProtectedMemory(std::uint64_t size) {
 	assert(this->_valueBufferSize >= size);
 #else 
 	this->_valueBufferSize = size;
+	auto now = std::chrono::high_resolution_clock::now();
+	std::uint64_t key = now.time_since_epoch().count();
+	this->_arc4 = new IRARC4(&key, sizeof(key));
+	IRUtils::lockMemory(this->_arc4, sizeof(IRARC4));
 #endif // _WIN32
 
 	this->_valueSize = size;
@@ -58,6 +64,10 @@ IRProtectedMemory::IRProtectedMemory(std::uint64_t size) {
 
 //------------------------------------------------------------------------------
 IRProtectedMemory::~IRProtectedMemory() {
+	if (this->_arc4) {
+		IRUtils::unlockMemory(this->_arc4, sizeof(IRARC4));
+		delete this->_arc4;
+	}
 	if (this->_value) {
 		IRUtils::unlockMemory(this->_value, this->_valueBufferSize);
 		IRUtils::clearMemory(this->_value, this->_valueBufferSize);
@@ -71,7 +81,9 @@ bool IRProtectedMemory::protect() {
 	return (CryptProtectMemory(this->_value, this->_valueBufferSize, 
 		CRYPTPROTECTMEMORY_SAME_PROCESS) == TRUE);
 #else
-	return false;
+	this->_arc4->save();
+	this->_arc4->apply(this->_value, this->_valueBufferSize);
+	return true;
 #endif //_WIN32
 }
 
@@ -81,7 +93,9 @@ bool IRProtectedMemory::unprotect() {
 	return (CryptUnprotectMemory(this->_value, this->_valueBufferSize, 
 		CRYPTPROTECTMEMORY_SAME_PROCESS) == TRUE);
 #else
-	return false;
+	this->_arc4->load();
+	this->_arc4->apply(this->_value, this->_valueBufferSize);
+	return true;
 #endif //_WIN32
 }
 
