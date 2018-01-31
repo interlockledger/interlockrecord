@@ -27,6 +27,8 @@
 #include <ircommon/irpmem.h>
 #include <ircommon/irutils.h>
 #include <stdexcept>
+#include <cstring>
+#include <cassert>
 using namespace ircommon;
 using namespace ircommon::crypto;
 
@@ -41,11 +43,15 @@ IRProtectedMemory::IRProtectedMemory(std::uint64_t size) {
 
 #ifdef _WIN32
 	this->_valueBufferSize = size + (CRYPTPROTECTMEMORY_BLOCK_SIZE - (size % CRYPTPROTECTMEMORY_BLOCK_SIZE));
+	assert((this->_valueBufferSize % CRYPTPROTECTMEMORY_BLOCK_SIZE) == 0);
+	assert(this->_valueBufferSize >= size);
 #else 
 	this->_valueBufferSize = size;
 #endif // _WIN32
+
 	this->_valueSize = size;
 	this->_value = new std::uint8_t[this->_valueBufferSize];
+	std::memset(this->_value, 0, this->_valueBufferSize);
 	IRUtils::lockMemory(this->_value, this->_valueBufferSize);
 	this->protect();
 }

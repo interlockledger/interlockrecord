@@ -43,6 +43,7 @@ add_executable(ircommon-test
 	src/crypto/I32FeistelObfuscatorTest.cpp
 	src/crypto/I32ObfuscatorTest.cpp
 	src/crypto/IRARC4Test.cpp
+	src/crypto/IRProtectedMemoryTest.cpp
 	src/IRBufferTest.cpp
 	src/IRCodecTest.cpp
 	src/IRFloatingPointTest.cpp

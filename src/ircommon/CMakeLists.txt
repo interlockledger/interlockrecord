@@ -34,3 +34,8 @@ target_include_directories(ircommon
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
+if(MSVC)
+	target_link_libraries(ircommon
+		PUBLIC Crypt32.lib
+	)
+endif()
