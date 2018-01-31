@@ -22,6 +22,7 @@ add_library(ircommon STATIC
 	src/ircodec.cpp
 	src/irjson.cpp
 	src/irbuffer.cpp
+	src/irpmem.cpp
 	src/irutils.cpp
 	src/i32obfus.cpp
 	src/irsemaph.cpp
