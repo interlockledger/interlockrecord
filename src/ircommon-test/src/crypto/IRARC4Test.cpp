@@ -26,6 +26,7 @@
  */
 #include "IRARC4Test.h"
 #include <ircommon/irarc4.h>
+#include <cstring>
 using namespace ircommon::crypto;
 
 //==============================================================================
@@ -160,4 +161,22 @@ TEST_F(IRARC4Test, skip) {
 }
 
 //------------------------------------------------------------------------------
+TEST_F(IRARC4Test, apply) {
+	IRARC4 c(IRARC4Test_KEY, sizeof(IRARC4Test_KEY));
+	std::uint8_t exp[256];
+	std::uint8_t buff[sizeof(exp)];
 
+	for (int i = 0; i < sizeof(exp); i++) {
+		exp[i] = i;
+	}
+	std::memcpy(buff, exp, sizeof(exp));
+
+	c.save();
+	c.apply(buff, sizeof(buff));
+	ASSERT_NE(0, std::memcmp(exp, buff, sizeof(exp)));
+	c.load();
+	c.apply(buff, sizeof(buff));
+	ASSERT_EQ(0, std::memcmp(exp, buff, sizeof(exp)));
+}
+
+//------------------------------------------------------------------------------

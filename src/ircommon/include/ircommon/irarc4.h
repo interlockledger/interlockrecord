@@ -124,6 +124,15 @@ public:
 	 * @param[in] n The number of entries to be skipped.
 	 */
 	void skip(int n);
+
+	/**
+	 * Applies the key stream to the specified buffer.
+	 *
+	 * @param[in,out] buff The buffer.
+	 * @param[in] size The size of buff in bytes.
+	 * @since 2018.01.31
+	 */
+	void apply(void * buff, std::uint64_t size);
 };
 
 } // namespace crypto

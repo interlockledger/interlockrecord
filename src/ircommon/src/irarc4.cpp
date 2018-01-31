@@ -114,3 +114,15 @@ void IRARC4::skip(int n) {
 }
 
 //------------------------------------------------------------------------------
+void IRARC4::apply(void * buff, std::uint64_t size) {
+	std::uint8_t * p;
+	std::uint8_t * pEnd;
+
+	p = (std::uint8_t *)buff;
+	pEnd = p + size;
+	for( ; p != pEnd; p++) {
+		*p = (*p ^ this->next());
+	}
+}
+
+//------------------------------------------------------------------------------
