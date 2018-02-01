@@ -64,10 +64,12 @@ IRProtectedMemory::IRProtectedMemory(std::uint64_t size) {
 
 //------------------------------------------------------------------------------
 IRProtectedMemory::~IRProtectedMemory() {
+#ifndef _WIN32
 	if (this->_arc4) {
 		IRUtils::unlockMemory(this->_arc4, sizeof(IRARC4));
 		delete this->_arc4;
 	}
+#endif //_WIN32
 	if (this->_value) {
 		IRUtils::unlockMemory(this->_value, this->_valueBufferSize);
 		IRUtils::clearMemory(this->_value, this->_valueBufferSize);
