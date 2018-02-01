@@ -25,6 +25,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "ILTagUtilTest.h"
+#include <ircommon/ilint.h>
+#include <ircommon/iltag.h>
+#include <ircommon/iltagstd.h>
+
+using namespace ircommon;
+using namespace ircommon::iltags;
 
 //==============================================================================
 // class ILTagUtilTest
@@ -45,10 +51,34 @@ void ILTagUtilTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagUtilTest,Constructor) {
+TEST_F(ILTagUtilTest, sameID) {
+	ILNullTag t1;
+	ILNullTag t2;
+	ILRawTag t3(t2.id());
+	ILRawTag t4(t2.id() + 1);
 
+	ASSERT_TRUE(ILTagUtil::sameID(t1, t2));
+	ASSERT_TRUE(ILTagUtil::sameID(t1, t3));
+	ASSERT_FALSE(ILTagUtil::sameID(t1, t4));
 	//TODO Implementation required!
 	std::cout << "Implementation required!";
 }
+
+
+//------------------------------------------------------------------------------
+TEST_F(ILTagUtilTest, sameClass) {
+	ILNullTag t1;
+	ILNullTag t2;
+	ILRawTag t3(t2.id());
+	ILRawTag t4(t2.id() + 1);
+
+	ASSERT_TRUE(ILTagUtil::sameClass(t1, t2));
+	ASSERT_TRUE(ILTagUtil::sameClass(t1, t3));
+	ASSERT_TRUE(ILTagUtil::sameClass(t1, t4));
+	//TODO Implementation required!
+	std::cout << "Implementation required!";
+}
+
+
 //------------------------------------------------------------------------------
 
