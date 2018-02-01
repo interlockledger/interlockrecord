@@ -5,6 +5,7 @@ project (irecordcore-test
 enable_testing()
 find_package(GTest REQUIRED)
 add_executable(irecordcore-test
+	src/crypto/IRCryptoTest.cpp
 	src/tags/IRTagFactoryTest.cpp
 	src/tags/IRBaseType16RawTagTest.cpp
 	src/tags/IRHashTagTest.cpp
