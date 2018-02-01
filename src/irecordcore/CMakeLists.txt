@@ -14,6 +14,7 @@ configure_file (
 
 # Sources
 add_library(irecordcore STATIC
+	src/irtags.cpp
 	src/IRCHandle.cpp)
 target_include_directories(irecordcore PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include

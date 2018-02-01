@@ -5,8 +5,18 @@ project (irecordcore-test
 enable_testing()
 find_package(GTest REQUIRED)
 add_executable(irecordcore-test
-	${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-)
+	src/tags/IRTagFactoryTest.cpp
+	src/tags/IRBaseType16RawTagTest.cpp
+	src/tags/IRHashTagTest.cpp
+	src/tags/IRPayloadTagTest.cpp
+	src/tags/IRSignedTagTest.cpp
+	src/tags/IRSigTagTest.cpp
+	src/tags/IRTagTypeTest.cpp
+	src/tags/IRBlockTagTest.cpp
+	src/tags/IRBlockSigTagTest.cpp
+	src/tags/IRPubTagTest.cpp
+	src/tags/IRHeaderTagTest.cpp
+	src/main.cpp)
 
 target_include_directories(irecordcore-test PUBLIC
 	$<TARGET_PROPERTY:irecordcore,INTERFACE_INCLUDE_DIRECTORIES>
