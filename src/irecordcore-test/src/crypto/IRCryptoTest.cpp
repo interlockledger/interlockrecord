@@ -51,14 +51,22 @@ void IRCryptoTest::TearDown() {
 TEST_F(IRCryptoTest, IRHashAlg) {
 
 	ASSERT_EQ(0, IR_HASH_SHA1);
-	// TODO Check with the definition
+	ASSERT_EQ(1, IR_HASH_SHA256);
+	ASSERT_EQ(2, IR_HASH_SHA512);
+	ASSERT_EQ(3, IR_HASH_SHA3_256);
+	ASSERT_EQ(4, IR_HASH_SHA3_512);
+	ASSERT_EQ(0xFFFF, IR_HASH_COPY);
 }
 
 //------------------------------------------------------------------------------
 TEST_F(IRCryptoTest, IRSignAlg) {
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	ASSERT_EQ(0, IR_SIG_RSA);
+	ASSERT_EQ(1, IR_SIG_RSA_1_5);
+	ASSERT_EQ(2, IR_SIG_DSA);
+	ASSERT_EQ(3, IR_SIG_ELGAMAL);
+	ASSERT_EQ(4, IR_SIG_ECDSA);
+	ASSERT_EQ(5, IR_SIG_EDDSA);
 }
 //------------------------------------------------------------------------------
 
