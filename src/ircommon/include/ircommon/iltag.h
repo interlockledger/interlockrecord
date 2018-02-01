@@ -583,6 +583,21 @@ public:
 	 */
 	static bool extractTagHeader(IRBuffer & inp,
 			std::uint64_t & tagId, std::uint64_t & tagSize);
+
+	/**
+	 * Deserializes the first ILTag found inside the input and
+	 * fills the tag instance properly.
+	 *
+	 * <p>This method will succeed if and only if the serialized
+	 * tag type matches the expected tag type defined by the tag
+	 * instance.</p>
+	 *
+	 * @param[in] inp The input buffer.
+	 * @param[out] tag The tag.
+	 * @return true on success or false otherwise.
+	 * @since 2018.02.01
+	 */
+	bool deserialize(IRBuffer & inp, ILTag & tag) const;
 };
 
 } //namespace iltags

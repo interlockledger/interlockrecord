@@ -260,4 +260,26 @@ bool ILTagFactory::extractTagHeader(IRBuffer & inp,
 }
 
 //------------------------------------------------------------------------------
+bool ILTagFactory::deserialize(IRBuffer & inp, ILTag & tag) const {
+	std::uint64_t tagId;
+	std::uint64_t tagSize;
+
+	if (!extractTagHeader(inp, tagId, tagSize)){
+		return false;
+	}
+	if (inp.available() < tagSize) {
+		return false;
+	}
+	if (tagId != tag.id()) {
+		return false;
+	}
+	if (tag.deserializeValue(*this, inp.roPosBuffer(), tagSize)) {
+		inp.skip(tagSize);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
 

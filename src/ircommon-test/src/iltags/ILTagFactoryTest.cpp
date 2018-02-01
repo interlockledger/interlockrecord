@@ -26,6 +26,7 @@
  */
 #include "ILTagFactoryTest.h"
 #include <ircommon/iltag.h>
+#include <ircommon/iltagstd.h>
 #include <ircommon/ilint.h>
 #include <cstring>
 using namespace ircommon;
@@ -416,6 +417,45 @@ TEST_F(ILTagFactoryTest, strictMode) {
 
 	f.setStrictMode(false);
 	ASSERT_FALSE(f.strictMode());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(ILTagFactoryTest, deserializeIRBufferILTag) {
+	ILTagFactory f;
+	IRBuffer out;
+	ILInt64Tag uint64Tag;
+	ILInt32Tag uint32Tag;
+	ILStringTag stringTag;
+	std::string s;
+
+	// Implicity
+	ASSERT_TRUE(out.writeILInt(ILTag::TAG_INT64));
+	ASSERT_TRUE(out.writeInt(std::uint64_t(0xFACADA)));
+
+	out.beginning();
+	ASSERT_TRUE(f.deserialize(out, uint64Tag));
+	ASSERT_EQ(0xFACADA, uint64Tag.value());
+
+	out.beginning();
+	ASSERT_FALSE(f.deserialize(out, uint32Tag));
+	out.beginning();
+	ASSERT_FALSE(f.deserialize(out, stringTag));
+
+	// Full tag
+	s = "And so it begins.";
+	out.beginning();
+	ASSERT_TRUE(out.writeILInt(ILTag::TAG_STRING));
+	ASSERT_TRUE(out.writeILInt(s.size()));
+	ASSERT_TRUE(out.write(s.c_str(), s.size()));
+
+	out.beginning();
+	ASSERT_TRUE(f.deserialize(out, stringTag));
+	ASSERT_STREQ(s.c_str(), stringTag.value().c_str());
+
+	out.beginning();
+	ASSERT_FALSE(f.deserialize(out, uint32Tag));
+	out.beginning();
+	ASSERT_FALSE(f.deserialize(out, uint64Tag));
 }
 
 //------------------------------------------------------------------------------
