@@ -33,6 +33,7 @@ add_executable(ircommon-test
 	src/iltags/ILBasicFixedOpaqueTagTest.cpp
 	src/iltags/ILInt32TagTest.cpp
 	src/iltags/ILILIntTagTest.cpp
+	src/iltags/ILTagUtilTest.cpp
 	src/codec/IRBase64AlphabetTest.cpp
 	src/codec/IRAlphabetTest.cpp
 	src/codec/IRHexAlphabetTest.cpp

@@ -275,8 +275,6 @@ public:
 	static std::uint64_t getImplicitValueSize(std::uint64_t tagId);
 };
 
-
-
 /**
  * This class implements the base class for all raw tags. The tag
  * information will be stored inside a IRBuffer to allow manipulation.
@@ -598,6 +596,48 @@ public:
 	 * @since 2018.02.01
 	 */
 	bool deserialize(IRBuffer & inp, ILTag & tag) const;
+};
+
+/**
+ * This class defines methods that can be used to perform
+ * some common operations with tags.
+ *
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2018.02.01
+ */
+class ILTagUtil {
+public:
+	/**
+	 * Verifies if two ILTag instances have the same ID.
+	 *
+	 * @param[in] a An ILTag.
+	 * @param[in] b Another ILTag.
+	 * @return true if they share the same ID or false otherwise.
+	 */
+	static bool sameID(const ILTag & a, const ILTag & b);
+
+	/**
+	 * Verifies if two ILTag instances have the same class.
+	 *
+	 * @param[in] a An ILTag.
+	 * @param[in] b Another ILTag.
+	 * @return true if they share the class ID or false otherwise.
+	 */
+	static bool sameClass(const ILTag & a, const ILTag & b);
+
+	/**
+	 * Verifies if two ILTag instances are equal.
+	 *
+	 * <p>This is achieved by comparing their serializations. Because
+	 * of that, the use of this method should be avoided whenever
+	 * possible. The main motivation to this method is to ease
+	 * the creation of unit-tests regarding the tags.</p>
+	 *
+	 * @param[in] a An ILTag.
+	 * @param[in] b Another ILTag.
+	 * @return true if they are equal or false otherwise.
+	 */
+	static bool equals(const ILTag & a, const ILTag & b);
 };
 
 } //namespace iltags

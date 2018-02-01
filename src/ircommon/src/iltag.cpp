@@ -26,6 +26,7 @@
  */
 #include <ircommon/iltag.h>
 #include <ircommon/ilint.h>
+#include <cstring>
 
 using namespace ircommon;
 using namespace ircommon::iltags;
@@ -279,6 +280,38 @@ bool ILTagFactory::deserialize(IRBuffer & inp, ILTag & tag) const {
 	} else {
 		return false;
 	}
+}
+
+//==============================================================================
+// Class ILTagUtil
+//------------------------------------------------------------------------------
+bool ILTagUtil::sameID(const ILTag & a, const ILTag & b) {
+	return (a.id() == b.id());
+}
+
+//------------------------------------------------------------------------------
+bool ILTagUtil::sameClass(const ILTag & a, const ILTag & b) {
+	return (typeid(a) == typeid(b));
+}
+
+//------------------------------------------------------------------------------
+bool ILTagUtil::equals(const ILTag & a, const ILTag & b) {
+	IRBuffer ba(0, true);
+	IRBuffer bb(0, true);
+
+	if (a.id() != b.id()) {
+		return false;
+	}
+	if (!a.serialize(ba)) {
+		return false;
+	}
+	if (!b.serialize(bb)) {
+		return false;
+	}
+	if (ba.size() != bb.size()) {
+		return false;
+	}
+	return (std::memcmp(ba.roBuffer(), bb.roBuffer(), ba.size()) == 0);
 }
 
 //------------------------------------------------------------------------------
