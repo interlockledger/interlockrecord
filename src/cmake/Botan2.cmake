@@ -64,6 +64,8 @@ if (WIN32)
 			"include/botan-2"
 			"botan-2")
 	set(BOTAN2_DEP_LIBS "Ws2_32.lib")
+	set(BOTAN2D_LIB "")
+	set(BOTAN2_DEP_LIBS "")
 else()
 	find_library(BOTAN2_LIB
 		"libbotan-2.a")
