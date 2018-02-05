@@ -24,23 +24,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <vector>
-#include <cstdint>
-#include <botan/build.h>
-#include <botan/sha2_32.h>
+#include <gtest/gtest.h>
 #include <iostream>
-#include <cstdio>
 
-int main(int argc, char ** argv) {
+int main(int argc, char **argv) {
+	int retval; 
+	std::cout << "Running main() from gtest_main.cc\n";
 
-	Botan::SHA_256 hash;
-	std::vector<Botan::byte> output;
+	testing::InitGoogleTest(&argc, argv);
 
-	hash.final(output);
-	//std::cout << output.size(); 
-	for (int i = 0; i < output.size(); i++) {
-		std::printf("%02X ", output.at(i));
-	}
-	return 0;
+	retval = RUN_ALL_TESTS();
+
+	return retval;
 }
 

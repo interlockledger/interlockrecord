@@ -1,4 +1,4 @@
-# Copyright (c) 2017, Open Communications Security
+# Copyright (c) 2017-2018, Open Communications Security
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,6 @@
 #    - BOTAN2_LIB: The Botan 2 library;
 #    - BOTAN2D_LIB: The Botan 2 library for debug;
 #    - BOTAN2_INCLUDE_DIR: The Botan 2 include library;
-#    - BOTAN2_DEP_LIBS: The other libraries require by Botan 2;
 #    - BOTAN2_VERSION: The version of the Botan library extracted from "build.h";
 #    - BOTAN2_FOUND: Flag that indicates that the Botan2 library was found;
 #
@@ -63,8 +62,10 @@ if (WIN32)
 		PATH_SUFFIXES 
 			"include/botan-2"
 			"botan-2")
-	set(BOTAN2_DEP_LIBS "Ws2_32.lib")
+	set(BOTAN2_LIB "${BOTAN2_LIB} Ws2_32.lib")
+	set(BOTAN2D_LIB "${BOTAN2D_LIB} Ws2_32.lib")
 else()
+	# Linux and other
 	find_library(BOTAN2_LIB
 		"libbotan-2.a")
 	find_library(BOTAN2_SHARED_LIB
@@ -73,8 +74,7 @@ else()
 		"botan/botan.h"
 		PATH_SUFFIXES "botan-2")
 	# TODO Fix this dependency later
-	set(BOTAN2D_LIB "")
-	set(BOTAN2_DEP_LIBS "")
+	set(BOTAN2D_LIB "${BOTAN2_LIB}")
 endif()
 
 # Extract the Botan version from build.h
