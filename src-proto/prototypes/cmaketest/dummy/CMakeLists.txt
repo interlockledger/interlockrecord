@@ -6,8 +6,7 @@ add_executable(dummy
 	src/main.cpp)
 
 target_include_directories(dummylib-test 
-	PUBLIC 
-	$<TARGET_PROPERTY:dummylib,INTERFACE_INCLUDE_DIRECTORIES>)
+	PUBLIC dummylib)
 
 target_link_libraries(dummy
 	dummylib

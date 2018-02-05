@@ -27,11 +27,10 @@
 # When the option MSVC_STATIC_CRT is set to ON, the default /MD flag will be
 # replaced by the /MT flag. Furthermore, the variable MSVC_CRT_FLAG will hold
 # the name of the flag used "MD" or "MT".
-if(__WINDOWS_MSVCCRT)
+if(__OPENCS_MSVCCRT)
   return()
 endif()
-
-set(__WINDOWS_MSVCCRT 1)
+set(__OPENCS_MSVCCRT 1)
 
 # Debug onlyt
 #get_cmake_property(_variableNames VARIABLES)

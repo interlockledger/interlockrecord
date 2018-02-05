@@ -9,8 +9,7 @@ add_executable(dummylib-test
 	src/main.cpp)
 
 target_include_directories(dummylib-test 
-	PUBLIC 
-	$<TARGET_PROPERTY:dummylib,INTERFACE_INCLUDE_DIRECTORIES>
+	PUBLIC dummylib
 	${GTEST_INCLUDE_DIRS})
 
 target_link_libraries(dummylib-test
