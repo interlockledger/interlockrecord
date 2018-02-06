@@ -21,11 +21,10 @@ add_library(irecordcore STATIC
 target_include_directories(irecordcore PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 	${BOTAN2_INCLUDE_DIR}
-	$<TARGET_PROPERTY:ircommon,INTERFACE_INCLUDE_DIRECTORIES>	
+	ircommon	
 )
 
 target_link_libraries(irecordcore
 	PUBLIC ircommon
-	PUBLIC ${BOTAN2D_LIB}
-	PUBLIC ${BOTAN2_DEP_LIBS}
+	PUBLIC Botan2
 )
