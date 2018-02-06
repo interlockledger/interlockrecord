@@ -43,8 +43,8 @@ add_executable(irecordcore-test
 	src/main.cpp)
 
 target_include_directories(irecordcore-test 
-	PUBLIC irecordcore
-	GTest::GTest
+	PUBLIC PUBLIC $<TARGET_PROPERTY:irecordcore,INTERFACE_INCLUDE_DIRECTORIES>
+	${GTEST_INCLUDE_DIRS}
 )
 target_link_libraries(irecordcore-test
 	irecord

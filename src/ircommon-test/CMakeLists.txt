@@ -94,8 +94,8 @@ add_executable(ircommon-test
 	src/main.cpp)
 
 target_include_directories(ircommon-test 
-	PUBLIC ircommon
-	GTest::GTest)
+	PUBLIC $<TARGET_PROPERTY:ircommon,INTERFACE_INCLUDE_DIRECTORIES>
+	${GTEST_INCLUDE_DIRS})
 
 target_link_libraries(ircommon-test
 	ircommon
