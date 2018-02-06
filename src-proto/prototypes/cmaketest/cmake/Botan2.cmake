@@ -43,7 +43,7 @@ set(__OPENCS_BOTAN2 1)
 
 # Check the dependency on 
 if (NOT __OPENCS_MSVCCRT)
-
+	message(FATAL_ERROR "OpenCS Botan2 module requires OpenCS MSVCCRT module in order to work properly.")
 endif()
 
 if (WIN32)
