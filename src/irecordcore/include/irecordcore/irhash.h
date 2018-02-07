@@ -33,39 +33,108 @@
 #include <botan/sha160.h>
 #include <botan/sha2_32.h>
 #include <botan/sha2_64.h>
+#include <botan/keccak.h>
 
 namespace irecordcore {
 namespace crypto {
 
+/**
+ * This is the base class for all hash algorithms.
+ *
+ * @since 2018.02.01
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ */
 class IRHash {
 private:
+	/**
+	 * Type of the hash.
+	 */
 	IRHashAlg _type;
 public:
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] type The algorithm type.
+	 */
 	IRHash(IRHashAlg type):
 			_type(type) {}
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRHash() = default;
 
+	/**
+	 * Returns the hash type.
+	 *
+	 * @return The hash type.
+	 */
 	IRHashAlg type() const {
 		return this->_type;
 	}
 
+	/**
+	 * Resets this instance.
+	 */
 	virtual void reset() = 0;
 
+	/**
+	 * Returns the size of this hash in bits.
+	 *
+	 * @return The size of the hash in bits.
+	 */
 	virtual std::uint64_t size() const;
 
+	/**
+	 * Returns the size of this hash in bytes.
+	 *
+	 * @return The size of the hash in bytes.
+	 */
+	std::uint64_t sizeInBytes() const {
+		return this->size() / 8;
+	}
+
+	/**
+	 * Updates this hash.
+	 *
+	 * @param[in] buff The data.
+	 * @param[in] size The size of buff in bytes.
+	 */
 	virtual void update(const void * buff, std::uint64_t size) = 0;
 
+	/**
+	 * Finalizes the computation of the hash.
+	 *
+	 * @param[out] out The buffer that will receive the data.
+	 * @param[in] size Size of the buffer out. It mus be always equal or larger
+	 * than sizeInBytes().
+	 * @return true for success or false otherwise.
+	 */
 	virtual bool finalize(void * out, std::uint64_t size) = 0;
 };
 
+/**
+ * This class implements the COPY hash algorithm.
+ *
+ * @since 2018.02.01
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ */
 class IRCopyHash  : public IRHash {
 private:
+	/**
+	 * The inner state.
+	 */
 	ircommon::IRBuffer _state;
 public:
-	IRCopyHash(IRHashAlg type):IRHash(IR_HASH_COPY),
+	/**
+	 * Creates a new instance of this class.
+	 */
+	IRCopyHash():IRHash(IR_HASH_COPY),
 			_state(0, true) {}
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRCopyHash() = default;
 
 	virtual void reset();
@@ -77,6 +146,14 @@ public:
 	virtual bool finalize(void * out, std::uint64_t size);
 };
 
+/**
+ * This class template implements the hash algorithm implemented by Botan 2.
+ *
+ * @since 2018.02.01
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @tparam BotanHashImpl Botan 2 class that implements the hash.
+ * @tparam Type The hash type.
+ */
 template <class BotanHashImpl, IRHashAlg Type>
 class IRBotanHash : public IRHash {
 private:
@@ -112,6 +189,49 @@ typedef IRBotanHash<Botan::SHA_160, IR_HASH_SHA1> IRSHA1Hash;
 typedef IRBotanHash<Botan::SHA_256, IR_HASH_SHA256> IRSHA256Hash;
 
 typedef IRBotanHash<Botan::SHA_512, IR_HASH_SHA256> IRSHA512Hash;
+
+/**
+ * This class template encapsulates the SHA3 hash algorithm implemented by
+ * Botan 2.
+ *
+ * @since 2018.02.06
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @tparam OutputSize The output size. Must be 224, 256, 384, or 512.
+ * @tparam Type The hash type.
+ */
+template <size_t OutputSize, IRHashAlg Type>
+class IRBotanKeccakHash : public IRHash {
+private:
+	Botan::Keccak_1600 _hash;
+public:
+	IRBotanKeccakHash(): IRHash(Type),_hash(OutputSize) {}
+
+	virtual ~IRBotanKeccakHash() = default;
+
+	virtual void reset() {
+		this->_hash.clear();
+	}
+
+	virtual std::uint64_t size() const {
+		return this->_hash.output_length();
+	}
+
+	virtual void update(const void * buff, std::uint64_t size) {
+		this->_hash.update((const std::uint8_t *)buff, size);
+	}
+
+	virtual bool finalize(void * out, std::uint64_t size) {
+		if (size < this->size()) {
+			return false;
+		}
+		this->_hash.final((std::uint8_t *)out);
+		return true;
+	}
+};
+
+typedef IRBotanKeccakHash<256, IR_HASH_SHA3_256> IRSHA3_256Hash;
+
+typedef IRBotanKeccakHash<512, IR_HASH_SHA3_512> IRSHA3_512Hash;
 
 class IRHashFactory {
 public:

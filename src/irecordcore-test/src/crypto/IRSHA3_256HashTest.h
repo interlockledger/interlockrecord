@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2017-2018, Open Communications Security
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of the <organization> nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -24,58 +24,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <irecordcore/irhash.h>
-#include <cstring>
+#ifndef __IRSHA3_256HASHTEST_H__
+#define __IRSHA3_256HASHTEST_H__
 
-using namespace irecordcore;
-using namespace irecordcore::crypto;
+#include <gtest/gtest.h>
 
-//==============================================================================
-// Class IRCopyHash
-//------------------------------------------------------------------------------
-void IRCopyHash::reset() {
-	this->_state.setSize(0);
-}
-
-//------------------------------------------------------------------------------
-std::uint64_t IRCopyHash::size() const {
-	return this->_state.size() * 8;
-}
-
-//------------------------------------------------------------------------------
-void IRCopyHash::update(const void * buff, std::uint64_t size) {
-	this->_state.write(buff, size);
-}
-
-//------------------------------------------------------------------------------
-bool IRCopyHash::finalize(void * out, std::uint64_t size) {
-	if (size < this->size()) {
-		return false;
-	}
-	std::memcpy(out, this->_state.roBuffer(), this->_state.size());
-	return true;
-}
-
-//==============================================================================
-// Class IRHashFactory
-//------------------------------------------------------------------------------
-IRHash * IRHashFactory::create(std::uint16_t type) {
-
-	switch(type) {
-	case IR_HASH_SHA1:
-		return new IRSHA1Hash();
-	case IR_HASH_SHA256:
-		return new IRSHA256Hash();
-	case IR_HASH_SHA512:
-		return new IRSHA512Hash();
-	case IR_HASH_SHA3_256:
-		return new IRSHA3_256Hash();
-	case IR_HASH_SHA3_512:
-		return new IRSHA3_512Hash();
-	default:
-		return nullptr;
-	}
-}
-
-//------------------------------------------------------------------------------
+class IRSHA3_256HashTest : public testing::Test {
+public:
+	IRSHA3_256HashTest();
+	virtual ~IRSHA3_256HashTest();
+	virtual void SetUp();
+	virtual void TearDown();
+};
+#endif //__IRSHA3_256HASHTEST_H__
 

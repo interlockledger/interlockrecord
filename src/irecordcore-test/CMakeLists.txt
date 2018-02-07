@@ -28,18 +28,26 @@ project (irecordcore-test
 
 enable_testing()
 add_executable(irecordcore-test
-	src/crypto/IRCryptoTest.cpp
 	src/tags/IRTagFactoryTest.cpp
-	src/tags/IRBaseType16RawTagTest.cpp
-	src/tags/IRHashTagTest.cpp
 	src/tags/IRPayloadTagTest.cpp
-	src/tags/IRSignedTagTest.cpp
-	src/tags/IRSigTagTest.cpp
+	src/tags/IRHeaderTagTest.cpp
 	src/tags/IRTagTypeTest.cpp
 	src/tags/IRBlockTagTest.cpp
-	src/tags/IRBlockSigTagTest.cpp
 	src/tags/IRPubTagTest.cpp
-	src/tags/IRHeaderTagTest.cpp
+	src/tags/IRBlockSigTagTest.cpp
+	src/tags/IRSignedTagTest.cpp
+	src/tags/IRHashTagTest.cpp
+	src/tags/IRBaseType16RawTagTest.cpp
+	src/tags/IRSigTagTest.cpp
+	src/crypto/IRSHA3_512HashTest.cpp
+	src/crypto/IRBotanHashTest.cpp
+	src/crypto/IRHashTest.cpp
+	src/crypto/IRSHA512HashTest.cpp
+	src/crypto/IRCryptoTest.cpp
+	src/crypto/IRSHA1HashTest.cpp
+	src/crypto/IRSHA256HashTest.cpp
+	src/crypto/IRSHA3_256HashTest.cpp
+	src/crypto/IRCopyHashTest.cpp
 	src/main.cpp)
 
 target_include_directories(irecordcore-test 
