@@ -64,7 +64,6 @@ TEST_F(ILTagUtilTest, sameID) {
 	std::cout << "Implementation required!";
 }
 
-
 //------------------------------------------------------------------------------
 TEST_F(ILTagUtilTest, sameClass) {
 	ILNullTag t1;
@@ -79,6 +78,16 @@ TEST_F(ILTagUtilTest, sameClass) {
 	std::cout << "Implementation required!";
 }
 
-
 //------------------------------------------------------------------------------
+TEST_F(ILTagUtilTest, equals) {
+	ILNullTag t1;
+	ILNullTag t2;
+	ILRawTag t3(t2.id());
+	ILRawTag t4(t2.id());
+	ILRawTag t5(t2.id() + 1);
+
+	ASSERT_TRUE(ILTagUtil::equals(t1, t2));
+	ASSERT_TRUE(ILTagUtil::equals(t3, t4));
+	ASSERT_FALSE(ILTagUtil::equals(t1, t3));
+}
 
