@@ -9,15 +9,10 @@ The InterlockRecord implementation uses the following external dependencies:
 
 ## Windows Dependencies
 
-### Botan
+This library uses the same library structure defined by the project **ocs-cmake-utils**.
+See the instructions to build those dependencies in:
 
-Instructions about this library can be found inside the directory
-``/deps/botan-win-build`` inside this repository.
-
-### Google Test
-
-Instructions about this library can be found inside the directory
-``/deps/gtest-win-build`` inside this repository.
+* https://github.com/opencs/ocs-cmake-utils
 
 ## Linux Dependencies
 
@@ -30,4 +25,5 @@ in order to build the library.
 
 ### Google Test
 
-This library can be installed directly from most Linux distributions.
+This library can be installed directly from most Linux distributions. See your
+distribution instructions for more information.
