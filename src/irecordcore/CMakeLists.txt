@@ -43,10 +43,7 @@ add_library(irecordcore STATIC
 	src/IRCHandle.cpp)
 	
 target_include_directories(irecordcore PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
-	${BOTAN2_INCLUDE_DIR}
-	PUBLIC $<TARGET_PROPERTY:ircommon,INTERFACE_INCLUDE_DIRECTORIES>
-)
+	${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_link_libraries(irecordcore
 	PUBLIC ircommon

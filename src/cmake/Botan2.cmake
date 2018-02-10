@@ -23,14 +23,20 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# This module locates Botan2 and defines the external library Botan2 on success.
+# ==============================================================================
+# This module locates the Botan2 library in the sysyem.
 #
-# It also defines the following constants:
-#    - BOTAN2_LIB: The Botan 2 library;
-#    - BOTAN2D_LIB: The Botan 2 library for debug;
-#    - BOTAN2_INCLUDE_DIR: The Botan 2 include library;
-#    - BOTAN2_VERSION: The version of the Botan library extracted from "build.h";
-#    - BOTAN2_FOUND: Flag that indicates that the Botan2 library was found;
+# Targets:
+#
+#    - Botan2
+#
+# Variables
+#
+#    - BOTAN2_LIB
+#    - BOTAN2D_LIB
+#    - BOTAN2_INCLUDE_DIR
+#    - BOTAN2_VERSION
+#    - BOTAN2_FOUND
 #
 # This method depends on MSVCCRT from OpenCS in order to work properly.
 #
@@ -46,35 +52,49 @@ if (NOT __OPENCS_MSVCCRT)
 	message(FATAL_ERROR "OpenCS Botan2 module requires OpenCS MSVCCRT module in order to work properly.")
 endif()
 
-if (WIN32)
-	if(CMAKE_CL_64)
-		set(platform "x64")
-	else()
-		set(platform "x86")
+function(botan2_log _msg)
+	if (BOTAN2_VERBOSE)
+		message(STATUS ${_msg})
 	endif()
+endfunction()
 
+if (WIN32)
 	if(NOT DEFINED MSVC_CRT_FLAG)
 		set(MSVC_CRT_FLAG "MD")
 	endif()
-
-	set(_BOTAN_CANDIDATE_PATHS
-		"c:/botan"
-		"d:/botan"
-		"e:/botan")
+	
+	# Get from ENV
+	if(NOT "$ENV{BOTAN2_HOME}" STREQUAL "") 
+		set(_BOTAN_CANDIDATE_PATHS "$ENV{BOTAN2_HOME}")
+		botan2_log("Using Botan2 location defined by BOTAN2_HOME.")
+	elseif(NOT "$ENV{BOTAN2_DIR}" STREQUAL "") 
+		set(_BOTAN_CANDIDATE_PATHS "$ENV{BOTAN2_DIR}")
+		botan2_log("Using Botan2 location defined by BOTAN2_DIR.")
+	else()
+		botan2_log("Looking Botan2 location inside <drive>:\\botan")
+		foreach(_botan_dir a b c d e f g h i j k l m n o p q r s t u v w x y z)
+			set(_BOTAN_CANDIDATE_PATHS
+				${_BOTAN_CANDIDATE_PATHS}
+				"${_botan_dir}:/botan"
+				)
+		endforeach()
+	endif()
+	
 	find_library(BOTAN2_LIB
 		"botan-${MSVC_CRT_FLAG}.lib"
 		PATHS ${_BOTAN_CANDIDATE_PATHS}
-		PATH_SUFFIXES "lib/${platform}")
+		PATH_SUFFIXES "${WIN32_TARGET_PLATFORM}/lib")
+	
 	find_library(BOTAN2D_LIB
-		"botan-${MSVC_CRT_FLAG}d.lib"
+		"botand-${MSVC_CRT_FLAG}.lib"
 		PATHS ${_BOTAN_CANDIDATE_PATHS}
-		PATH_SUFFIXES "lib/${platform}")
+		PATH_SUFFIXES "${WIN32_TARGET_PLATFORM}/lib")
+		
 	find_path(BOTAN2_INCLUDE_DIR
 		"botan/botan.h"
 		PATHS ${_BOTAN_CANDIDATE_PATHS}
 		PATH_SUFFIXES 
-			"include/botan-2"
-			"botan-2")
+			"${WIN32_TARGET_PLATFORM}/include/botan-2")
 	set(BOTAN2_DEPS Ws2_32.lib)
 else()
 	# Linux and other
@@ -89,41 +109,46 @@ else()
 	set(BOTAN2D_LIB "${BOTAN2_LIB}")
 endif()
 
-# Extract the Botan version from build.h
-if(EXISTS "${BOTAN2_INCLUDE_DIR}/botan/build.h")
-	file(STRINGS "${BOTAN2_INCLUDE_DIR}/botan/build.h" _BOTAN2_BUILD_HEADER)
-	string(REGEX REPLACE ".+BOTAN_VERSION_MAJOR ([0-9]+).+BOTAN_VERSION_MINOR ([0-9]+).+BOTAN_VERSION_PATCH ([0-9]+).+" 
-		"\\1.\\2.\\3" BOTAN2_VERSION "${_BOTAN2_BUILD_HEADER}")
-	unset(_BOTAN2_BUILD_HEADER)
-else()
-	set(BOTAN2_VERSION "0.0.0")
-endif()
+if(DEFINED BOTAN2_INCLUDE_DIR)
+	botan2_log("Botan2 headers found in ${BOTAN2_INCLUDE_DIR}.")
+	
+	# Extract the Botan version from build.h
+	if(EXISTS "${BOTAN2_INCLUDE_DIR}/botan/build.h")
+		file(STRINGS "${BOTAN2_INCLUDE_DIR}/botan/build.h" _BOTAN2_BUILD_HEADER)
+		string(REGEX REPLACE ".+BOTAN_VERSION_MAJOR ([0-9]+).+BOTAN_VERSION_MINOR ([0-9]+).+BOTAN_VERSION_PATCH ([0-9]+).+" 
+			"\\1.\\2.\\3" BOTAN2_VERSION "${_BOTAN2_BUILD_HEADER}")
+		unset(_BOTAN2_BUILD_HEADER)
+	else()
+		set(BOTAN2_VERSION "0.0.0")
+	endif()
+	botan2_log("Botan2 version is ${BOTAN2_VERSION}")
 
-if(DEFINED BOTAN2_LIB)
-	if(DEFINED BOTAN2_INCLUDE_DIR)
-		set(BOTAN2_FOUND 1)
-		message(STATUS "Botan ${BOTAN2_VERSION} found.")
-		
-		# Define the library
-		if(NOT TARGET Botan2)
-			add_library(Botan2 UNKNOWN IMPORTED)
-			set_target_properties(Botan2 PROPERTIES
-				INTERFACE_INCLUDE_DIRECTORIES "${BOTAN2_INCLUDE_DIR}")
-			if(DEFINED BOTAN2_DEPS)
-				set_target_properties(Botan2 PROPERTIES
-					INTERFACE_LINK_LIBRARIES "${BOTAN2_DEPS}")
-			endif()
-            set_property(TARGET Botan2 APPEND PROPERTY
+	# Define the library
+	if(NOT TARGET Botan2)
+		add_library(Botan2 UNKNOWN IMPORTED)
+		set_target_properties(Botan2 PROPERTIES
+			INTERFACE_INCLUDE_DIRECTORIES "${BOTAN2_INCLUDE_DIR}")
+		if(BOTAN2_LIB)
+			set_property(TARGET Botan2 APPEND PROPERTY
 				IMPORTED_CONFIGURATIONS RELEASE)
-            set_target_properties(Botan2 PROPERTIES
+			set_target_properties(Botan2 PROPERTIES
 				IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
 				IMPORTED_LOCATION_RELEASE "${BOTAN2_LIB}")
-            set_property(TARGET Botan2 APPEND PROPERTY
-                IMPORTED_CONFIGURATIONS DEBUG)
-            set_target_properties(Botan2 PROPERTIES
-                IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
-                IMPORTED_LOCATION_DEBUG "${BOTAN2D_LIB}")
-		endif()		
-	endif()
+			botan2_log("Botan2 release lib found at ${BOTAN2_LIB}")
+		endif()
+		if(BOTAN2D_LIB)
+			set_property(TARGET Botan2 APPEND PROPERTY
+				IMPORTED_CONFIGURATIONS DEBUG)
+			set_target_properties(Botan2 PROPERTIES
+				IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
+				IMPORTED_LOCATION_DEBUG "${BOTAN2D_LIB}")
+			botan2_log("Botan2 debug lib found at ${BOTAN2D_LIB}")
+		endif()
+		if(BOTAN2_DEPS)
+			set_target_properties(Botan2 PROPERTIES
+				INTERFACE_LINK_LIBRARIES "${BOTAN2_DEPS}")
+			botan2_log("Botan2 requires the following additional libraries: ${BOTAN2_DEPS}")
+		endif()
+	endif()		
+	set(BOTAN2_FOUND 1)
 endif()
-

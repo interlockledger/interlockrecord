@@ -29,6 +29,13 @@ project (interlockrecord
 # Including the global modules
 set(MSVC_STATIC_CRT 1)
 include("cmake/MSVCCRT.cmake")
+
+# GTest
+set(GTEST_VERBOSE 1)
+include("cmake/GTest.cmake")
+
+# Botan2
+set(BOTAN2_VERBOSE 1)
 include("cmake/Botan2.cmake")
 
 # Threads
@@ -37,9 +44,6 @@ if (CMAKE_USE_PTHREADS_INIT)
 	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 endif()
-
-# GTest
-find_package(GTest REQUIRED)
 
 # Sets the default output for all files
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)

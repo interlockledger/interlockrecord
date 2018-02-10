@@ -93,13 +93,9 @@ add_executable(ircommon-test
 	src/IRHandleListTest.cpp
 	src/main.cpp)
 
-target_include_directories(ircommon-test 
-	PUBLIC $<TARGET_PROPERTY:ircommon,INTERFACE_INCLUDE_DIRECTORIES>
-	${GTEST_INCLUDE_DIRS})
-
 target_link_libraries(ircommon-test
 	ircommon
-	GTest::GTest)
+	GTest)
 
 add_test(tests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ircommon-tests)
 

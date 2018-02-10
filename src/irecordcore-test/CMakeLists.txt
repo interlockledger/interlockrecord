@@ -50,14 +50,9 @@ add_executable(irecordcore-test
 	src/crypto/IRCopyHashTest.cpp
 	src/main.cpp)
 
-target_include_directories(irecordcore-test 
-	PUBLIC PUBLIC $<TARGET_PROPERTY:irecordcore,INTERFACE_INCLUDE_DIRECTORIES>
-	${GTEST_INCLUDE_DIRS}
-)
 target_link_libraries(irecordcore-test
-	irecord
 	irecordcore
-	GTest::GTest
-)
+	GTest)
+
 add_test(tests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/irecordcore-test)
 
