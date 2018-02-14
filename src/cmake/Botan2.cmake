@@ -40,6 +40,9 @@
 #
 # This method depends on MSVCCRT from OpenCS in order to work properly.
 #
+# History:
+#    - 2018.02.14: Support to "-dbg" libraries on Linux added;
+#
 # Known limitations:
 # 	- This version of the module was not tested on MacOS.
 if(__OPENCS_BOTAN2)
@@ -105,8 +108,11 @@ else()
 	find_path(BOTAN2_INCLUDE_DIR
 		"botan/botan.h"
 		PATH_SUFFIXES "botan-2")
-	# TODO Fix this dependency later
-	set(BOTAN2D_LIB "${BOTAN2_LIB}")
+	find_library(BOTAN2D_LIB
+		"libbotan-2-dbg.a")
+	if(NOT BOTAN2D_LIB)
+		set(BOTAN2D_LIB "${BOTAN2_LIB}")
+	endif()
 endif()
 
 if(DEFINED BOTAN2_INCLUDE_DIR)

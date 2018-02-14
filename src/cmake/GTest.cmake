@@ -54,6 +54,9 @@
 #
 # This method depends on MSVCCRT from OpenCS in order to work properly.
 #
+# History:
+#    - 2018.02.14: Support to "-dbg" libraries on Linux added;
+#
 # Known limitations:
 # 	- Not tested on MacOS
 if(__OPENCS_GTEST)
@@ -122,10 +125,14 @@ if (WIN32)
 	endforeach(_gtest_lib_title)
 else()
 	foreach(_gtest_lib_title IN ITEMS GTEST GTEST_MAIN GMOCK GMOCK_MAIN)
-		string(TOLOWER "lib${_gtest_lib_title}.a" _gtest_lib_file)
+		string(TOLOWER "lib${_gtest_lib_title}" _gtest_lib_file)
 		find_library(${_gtest_lib_title}_LIB
-			${_gtest_lib_file})
-		set(${_gtest_lib_title}D_LIB ${_gtest_lib_file})
+			${_gtest_lib_file}.a)
+		find_library(${_gtest_lib_title}D_LIB
+			${_gtest_lib_file}-dbg.a)
+		if (NOT ${_gtest_lib_title}D_LIB)
+			set(${_gtest_lib_title}D_LIB ${${_gtest_lib_title}_LIB})
+		endif()
 	endforeach(_gtest_lib_title)
 	# On Linux, it will require threads
 endif()
