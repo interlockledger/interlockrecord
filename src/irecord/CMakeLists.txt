@@ -44,38 +44,43 @@ endif()
 
 # Sources
 add_library(irecord SHARED
-	src/IRBlockDispose.cpp
+	include/irecord/irecord.h
+	include/irecord/irconst.h
+	include/irecord/irdll.h
+	include/irecord/irerr.h
+	src/IRRootTemplateSetParent.cpp
+	src/IREmergencyKeyDispose.cpp
 	src/IRBlockLoad.cpp
+	src/IRInstanceStateSerialize.cpp
 	src/IRBlockParameter.cpp
+	src/IRInstanceStateCreate.cpp
 	src/IRBlockSerialize.cpp
-	src/IRCheckEmergencyClosing.cpp
-	src/IRCheckParent.cpp
-	src/IRCheckRoot.cpp
 	src/IRClose.cpp
 	src/IRContextCreate.cpp
-	src/IRContextDispose.cpp
-	src/IRDataBlockAdd.cpp
-	src/IRDeinitialize.cpp
-	src/IREmergencyClose.cpp
-	src/IREmergencyKeyCreate.cpp
-	src/IREmergencyKeyDispose.cpp
-	src/IREmergencyKeyLoad.cpp
-	src/IREmergencyKeySerialize.cpp
-	src/IRGetVersion.cpp
-	src/IRInitialize.cpp
-	src/IRInstanceStateCreate.cpp
-	src/IRInstanceStateDispose.cpp
-	src/IRInstanceStateLoad.cpp
-	src/IRInstanceStateSerialize.cpp
-	src/IRInstanceStateSetParam.cpp
-	src/IRRootBlockCreate.cpp
-	src/IRRootTemplateCreate.cpp
-	src/IRRootTemplateDispose.cpp
-	src/IRRootTemplateParam.cpp
+	src/IRCheckParent.cpp
 	src/IRRootTemplateParamInt.cpp
+	src/IRInstanceStateDispose.cpp
+	src/IRBlockDispose.cpp
+	src/IREmergencyClose.cpp
+	src/IREmergencyKeyLoad.cpp
+	src/IRCheckEmergencyClosing.cpp
+	src/IRContextDispose.cpp
+	src/IRInstanceStateLoad.cpp
+	src/IRRootBlockCreate.cpp
+	src/IRDeinitialize.cpp
+	src/IRGetVersion.cpp
+	src/IRRootTemplateParam.cpp
+	src/IRRootTemplateDispose.cpp
 	src/IRRootTemplateSetEmergencyKey.cpp
+	src/IRCheckRoot.cpp
+	src/IREmergencyKeyCreate.cpp
+	src/version.h
+	src/IRInitialize.cpp
 	src/IRRootTemplateSetNetwork.cpp
-	src/IRRootTemplateSetParent.cpp
+	src/IRInstanceStateSetParam.cpp
+	src/IREmergencyKeySerialize.cpp
+	src/IRDataBlockAdd.cpp
+	src/IRRootTemplateCreate.cpp
 	${irecord_DEF_FILE}
 )
 target_include_directories(irecord PUBLIC 

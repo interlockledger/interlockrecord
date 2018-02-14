@@ -38,9 +38,15 @@ configure_file (
 
 # Sources
 add_library(irecordcore STATIC
-	src/irtags.cpp
+	include/irecordcore/irtags.h
+	include/irecordcore/irhash.h
+	include/irecordcore/IRCHandle.h
+	include/irecordcore/version.h
+	include/irecordcore/ircrypto.h
 	src/irhash.cpp
-	src/IRCHandle.cpp)
+	src/IRCHandle.cpp
+	src/irtags.cpp
+	)
 	
 target_include_directories(irecordcore PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include)
