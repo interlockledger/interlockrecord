@@ -25,18 +25,44 @@ More instructions about those dependencies can be found inside **DEPS.md**.
 
 ## Development environment
 
+### Code::Blocks
+
+Code::Blocks with Ninja:
+
+```
+$ cmake ../src -G"CodeBlocks - Ninja" -DCMAKE_BUILD_TYPE=Debug
+```
+
+Code::Blocks with Makefile:
+
+```
+$ cmake ../src -G"CodeBlocks - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
+```
+
 ### Eclipse
 
 In order to create the **Eclipse CDT** project, create a directory called **build** side by side of the
 directory **src**. Go to this directory and run the command:
 
-For Neon:
+For Neon with Ninja:
+
+```
+$ cmake ../src -G"Eclipse CDT4 - Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECLIPSE_VERSION=4.6
+```
+
+For Neon with Makefile:
 
 ```
 $ cmake ../src -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECLIPSE_VERSION=4.6
 ```
 
-For Oxygen:
+For Oxygen with Ninja:
+
+```
+$ cmake ../src -G"Eclipse CDT4 - Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECLIPSE_VERSION=4.7
+```
+
+For Oxygen with Makefile:
 
 ```
 $ cmake ../src -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECLIPSE_VERSION=4.7
