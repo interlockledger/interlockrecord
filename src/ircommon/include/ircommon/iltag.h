@@ -365,17 +365,10 @@ public:
 	 * Creates a new instance of this class.
 	 *
 	 * @param[in] id The tag ID.
-	 */
-	ILBaseTagListTag(std::uint64_t id):
-			ILBaseTagListTag(id, 0xFFFFFFFFFFFFFFFFll){}
-
-	/**
-	 * Creates a new instance of this class.
-	 *
-	 * @param[in] id The tag ID.
 	 * @param[in] maxEntries Maximum entries allowed in this instance.
 	 */
-	ILBaseTagListTag(std::uint64_t id, std::uint64_t maxEntries) :
+	ILBaseTagListTag(std::uint64_t id,
+			std::uint64_t maxEntries = 0xFFFFFFFFFFFFFFFFll) :
 		ILTag(id), _maxEntries(maxEntries){}
 
 	/**
@@ -480,6 +473,13 @@ public:
 	}
 };
 
+/**
+ * This class implements the base class for all tag array tags.
+ *
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2018.02.16
+ * @note As a safeguard, entries set to nullptr will be encoded as TAG_NULL.
+ */
 class ILBaseTagArrayTag: public ILBaseTagListTag {
 public:
 	typedef std::shared_ptr<ILTag> SharedPointer;
@@ -488,15 +488,14 @@ protected:
 
 	virtual bool serializeValue(ircommon::IRBuffer & out) const;
 public:
-	ILBaseTagArrayTag(std::uint64_t id) : ILBaseTagListTag(id){}
-
 	/**
 	 * Creates a new instance of this class.
 	 *
 	 * @param[in] id The tag ID.
 	 * @param[in] maxEntries Maximum entries allowed in this instance.
 	 */
-	ILBaseTagArrayTag(std::uint64_t id, std::uint64_t maxEntries):
+	ILBaseTagArrayTag(std::uint64_t id,
+			std::uint64_t maxEntries = 0xFFFFFFFFFFFFFFFFll):
 			ILBaseTagListTag(id, maxEntries) {}
 
 	/**
