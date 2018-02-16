@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "ILTagSeqTagTest.h"
+#include <ircommon/iltag.h>
+#include <ircommon/iltagstd.h>
+using namespace ircommon;
+using namespace ircommon::iltags;
 
 //==============================================================================
 // class ILTagSeqTagTest
@@ -46,9 +50,11 @@ void ILTagSeqTagTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(ILTagSeqTagTest,Constructor) {
+	ILTagSeqTag * tag;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	tag = new ILTagSeqTag();
+	ASSERT_EQ(ILTag::TAG_ILTAG_SEQ, tag->id());
+	delete tag;
 }
 //------------------------------------------------------------------------------
 
