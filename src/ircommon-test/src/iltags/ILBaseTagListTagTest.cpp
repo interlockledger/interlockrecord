@@ -24,7 +24,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "ILTagListTagTest.h"
+#include "ILBaseTagListTagTest.h"
 #include <ircommon/iltag.h>
 #include <ircommon/ilint.h>
 #include <cstring>
@@ -34,23 +34,23 @@ using namespace ircommon::iltags;
 //==============================================================================
 // class ILTagListTagTest
 //------------------------------------------------------------------------------
-ILTagListTagTest::ILTagListTagTest() {
+ILBaseTagListTagTest::ILBaseTagListTagTest() {
 }
 
 //------------------------------------------------------------------------------
-ILTagListTagTest::~ILTagListTagTest() {
+ILBaseTagListTagTest::~ILBaseTagListTagTest() {
 }
 
 //------------------------------------------------------------------------------
-void ILTagListTagTest::SetUp() {
+void ILBaseTagListTagTest::SetUp() {
 }
 
 //------------------------------------------------------------------------------
-void ILTagListTagTest::TearDown() {
+void ILBaseTagListTagTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-ILTag * ILTagListTagTest::createSample(std::uint64_t id, int size) {
+ILTag * ILBaseTagListTagTest::createSample(std::uint64_t id, int size) {
 	ILRawTag * tag;
 
 	tag = new ILRawTag(id);
@@ -62,54 +62,54 @@ ILTag * ILTagListTagTest::createSample(std::uint64_t id, int size) {
 
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest,Constructor) {
-	ILTagListTag * tag;
+TEST_F(ILBaseTagListTagTest,Constructor) {
+	ILBaseTagListTag * tag;
 
-	tag = new ILTagListTag(ILTag::TAG_ILTAG_ARRAY);
+	tag = new ILBaseTagListTag(ILTag::TAG_ILTAG_ARRAY);
 	ASSERT_EQ(ILTag::TAG_ILTAG_ARRAY, tag->id());
-	ASSERT_EQ(ILInt::size(tag->count()), tag->size());
+	ASSERT_EQ(0, tag->size());
 	ASSERT_EQ(0, tag->count());
 	delete tag;
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest, size) {
-	ILTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
+TEST_F(ILBaseTagListTagTest, size) {
+	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
 	ILTag * t;
 	std::uint64_t payloadSize;
 
-	ASSERT_EQ(ILInt::size(tag.count()), tag.size());
+	ASSERT_EQ(0, tag.size());
 	payloadSize = 0;
 	for (int i = 0; i < 256; i++) {
-		t =  ILTagListTagTest::createSample(0xFF, 10);
+		t =  ILBaseTagListTagTest::createSample(0xFF, 10);
 		payloadSize += t->tagSize();
 		tag.add(t);
-		ASSERT_EQ(ILInt::size(tag.count()) + payloadSize, tag.size());
+		ASSERT_EQ(payloadSize, tag.size());
 	}
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest, count) {
-	ILTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
+TEST_F(ILBaseTagListTagTest, count) {
+	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
 	ILTag * t;
 
 	ASSERT_EQ(0, tag.count());
 	for (int i = 0; i < 256; i++) {
-		t =  ILTagListTagTest::createSample(0xFF, i);
+		t =  ILBaseTagListTagTest::createSample(0xFF, i);
 		tag.add(t);
 		ASSERT_EQ(i + 1, tag.count());
 	}
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest, add) {
-	ILTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
+TEST_F(ILBaseTagListTagTest, add) {
+	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
 	ILTag * t;
 
 	ASSERT_EQ(0, tag.count());
 	for (int i = 0; i < 16; i++) {
-		t =  ILTagListTagTest::createSample(0xFF + i, 1);
-		ASSERT_TRUE(tag.add(ILTagListTag::SharedPointer(t)));
+		t =  ILBaseTagListTagTest::createSample(0xFF + i, 1);
+		ASSERT_TRUE(tag.add(ILBaseTagListTag::SharedPointer(t)));
 		ASSERT_EQ(i + 1, tag.count());
 		for (int j = 0; j <= i; j++) {
 			ASSERT_EQ(0xFF + j, tag[j]->id());
@@ -118,13 +118,13 @@ TEST_F(ILTagListTagTest, add) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest, addPtr) {
-	ILTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
+TEST_F(ILBaseTagListTagTest, addPtr) {
+	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
 	ILTag * t;
 
 	ASSERT_EQ(0, tag.count());
 	for (int i = 0; i < 16; i++) {
-		t =  ILTagListTagTest::createSample(0xFF + i, 1);
+		t =  ILBaseTagListTagTest::createSample(0xFF + i, 1);
 		ASSERT_TRUE(tag.add(t));
 		ASSERT_EQ(i + 1, tag.count());
 		for (int j = 0; j <= i; j++) {
@@ -134,32 +134,32 @@ TEST_F(ILTagListTagTest, addPtr) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest, insert) {
-	ILTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
+TEST_F(ILBaseTagListTagTest, insert) {
+	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
 	ILTag * t;
 
 	ASSERT_EQ(0, tag.count());
 
-	t =  ILTagListTagTest::createSample(0xFF, 1);
-	ASSERT_TRUE(tag.insert(0, ILTagListTag::SharedPointer(t)));
+	t =  ILBaseTagListTagTest::createSample(0xFF, 1);
+	ASSERT_TRUE(tag.insert(0, ILBaseTagListTag::SharedPointer(t)));
 	ASSERT_EQ(1, tag.count());
 	ASSERT_EQ(0xFF, tag[0]->id());
 
-	t =  ILTagListTagTest::createSample(0xFF + 1, 1);
-	ASSERT_TRUE(tag.insert(0, ILTagListTag::SharedPointer(t)));
+	t =  ILBaseTagListTagTest::createSample(0xFF + 1, 1);
+	ASSERT_TRUE(tag.insert(0, ILBaseTagListTag::SharedPointer(t)));
 	ASSERT_EQ(2, tag.count());
 	ASSERT_EQ(0xFF + 1, tag[0]->id());
 	ASSERT_EQ(0xFF, tag[1]->id());
 
-	t =  ILTagListTagTest::createSample(0xFF + 2, 1);
-	ASSERT_TRUE(tag.insert(1, ILTagListTag::SharedPointer(t)));
+	t =  ILBaseTagListTagTest::createSample(0xFF + 2, 1);
+	ASSERT_TRUE(tag.insert(1, ILBaseTagListTag::SharedPointer(t)));
 	ASSERT_EQ(3, tag.count());
 	ASSERT_EQ(0xFF + 1, tag[0]->id());
 	ASSERT_EQ(0xFF + 2, tag[1]->id());
 	ASSERT_EQ(0xFF, tag[2]->id());
 
-	t =  ILTagListTagTest::createSample(0xFF + 3, 1);
-	ASSERT_TRUE(tag.insert(3, ILTagListTag::SharedPointer(t)));
+	t =  ILBaseTagListTagTest::createSample(0xFF + 3, 1);
+	ASSERT_TRUE(tag.insert(3, ILBaseTagListTag::SharedPointer(t)));
 	ASSERT_EQ(4, tag.count());
 	ASSERT_EQ(0xFF + 1, tag[0]->id());
 	ASSERT_EQ(0xFF + 2, tag[1]->id());
@@ -168,31 +168,31 @@ TEST_F(ILTagListTagTest, insert) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest, insertPtr) {
-	ILTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
+TEST_F(ILBaseTagListTagTest, insertPtr) {
+	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
 	ILTag * t;
 
 	ASSERT_EQ(0, tag.count());
 
-	t =  ILTagListTagTest::createSample(0xFF, 1);
+	t =  ILBaseTagListTagTest::createSample(0xFF, 1);
 	ASSERT_TRUE(tag.insert(0, t));
 	ASSERT_EQ(1, tag.count());
 	ASSERT_EQ(0xFF, tag[0]->id());
 
-	t =  ILTagListTagTest::createSample(0xFF + 1, 1);
+	t =  ILBaseTagListTagTest::createSample(0xFF + 1, 1);
 	ASSERT_TRUE(tag.insert(0, t));
 	ASSERT_EQ(2, tag.count());
 	ASSERT_EQ(0xFF + 1, tag[0]->id());
 	ASSERT_EQ(0xFF, tag[1]->id());
 
-	t =  ILTagListTagTest::createSample(0xFF + 2, 1);
+	t =  ILBaseTagListTagTest::createSample(0xFF + 2, 1);
 	ASSERT_TRUE(tag.insert(1, t));
 	ASSERT_EQ(3, tag.count());
 	ASSERT_EQ(0xFF + 1, tag[0]->id());
 	ASSERT_EQ(0xFF + 2, tag[1]->id());
 	ASSERT_EQ(0xFF, tag[2]->id());
 
-	t =  ILTagListTagTest::createSample(0xFF + 3, 1);
+	t =  ILBaseTagListTagTest::createSample(0xFF + 3, 1);
 	ASSERT_TRUE(tag.insert(3, t));
 	ASSERT_EQ(4, tag.count());
 	ASSERT_EQ(0xFF + 1, tag[0]->id());
@@ -202,15 +202,15 @@ TEST_F(ILTagListTagTest, insertPtr) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest, remove) {
-	ILTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
+TEST_F(ILBaseTagListTagTest, remove) {
+	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
 	ILTag * t;
 
 	ASSERT_EQ(0, tag.count());
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 0, 1)));
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 1, 1)));
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 2, 1)));
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 3, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 0, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 1, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 2, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 3, 1)));
 	ASSERT_EQ(4, tag.count());
 	ASSERT_EQ(0xFF + 0, tag[0]->id());
 	ASSERT_EQ(0xFF + 1, tag[1]->id());
@@ -237,15 +237,15 @@ TEST_F(ILTagListTagTest, remove) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest, clear) {
-	ILTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
+TEST_F(ILBaseTagListTagTest, clear) {
+	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
 	ILTag * t;
 
 	ASSERT_EQ(0, tag.count());
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 0, 1)));
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 1, 1)));
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 2, 1)));
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 3, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 0, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 1, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 2, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 3, 1)));
 	ASSERT_EQ(4, tag.count());
 	ASSERT_EQ(0xFF + 0, tag[0]->id());
 	ASSERT_EQ(0xFF + 1, tag[1]->id());
@@ -257,16 +257,16 @@ TEST_F(ILTagListTagTest, clear) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest, accessOperatorRO) {
-	ILTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
-	const ILTagListTag & roTag(tag);
+TEST_F(ILBaseTagListTagTest, accessOperatorRO) {
+	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
+	const ILBaseTagListTag & roTag(tag);
 	ILTag * t;
 
 	ASSERT_EQ(0, tag.count());
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 0, 1)));
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 1, 1)));
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 2, 1)));
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 3, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 0, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 1, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 2, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 3, 1)));
 	ASSERT_EQ(4, tag.count());
 	ASSERT_EQ(0xFF + 0, roTag[0]->id());
 	ASSERT_EQ(0xFF + 1, roTag[1]->id());
@@ -275,15 +275,15 @@ TEST_F(ILTagListTagTest, accessOperatorRO) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest, accessOperatorRW) {
-	ILTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
+TEST_F(ILBaseTagListTagTest, accessOperatorRW) {
+	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
 	ILTag * t;
 
 	ASSERT_EQ(0, tag.count());
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 0, 1)));
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 1, 1)));
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 2, 1)));
-	ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + 3, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 0, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 1, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 2, 1)));
+	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 3, 1)));
 	ASSERT_EQ(4, tag.count());
 	ASSERT_EQ(0xFF + 0, tag[0]->id());
 	ASSERT_EQ(0xFF + 1, tag[1]->id());
@@ -292,21 +292,20 @@ TEST_F(ILTagListTagTest, accessOperatorRW) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest, serialize) {
-	ILTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
+TEST_F(ILBaseTagListTagTest, serialize) {
+	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
 	ILTag * t;
 	IRBuffer out;
 	IRBuffer expected;
 
 	// Create the object to be serialized
 	for (int i = 0; i < 256; i++) {
-		ASSERT_TRUE(tag.add(ILTagListTagTest::createSample(0xFF + i, i)));
+		ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + i, i)));
 	}
 
 	// Serialize by hand
 	ASSERT_TRUE(expected.writeILInt(tag.id()));
 	ASSERT_TRUE(expected.writeILInt(tag.size()));
-	ASSERT_TRUE(expected.writeILInt(tag.count()));
 	for (int i = 0; i < tag.count(); i++) {
 		ASSERT_TRUE(tag[i]->serialize(expected));
 	}
@@ -318,16 +317,15 @@ TEST_F(ILTagListTagTest, serialize) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(ILTagListTagTest, deserializeValue) {
-	ILTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
+TEST_F(ILBaseTagListTagTest, deserializeValue) {
+	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
 	ILTagFactory f;
 	ILTag * t;
 	IRBuffer serialized;
 
 	// Serialize by hand
-	ASSERT_TRUE(serialized.writeILInt(256));
 	for (int i = 0; i < 256; i++) {
-		t = ILTagListTagTest::createSample(0xFF + i, i);
+		t = ILBaseTagListTagTest::createSample(0xFF + i, i);
 		ASSERT_TRUE(t->serialize(serialized));
 		delete t;
 	}

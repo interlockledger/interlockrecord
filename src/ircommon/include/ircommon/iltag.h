@@ -345,15 +345,13 @@ public:
 };
 
 /**
- * This class implements the base class for all tag-list tags.
- * If <b>noCounter</b> is false, it follows the syntax of the
- * TAG_ILTAG_ARRAY, otherwise it follows the syntax of TAG_ILTAG_SEQ.
+ * This class implements the base class for all tag list tags.
  *
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
- * @since 2018.01.22
+ * @since 2018.02.16
  * @note As a safeguard, entries set to nullptr will be encoded as TAG_NULL.
  */
-class ILTagListTag: public ILTag {
+class ILBaseTagListTag: public ILTag {
 public:
 	typedef std::shared_ptr<ILTag> SharedPointer;
 protected:
@@ -361,33 +359,36 @@ protected:
 
 	virtual bool serializeValue(ircommon::IRBuffer & out) const;
 
-	/**
-	 * Determines it the serialization adds or not the tag counter
-	 * in the serialization.
-     * @since 2018.02.15
-	 */
-	bool _noCounter;
+	std::uint64_t _maxEntries;
 public:
 	/**
 	 * Creates a new instance of this class.
 	 *
 	 * @param[in] id The tag ID.
-	 * @param[in] noCounter If true, removes the number of tags from the beginning of
-	 * the serialization.
 	 */
-	ILTagListTag(std::uint64_t id, bool noCounter = false);
+	ILBaseTagListTag(std::uint64_t id):
+			ILBaseTagListTag(id, 0xFFFFFFFFFFFFFFFFll){}
+
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] id The tag ID.
+	 * @param[in] maxEntries Maximum entries allowed in this instance.
+	 */
+	ILBaseTagListTag(std::uint64_t id, std::uint64_t maxEntries) :
+		ILTag(id), _maxEntries(maxEntries){}
 
 	/**
 	 * Disposes this instance and releases all associated resources.
 	 */
-	virtual ~ILTagListTag() = default;
+	virtual ~ILBaseTagListTag() = default;
 
 	/**
 	 * Returns the number of tags.
 	 *
 	 * @return The number of tags.
 	 */
-	int count() const {
+	std::uint64_t count() const {
 		return this->_list.size();
 	}
 
@@ -422,7 +423,7 @@ public:
 	 * @param[in] obj The tag to be added.
 	 * @return true for success or false otherwise.
 	 */
-	bool insert(int idx, SharedPointer obj);
+	bool insert(std::uint64_t idx, SharedPointer obj);
 
 	/**
 	 * Inserts a new tag in a given position.
@@ -432,7 +433,7 @@ public:
 	 * of this instance.
 	 * @return true for success or false otherwise.
 	 */
-	bool insert(int idx, ILTag * obj) {
+	bool insert(std::uint64_t idx, ILTag * obj) {
 		return this->insert(idx, SharedPointer(obj));
 	}
 
@@ -442,7 +443,7 @@ public:
 	 * @param[in] idx The position.
 	 * @return true for success or false otherwise.
 	 */
-	bool remove(int idx);
+	bool remove(std::uint64_t idx);
 
 	/**
 	 * Removes all tags.
@@ -459,7 +460,7 @@ public:
 	 * @param[in] idx The position.
 	 * @return A reference to the SharedPointer that holds the tag.
 	 */
-	SharedPointer & operator [](int idx);
+	SharedPointer & operator [](std::uint64_t idx);
 
 	/**
 	 * Grants read-only access to the tag a given postion.
@@ -467,7 +468,46 @@ public:
 	 * @param[in] idx The position.
 	 * @return A reference to the SharedPointer that holds the tag.
 	 */
-	const SharedPointer & operator [](int idx) const;
+	const SharedPointer & operator [](std::uint64_t idx) const;
+
+	/**
+	 * Returns the maximum number of entries allowed in this instance.
+	 *
+	 * @return The maximum number of entries.
+	 */
+	std::uint64_t maxEntries() const {
+		return this->_maxEntries;
+	}
+};
+
+class ILBaseTagArrayTag: public ILBaseTagListTag {
+public:
+	typedef std::shared_ptr<ILTag> SharedPointer;
+protected:
+	std::vector<SharedPointer> _list;
+
+	virtual bool serializeValue(ircommon::IRBuffer & out) const;
+public:
+	ILBaseTagArrayTag(std::uint64_t id) : ILBaseTagListTag(id){}
+
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] id The tag ID.
+	 * @param[in] maxEntries Maximum entries allowed in this instance.
+	 */
+	ILBaseTagArrayTag(std::uint64_t id, std::uint64_t maxEntries):
+			ILBaseTagListTag(id, maxEntries) {}
+
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
+	virtual ~ILBaseTagArrayTag() = default;
+
+	virtual std::uint64_t size() const;
+
+	virtual bool deserializeValue(const ILTagFactory & factory,
+			const void * buff, std::uint64_t size);
 };
 
 /**

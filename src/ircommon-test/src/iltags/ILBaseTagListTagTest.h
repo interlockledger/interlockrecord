@@ -24,37 +24,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "ILTagArrayTagTest.h"
+#ifndef __IRBASETAGLISTTAGTEST_H__
+#define __IRBASETAGLISTTAGTEST_H__
+
+#include <gtest/gtest.h>
 #include <ircommon/iltag.h>
-#include <ircommon/iltagstd.h>
-using namespace ircommon;
-using namespace ircommon::iltags;
 
-//==============================================================================
-// class ILTagListTagTest
-//------------------------------------------------------------------------------
-ILTagArrayTagTest::ILTagArrayTagTest() {
-}
+class ILBaseTagListTagTest : public testing::Test {
+public:
+	ILBaseTagListTagTest();
+	virtual ~ILBaseTagListTagTest();
+	virtual void SetUp();
+	virtual void TearDown();
 
-//------------------------------------------------------------------------------
-ILTagArrayTagTest::~ILTagArrayTagTest() {
-}
-
-//------------------------------------------------------------------------------
-void ILTagArrayTagTest::SetUp() {
-}
-
-//------------------------------------------------------------------------------
-void ILTagArrayTagTest::TearDown() {
-}
-
-//------------------------------------------------------------------------------
-TEST_F(ILTagArrayTagTest, Constructor) {
-	ILBaseTagListTag * tag;
-
-	tag = new ILTagArrayTag();
-	ASSERT_EQ(ILTag::TAG_ILTAG_ARRAY, tag->id());
-	delete tag;
-}
-//------------------------------------------------------------------------------
+	static ircommon::iltags::ILTag * createSample(std::uint64_t id, int size);
+};
+#endif //__IRBASETAGLISTTAGTEST_H__
 

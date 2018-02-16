@@ -109,17 +109,9 @@ bool ILRawTag::deserializeValue(const ILTagFactory & factory,
 //==============================================================================
 // Class ILTagListTag
 //------------------------------------------------------------------------------
-ILTagListTag::ILTagListTag(std::uint64_t id, bool noCounter): ILTag(id),
-    _noCounter(noCounter){
-}
+bool ILBaseTagListTag::serializeValue(ircommon::IRBuffer & out) const {
 
-//------------------------------------------------------------------------------
-bool ILTagListTag::serializeValue(ircommon::IRBuffer & out) const {
-
-    if (!this->_noCounter) {
-        out.writeILInt(this->count());
-    }
-	for (int i = 0; i < this->count(); i++) {
+	for (std::uint64_t i = 0; i < this->count(); i++) {
 		if (this->_list[i] == nullptr) {
 			// Shortcut to write a TAG_NULL that is a single 0.
 			if (!out.write(0)) {
@@ -135,10 +127,10 @@ bool ILTagListTag::serializeValue(ircommon::IRBuffer & out) const {
 }
 
 //------------------------------------------------------------------------------
-std::uint64_t ILTagListTag::size() const {
+std::uint64_t ILBaseTagListTag::size() const {
 	std::uint64_t total;
 
-	total = ILInt::size(this->count());
+	total = 0;
 	for (int i = 0; i < this->count(); i++) {
 		if (this->_list[i] == nullptr) {
 			total += 1;
@@ -150,70 +142,102 @@ std::uint64_t ILTagListTag::size() const {
 }
 
 //------------------------------------------------------------------------------
-bool ILTagListTag::deserializeValue(const ILTagFactory & factory,
+bool ILBaseTagListTag::deserializeValue(const ILTagFactory & factory,
 			const void * buff, std::uint64_t size) {
 	IRBuffer inp(buff, size);
 	std::uint64_t count;
 
 	this->clear();
+	while (inp.available() != 0) {
+		ILTag * tag = factory.deserialize(inp);
+		if (!tag) {
+			return false;
+		}
+		if (!this->add(tag)) {
+			return false;
+		}
+	}
+	return true;
+}
 
-	if (this->_noCounter) {
-        while (inp.available() != 0) {
-            ILTag * tag = factory.deserialize(inp);
-            if (!tag) {
-                return false;
-            }
-            if (!this->add(tag)) {
-                return false;
-            }
-        }
-        return true;
+//------------------------------------------------------------------------------
+bool ILBaseTagListTag::add(SharedPointer obj) {
+
+	if (this->count() < this->maxEntries()) {
+		this->_list.push_back(obj);
+		return true;
 	} else {
-        if (!inp.readILInt(count)) {
-            return false;
-        }
-
-        for(; count > 0; count--) {
-            ILTag * tag = factory.deserialize(inp);
-            if (!tag) {
-                return false;
-            }
-            if (!this->add(tag)) {
-                return false;
-            }
-        }
-        return (inp.available() == 0);
+		return false;
 	}
 }
 
 //------------------------------------------------------------------------------
-bool ILTagListTag::add(SharedPointer obj) {
-	this->_list.push_back(obj);
-	return true;
+bool ILBaseTagListTag::insert(std::uint64_t idx, SharedPointer obj) {
+
+	if ((this->count() < this->maxEntries()) && (idx < this->maxEntries())) {
+		this->_list.insert(this->_list.begin() + idx, obj);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 //------------------------------------------------------------------------------
-bool ILTagListTag::insert(int idx, SharedPointer obj) {
-
-	this->_list.insert(this->_list.begin() + idx, obj);
-	return true;
-}
-
-//------------------------------------------------------------------------------
-bool ILTagListTag::remove(int idx) {
+bool ILBaseTagListTag::remove(std::uint64_t idx) {
 
 	this->_list.erase(this->_list.begin() + idx);
 	return true;
 }
 
 //------------------------------------------------------------------------------
-ILTagListTag::SharedPointer & ILTagListTag::operator [](int idx) {
+ILBaseTagListTag::SharedPointer & ILBaseTagListTag::operator [](std::uint64_t idx) {
 	return this->_list[idx];
 }
 
 //------------------------------------------------------------------------------
-const ILTagListTag::SharedPointer & ILTagListTag::operator [](int idx) const {
+const ILBaseTagListTag::SharedPointer & ILBaseTagListTag::operator [](std::uint64_t idx) const {
 	return this->_list[idx];
+}
+
+//==============================================================================
+// Class ILBaseTagArrayTag
+//------------------------------------------------------------------------------
+bool ILBaseTagArrayTag::serializeValue(ircommon::IRBuffer & out) const {
+
+    if (!out.writeILInt(this->count())) {
+    	return false;
+    }
+    return ILBaseTagListTag::serializeValue(out);
+}
+
+//------------------------------------------------------------------------------
+std::uint64_t ILBaseTagArrayTag::size() const {
+	return ILInt::size(this->count()) + ILBaseTagListTag::size();
+}
+
+//------------------------------------------------------------------------------
+bool ILBaseTagArrayTag::deserializeValue(const ILTagFactory & factory,
+		const void * buff, std::uint64_t size) {
+	IRBuffer inp(buff, size);
+	std::uint64_t count;
+
+	this->clear();
+	if (!inp.readILInt(count)) {
+		return false;
+	}
+	if (count > this->maxEntries()) {
+		return false;
+	}
+	for(; count > 0; count--) {
+		ILTag * tag = factory.deserialize(inp);
+		if (!tag) {
+			return false;
+		}
+		if (!this->add(tag)) {
+			return false;
+		}
+	}
+	return (inp.available() == 0);
 }
 
 //==============================================================================

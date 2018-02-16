@@ -668,9 +668,9 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @since 2018.01.24
  */
-class ILTagArrayTag: public ILTagListTag {
+class ILTagArrayTag: public ILBaseTagArrayTag {
 public:
-	ILTagArrayTag(): ILTagListTag(ILTag::TAG_ILTAG_ARRAY, false) {}
+	ILTagArrayTag(): ILBaseTagArrayTag(ILTag::TAG_ILTAG_ARRAY) {}
 
 	virtual ~ILTagArrayTag() = default;
 };
@@ -681,9 +681,9 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @since 2018.02.15
  */
-class ILTagSeqTag: public ILTagListTag {
+class ILTagSeqTag: public ILBaseTagListTag {
 public:
-	ILTagSeqTag(): ILTagListTag(ILTag::TAG_ILTAG_SEQ, true) {}
+	ILTagSeqTag(): ILBaseTagListTag(ILTag::TAG_ILTAG_SEQ) {}
 
 	virtual ~ILTagSeqTag() = default;
 };
