@@ -52,6 +52,8 @@ add_executable(ircommon-test
 	src/crypto/IRProtectedMemoryTest.h
 	src/ILIntTest.cpp
 	src/ILIntTest.h
+	src/iltags/ILBaseTagArrayTagTest.cpp
+	src/iltags/ILBaseTagArrayTagTest.h
 	src/iltags/ILBaseTagListTagTest.cpp
 	src/iltags/ILBaseTagListTagTest.h
 	src/iltags/ILBasicFixedOpaqueTagTest.cpp
