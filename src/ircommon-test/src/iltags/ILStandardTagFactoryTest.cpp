@@ -198,6 +198,11 @@ TEST_F(ILStandardTagFactoryTest, createFalseFalse) {
 	ASSERT_EQ(typeid(ILTagArrayTag), typeid(*t));
 	delete t;
 
+	t = f.create(ILTag::TAG_ILTAG_SEQ);
+	ASSERT_TRUE(t != nullptr);
+	ASSERT_EQ(typeid(ILTagSeqTag), typeid(*t));
+	delete t;
+
 	// Reserved tags
 	t = f.create(14);
 	ASSERT_TRUE(t != nullptr);
@@ -211,8 +216,8 @@ TEST_F(ILStandardTagFactoryTest, createFalseFalse) {
 	ASSERT_FALSE(static_cast<ILRawTag*>(t)->secure());
 	delete t;
 
-	for (int i = 22; i < 32; i++) {
-		t = f.create(15);
+	for (int i = 23; i < 32; i++) {
+		t = f.create(i);
 		ASSERT_TRUE(t != nullptr);
 		ASSERT_EQ(typeid(ILRawTag), typeid(*t));
 		ASSERT_FALSE(static_cast<ILRawTag*>(t)->secure());
@@ -221,7 +226,7 @@ TEST_F(ILStandardTagFactoryTest, createFalseFalse) {
 
 	// Other tags
 	for (int i = 32; i < 256; i++) {
-		t = f.create(15);
+		t = f.create(i);
 		ASSERT_TRUE(t != nullptr);
 		ASSERT_EQ(typeid(ILRawTag), typeid(*t));
 		ASSERT_FALSE(static_cast<ILRawTag*>(t)->secure());
@@ -337,6 +342,11 @@ TEST_F(ILStandardTagFactoryTest, createTrueFalse) {
 	ASSERT_EQ(typeid(ILTagArrayTag), typeid(*t));
 	delete t;
 
+	t = f.create(ILTag::TAG_ILTAG_SEQ);
+	ASSERT_TRUE(t != nullptr);
+	ASSERT_EQ(typeid(ILTagSeqTag), typeid(*t));
+	delete t;
+
 	// Reserved tags
 	t = f.create(14);
 	ASSERT_TRUE(t != nullptr);
@@ -350,8 +360,8 @@ TEST_F(ILStandardTagFactoryTest, createTrueFalse) {
 	ASSERT_TRUE(static_cast<ILRawTag*>(t)->secure());
 	delete t;
 
-	for (int i = 22; i < 32; i++) {
-		t = f.create(15);
+	for (int i = 23; i < 32; i++) {
+		t = f.create(i);
 		ASSERT_TRUE(t != nullptr);
 		ASSERT_EQ(typeid(ILRawTag), typeid(*t));
 		ASSERT_TRUE(static_cast<ILRawTag*>(t)->secure());
@@ -360,7 +370,7 @@ TEST_F(ILStandardTagFactoryTest, createTrueFalse) {
 
 	// Other tags
 	for (int i = 32; i < 256; i++) {
-		t = f.create(15);
+		t = f.create(i);
 		ASSERT_TRUE(t != nullptr);
 		ASSERT_EQ(typeid(ILRawTag), typeid(*t));
 		ASSERT_TRUE(static_cast<ILRawTag*>(t)->secure());
@@ -476,6 +486,11 @@ TEST_F(ILStandardTagFactoryTest, createFalseTrue) {
 	ASSERT_EQ(typeid(ILTagArrayTag), typeid(*t));
 	delete t;
 
+	t = f.create(ILTag::TAG_ILTAG_SEQ);
+	ASSERT_TRUE(t != nullptr);
+	ASSERT_EQ(typeid(ILTagSeqTag), typeid(*t));
+	delete t;
+
 	// Reserved tags
 	t = f.create(14);
 	ASSERT_TRUE(t == nullptr);
@@ -483,14 +498,14 @@ TEST_F(ILStandardTagFactoryTest, createFalseTrue) {
 	t = f.create(15);
 	ASSERT_TRUE(t == nullptr);
 
-	for (int i = 22; i < 32; i++) {
-		t = f.create(15);
+	for (int i = 23; i < 32; i++) {
+		t = f.create(i);
 		ASSERT_TRUE(t == nullptr);
 	}
 
 	// Other tags
 	for (int i = 32; i < 256; i++) {
-		t = f.create(15);
+		t = f.create(i);
 		ASSERT_TRUE(t == nullptr);
 	}
 }
@@ -603,6 +618,11 @@ TEST_F(ILStandardTagFactoryTest, createTrueTrue) {
 	ASSERT_EQ(typeid(ILTagArrayTag), typeid(*t));
 	delete t;
 
+	t = f.create(ILTag::TAG_ILTAG_SEQ);
+	ASSERT_TRUE(t != nullptr);
+	ASSERT_EQ(typeid(ILTagSeqTag), typeid(*t));
+	delete t;
+
 	// Reserved tags
 	t = f.create(14);
 	ASSERT_TRUE(t == nullptr);
@@ -610,14 +630,14 @@ TEST_F(ILStandardTagFactoryTest, createTrueTrue) {
 	t = f.create(15);
 	ASSERT_TRUE(t == nullptr);
 
-	for (int i = 22; i < 32; i++) {
-		t = f.create(15);
+	for (int i = 23; i < 32; i++) {
+		t = f.create(i);
 		ASSERT_TRUE(t == nullptr);
 	}
 
 	// Other tags
 	for (int i = 32; i < 256; i++) {
-		t = f.create(15);
+		t = f.create(i);
 		ASSERT_TRUE(t == nullptr);
 	}
 }

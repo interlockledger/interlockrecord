@@ -109,13 +109,16 @@ bool ILRawTag::deserializeValue(const ILTagFactory & factory,
 //==============================================================================
 // Class ILTagListTag
 //------------------------------------------------------------------------------
-ILTagListTag::ILTagListTag(std::uint64_t id): ILTag(id) {
+ILTagListTag::ILTagListTag(std::uint64_t id, bool noCounter): ILTag(id),
+    _noCounter(noCounter){
 }
 
 //------------------------------------------------------------------------------
 bool ILTagListTag::serializeValue(ircommon::IRBuffer & out) const {
 
-	out.writeILInt(this->count());
+    if (!this->_noCounter) {
+        out.writeILInt(this->count());
+    }
 	for (int i = 0; i < this->count(); i++) {
 		if (this->_list[i] == nullptr) {
 			// Shortcut to write a TAG_NULL that is a single 0.
@@ -152,21 +155,35 @@ bool ILTagListTag::deserializeValue(const ILTagFactory & factory,
 	IRBuffer inp(buff, size);
 	std::uint64_t count;
 
-	if (!inp.readILInt(count)) {
-		return false;
-	}
-
 	this->clear();
-	for(; count > 0; count--) {
-		ILTag * tag = factory.deserialize(inp);
-		if (!tag) {
-			return false;
-		}
-		if (!this->add(tag)) {
-			return false;
-		}
+
+	if (this->_noCounter) {
+        while (inp.available() != 0) {
+            ILTag * tag = factory.deserialize(inp);
+            if (!tag) {
+                return false;
+            }
+            if (!this->add(tag)) {
+                return false;
+            }
+        }
+        return true;
+	} else {
+        if (!inp.readILInt(count)) {
+            return false;
+        }
+
+        for(; count > 0; count--) {
+            ILTag * tag = factory.deserialize(inp);
+            if (!tag) {
+                return false;
+            }
+            if (!this->add(tag)) {
+                return false;
+            }
+        }
+        return (inp.available() == 0);
 	}
-	return (inp.available() == 0);
 }
 
 //------------------------------------------------------------------------------

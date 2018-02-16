@@ -252,6 +252,8 @@ public:
  */
 class IRHeaderTag: ircommon::iltags::ILTag {
 protected:
+//    std::vector<std::shared_ptr<ircommon::iltags::ILTag>>
+
 	ircommon::iltags::ILUInt16Tag _version;
 	ircommon::iltags::ILUInt8Tag _recordType;
 	IRHashTag _instanceId;
@@ -262,6 +264,8 @@ protected:
 	ircommon::iltags::ILILIntTag _timestamp;
 	virtual bool serializeValue(ircommon::IRBuffer & out) const;
 public:
+
+
 	IRHeaderTag();
 
 	virtual ~IRHeaderTag() = default;

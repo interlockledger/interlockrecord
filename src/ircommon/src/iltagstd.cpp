@@ -259,6 +259,8 @@ ILTag * ILStandardTagFactory::create(std::uint64_t tagId) const {
 		return new ILILIntArrayTag();
 	case ILTag::TAG_ILTAG_ARRAY:
 		return new ILTagArrayTag();
+	case ILTag::TAG_ILTAG_SEQ:
+		return new ILTagSeqTag();
 	default:
 		return ILTagFactory::create(tagId);
 	}

@@ -150,7 +150,11 @@ public:
 		 * The ILTag array tag. It contains an ILInt64 value that encodes the
 		 * number of objects followed by the serialization of the tags.
 		 */
-		TAG_ILTAG_ARRAY = 21
+		TAG_ILTAG_ARRAY = 21,
+        /**
+		 * The ILTag sequence tag. It contains the serialization of a sequence of tags.
+		 */
+		TAG_ILTAG_SEQ = 22
 	} KnownStandardTagID;
 private:
 	/**
@@ -341,8 +345,9 @@ public:
 };
 
 /**
- * This class implements the base class for all tag-list tags. It follows the
- * syntax of the TAG_ILTAG_ARRAY.
+ * This class implements the base class for all tag-list tags.
+ * If <b>noCounter</b> is false, it follows the syntax of the
+ * TAG_ILTAG_ARRAY, otherwise it follows the syntax of TAG_ILTAG_SEQ.
  *
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @since 2018.01.22
@@ -355,13 +360,22 @@ protected:
 	std::vector<SharedPointer> _list;
 
 	virtual bool serializeValue(ircommon::IRBuffer & out) const;
+
+	/**
+	 * Determines it the serialization adds or not the tag counter
+	 * in the serialization.
+     * @since 2018.02.15
+	 */
+	bool _noCounter;
 public:
 	/**
 	 * Creates a new instance of this class.
 	 *
 	 * @param[in] id The tag ID.
+	 * @param[in] noCounter If true, removes the number of tags from the beginning of
+	 * the serialization.
 	 */
-	ILTagListTag(std::uint64_t id);
+	ILTagListTag(std::uint64_t id, bool noCounter = false);
 
 	/**
 	 * Disposes this instance and releases all associated resources.

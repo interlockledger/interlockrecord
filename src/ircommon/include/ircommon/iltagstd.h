@@ -670,9 +670,22 @@ public:
  */
 class ILTagArrayTag: public ILTagListTag {
 public:
-	ILTagArrayTag(): ILTagListTag(ILTag::TAG_ILTAG_ARRAY) {}
+	ILTagArrayTag(): ILTagListTag(ILTag::TAG_ILTAG_ARRAY, false) {}
 
 	virtual ~ILTagArrayTag() = default;
+};
+
+/**
+ * This class implements the ILTag sequence of tags.
+ *
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2018.02.15
+ */
+class ILTagSeqTag: public ILTagListTag {
+public:
+	ILTagSeqTag(): ILTagListTag(ILTag::TAG_ILTAG_SEQ, true) {}
+
+	virtual ~ILTagSeqTag() = default;
 };
 
 /**

@@ -277,6 +277,7 @@ TEST_F(ILTagTest, CONSTANTS) {
 	ASSERT_EQ(19, ILTag::TAG_BDEC);
 	ASSERT_EQ(20, ILTag::TAG_ILINT64_ARRAY);
 	ASSERT_EQ(21, ILTag::TAG_ILTAG_ARRAY);
+	ASSERT_EQ(22, ILTag::TAG_ILTAG_SEQ);
 }
 
 //------------------------------------------------------------------------------
