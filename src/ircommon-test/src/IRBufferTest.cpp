@@ -1469,5 +1469,65 @@ TEST_F(IRBufferTest, readFloatDouble) {
 }
 
 //------------------------------------------------------------------------------
+TEST_F(IRBufferTest, set) {
+	IRBuffer buff;
+	IRBuffer roBuff(IRBufferTest_SAMPLE, IRBufferTest_SAMPLE_SIZE);
+
+	ASSERT_FALSE(roBuff.set(IRBufferTest_SAMPLE, IRBufferTest_SAMPLE_SIZE));
+
+	// Set on empty
+	ASSERT_TRUE(buff.set(IRBufferTest_SAMPLE, IRBufferTest_SAMPLE_SIZE));
+	ASSERT_EQ(IRBufferTest_SAMPLE_SIZE, buff.size());
+	ASSERT_EQ(0, buff.position());
+	ASSERT_EQ(0, std::memcmp(IRBufferTest_SAMPLE, buff.roBuffer(), IRBufferTest_SAMPLE_SIZE));
+
+	// Replace a larger value
+	buff.ending();
+	ASSERT_TRUE(buff.set(IRBufferTest_SAMPLE, IRBufferTest_SAMPLE_SIZE));
+	ASSERT_EQ(IRBufferTest_SAMPLE_SIZE, buff.size());
+	ASSERT_EQ(0, buff.position());
+	ASSERT_EQ(0, std::memcmp(IRBufferTest_SAMPLE, buff.roBuffer(), IRBufferTest_SAMPLE_SIZE));
+
+	// Replace a larger value
+	ASSERT_TRUE(buff.write(IRBufferTest_SAMPLE, IRBufferTest_SAMPLE_SIZE));
+	buff.ending();
+	ASSERT_TRUE(buff.set(IRBufferTest_SAMPLE, IRBufferTest_SAMPLE_SIZE));
+	ASSERT_EQ(IRBufferTest_SAMPLE_SIZE, buff.size());
+	ASSERT_EQ(0, buff.position());
+	ASSERT_EQ(0, std::memcmp(IRBufferTest_SAMPLE, buff.roBuffer(), IRBufferTest_SAMPLE_SIZE));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBufferTest, copy) {
+	IRBuffer buff;
+	IRBuffer buff2;
+	IRBuffer roBuff(IRBufferTest_SAMPLE, IRBufferTest_SAMPLE_SIZE);
+
+	// Test on read-only instance
+	ASSERT_FALSE(roBuff.copy(buff));
+	ASSERT_FALSE(roBuff.copy(roBuff));
+
+	// Copy one instance to itself
+	ASSERT_TRUE(buff.write(1));
+	ASSERT_TRUE(buff.copy(buff));
+	ASSERT_EQ(1, buff.position());
+
+	// Copy empty to non-empty
+	ASSERT_TRUE(buff.copy(buff2));
+	ASSERT_EQ(0, buff.size());
+	ASSERT_EQ(0, buff.position());
+
+	// Copy read-only
+	roBuff.setPosition(3);
+	ASSERT_TRUE(buff.copy(roBuff));
+	ASSERT_EQ(roBuff.position(), buff.position());
+	ASSERT_EQ(roBuff.size(), buff.size());
+	ASSERT_EQ(0, std::memcmp(roBuff.roBuffer(), buff.roBuffer(), buff.size()));
+}
+
+//------------------------------------------------------------------------------
+
+
+
 
 

@@ -29,6 +29,7 @@
 
 #include <ircommon/iltag.h>
 #include <ircommon/iltagstd.h>
+#include <irecordcore/irtypes.h>
 
 namespace irecordcore {
 namespace tags {
@@ -84,13 +85,10 @@ typedef enum IRTagType {
 class IRBaseType16RawTag : public ircommon::iltags::ILTag {
 protected:
     /**
-     * The tag type.
-     */
-	std::uint16_t _type;
-    /**
      * The tag value.
      */
-	ircommon::IRBuffer _value;
+	irecordcore::IRTypedRaw _value;
+
 	virtual bool serializeValue(ircommon::IRBuffer & out) const;
 public:
     /**
@@ -112,30 +110,12 @@ public:
 			const ircommon::iltags::ILTagFactory & factory,
 			const void * buff, std::uint64_t size);
 
-    /**
-     * Returns the type of this object.
-     *
-     * @return The type.
-     */
-	std::uint16_t type() const {
-		return this->_type;
-	}
-
-	/**
-	 * Sets the type of this object.
-	 *
-	 * @param[in] type The object type.
-	 */
-	void setType(std::uint16_t type) {
-		this->_type = type;
-	}
-
 	/**
 	 * Returns the value of this tag without its type.
 	 *
 	 * @return The read/write buffer that holds the value.
 	 */
-	ircommon::IRBuffer & value() {
+	irecordcore::IRTypedRaw & value() {
 		return this->_value;
 	}
 
@@ -144,7 +124,7 @@ public:
 	 *
 	 * @return The read only buffer that holds the value.
 	 */
-	const ircommon::IRBuffer & value() const {
+	const irecordcore::IRTypedRaw & value() const {
 		return this->_value;
 	}
 };
@@ -250,33 +230,11 @@ public:
  * @since 2018.02.01
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
-class IRHeaderTag: ircommon::iltags::ILTag {
-protected:
-//    std::vector<std::shared_ptr<ircommon::iltags::ILTag>>
-
-	ircommon::iltags::ILUInt16Tag _version;
-	ircommon::iltags::ILUInt8Tag _recordType;
-	IRHashTag _instanceId;
-	ircommon::iltags::ILILIntTag _blockSerial;
-	ircommon::iltags::ILILIntTag _blockOffset;
-	ircommon::iltags::ILILIntTag _parentBlockOffset;
-	ircommon::iltags::ILILIntTag _applicationId;
-	ircommon::iltags::ILILIntTag _timestamp;
-	virtual bool serializeValue(ircommon::IRBuffer & out) const;
+class IRHeaderTag: ircommon::iltags::ILBaseTagListTag {
 public:
-
-
 	IRHeaderTag();
 
 	virtual ~IRHeaderTag() = default;
-
-	virtual std::uint64_t size() const;
-
-	virtual bool deserializeValue(
-			const ircommon::iltags::ILTagFactory & factory,
-			const void * buff, std::uint64_t size);
-
-	// TODO add the getters
 };
 
 /**
@@ -356,3 +314,5 @@ public:
 } // namespace irecord
 
 #endif /* _IRECORDCORE_IRTAGS_H_ */
+
+

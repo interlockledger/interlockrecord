@@ -35,13 +35,13 @@ using namespace ircommon::iltags;
 // Class IRBaseType16RawTag
 //------------------------------------------------------------------------------
 IRBaseType16RawTag::IRBaseType16RawTag(std::uint64_t id, bool secure):
-		ircommon::iltags::ILTag(id), _value(0, secure), _type(0) {
+		ircommon::iltags::ILTag(id), _value(0, secure) {
 }
 
 //------------------------------------------------------------------------------
 bool IRBaseType16RawTag::serializeValue(ircommon::IRBuffer & out) const {
 
-	if (!out.writeInt(this->_type)){
+	if (!out.writeInt(this->value().type())){
 		return false;
 	}
 	return out.write(this->_value.roBuffer(), this->_value.size());
@@ -50,7 +50,7 @@ bool IRBaseType16RawTag::serializeValue(ircommon::IRBuffer & out) const {
 //------------------------------------------------------------------------------
 std::uint64_t IRBaseType16RawTag::size() const {
 
-	return sizeof(this->_type) + this->_value.size();
+	return sizeof(this->value().type()) + this->_value.size();
 }
 
 //------------------------------------------------------------------------------
@@ -58,10 +58,12 @@ bool IRBaseType16RawTag::deserializeValue(
 		const ircommon::iltags::ILTagFactory & factory,
 		const void * buff, std::uint64_t size) {
 	IRBuffer inp(buff, size);
+	std::uint16_t type;
 
-	if (!inp.readInt(this->_type)) {
+	if (!inp.readInt(type)) {
 		return false;
 	}
+	this->_value.setType(type);
 	return this->_value.set(inp.roPosBuffer(), inp.available());
 }
 

@@ -461,3 +461,20 @@ bool IRBuffer::readFloat(double & v) {
 }
 
 //------------------------------------------------------------------------------
+bool IRBuffer::copy(const IRBuffer & other) {
+
+	if (this->readOnly()) {
+		return false;
+	}
+	if (this == &other) {
+		return true;
+	}
+	if (this->set(other.roBuffer(), other.size())) {
+		this->setPosition(other.position());
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------

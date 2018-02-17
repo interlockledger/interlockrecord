@@ -586,6 +586,28 @@ public:
 	 * @since 2018.01.26
 	 */
 	bool readFloat(double & v);
+
+	/**
+	 * Copies the contents of another instance into this instance. It will copy
+	 * the current data and the current read/write position.
+	 *
+	 * @param[in] other The other instance.
+	 * @return true for success or false otherwise.
+	 * @since 2018.02.17
+	 */
+	bool copy(const IRBuffer * other) {
+		return this->copy(*other);
+	}
+
+	/**
+	 * Copies the contents of another instance into this instance. It will copy
+	 * the current data and the current read/write position.
+	 *
+	 * @param[in] other The other instance.
+	 * @return true for success or false otherwise.
+	 * @since 2018.02.17
+	 */
+	bool copy(const IRBuffer & other);
 };
 
 } //namespace ircommon
