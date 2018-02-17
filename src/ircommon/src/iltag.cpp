@@ -163,22 +163,44 @@ bool ILBaseTagListTag::deserializeValue(const ILTagFactory & factory,
 //------------------------------------------------------------------------------
 bool ILBaseTagListTag::add(SharedPointer obj) {
 
-	if (this->count() < this->maxEntries()) {
+	if (this->isFull()) {
+		return false;
+	} else {
 		this->_list.push_back(obj);
 		return true;
-	} else {
+	}
+}
+
+//------------------------------------------------------------------------------
+bool ILBaseTagListTag::add(ILTag * obj) {
+
+	if (this->isFull()) {
 		return false;
+	} else {
+		this->_list.push_back(SharedPointer(obj));
+		return true;
 	}
 }
 
 //------------------------------------------------------------------------------
 bool ILBaseTagListTag::insert(std::uint64_t idx, SharedPointer obj) {
 
-	if ((this->count() < this->maxEntries()) && (idx < this->maxEntries())) {
+	if (this->isFull() || (idx >= this->maxEntries())) {
+		return false;
+	} else {
 		this->_list.insert(this->_list.begin() + idx, obj);
 		return true;
-	} else {
+	}
+}
+
+//------------------------------------------------------------------------------
+bool ILBaseTagListTag::insert(std::uint64_t idx, ILTag * obj) {
+
+	if (this->isFull() || (idx >= this->maxEntries())) {
 		return false;
+	} else {
+		this->_list.insert(this->_list.begin() + idx, SharedPointer(obj));
+		return true;
 	}
 }
 
@@ -197,6 +219,26 @@ ILBaseTagListTag::SharedPointer & ILBaseTagListTag::operator [](std::uint64_t id
 //------------------------------------------------------------------------------
 const ILBaseTagListTag::SharedPointer & ILBaseTagListTag::operator [](std::uint64_t idx) const {
 	return this->_list[idx];
+}
+
+//------------------------------------------------------------------------------
+ILBaseTagListTag::SharedPointer & ILBaseTagListTag::get(std::uint64_t idx) {
+
+	if (idx < this->count()) {
+		return (*this)[idx];
+	} else {
+		throw std::out_of_range("Out of range!");
+	}
+}
+
+//------------------------------------------------------------------------------
+const ILBaseTagListTag::SharedPointer & ILBaseTagListTag::get(std::uint64_t idx) const {
+
+	if (idx < this->count()) {
+		return (*this)[idx];
+	} else {
+		throw std::out_of_range("Out of range!");
+	}
 }
 
 //==============================================================================

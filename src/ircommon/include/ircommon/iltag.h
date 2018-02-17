@@ -404,10 +404,9 @@ public:
 	 * @param[in] obj The tag to be added. This method will claim the ownership
 	 * of this instance.
 	 * @return true for success or false otherwise.
+	 * @note In case of failure, obj will not be claimed by this instance.
 	 */
-	bool add(ILTag * obj) {
-		return this->add(SharedPointer(obj));
-	}
+	bool add(ILTag * obj);
 
 	/**
 	 * Inserts a new tag in a given position.
@@ -425,10 +424,9 @@ public:
 	 * @param[in] obj The tag to be added. This method will claim the ownership
 	 * of this instance.
 	 * @return true for success or false otherwise.
+	 * @note In case of failure, obj will not be claimed by this instance.
 	 */
-	bool insert(std::uint64_t idx, ILTag * obj) {
-		return this->insert(idx, SharedPointer(obj));
-	}
+	bool insert(std::uint64_t idx, ILTag * obj);
 
 	/**
 	 * Removes the tag at a given index.
@@ -448,20 +446,38 @@ public:
 	}
 
 	/**
-	 * Grants read/write access to the tag a given postion.
+	 * Grants read/write access to the tag a given position.
 	 *
 	 * @param[in] idx The position.
 	 * @return A reference to the SharedPointer that holds the tag.
+	 * @note No bound check is performed.
 	 */
 	SharedPointer & operator [](std::uint64_t idx);
 
 	/**
-	 * Grants read-only access to the tag a given postion.
+	 * Grants read-only access to the tag a given position.
+	 *
+	 * @param[in] idx The position.
+	 * @return A reference to the SharedPointer that holds the tag.
+	 * @note No bound check is performed.
+	 */
+	const SharedPointer & operator [](std::uint64_t idx) const;
+
+	/**
+	 * Grants read/write access to the tag a given position.
 	 *
 	 * @param[in] idx The position.
 	 * @return A reference to the SharedPointer that holds the tag.
 	 */
-	const SharedPointer & operator [](std::uint64_t idx) const;
+	SharedPointer & get(std::uint64_t idx);
+
+	/**
+	 * Grants read-only access to the tag a given position.
+	 *
+	 * @param[in] idx The position.
+	 * @return A reference to the SharedPointer that holds the tag.
+	 */
+	const SharedPointer & get(std::uint64_t idx) const;
 
 	/**
 	 * Returns the maximum number of entries allowed in this instance.
@@ -470,6 +486,15 @@ public:
 	 */
 	std::uint64_t maxEntries() const {
 		return this->_maxEntries;
+	}
+
+	/**
+	 * Verifies if this instance is full.
+	 *
+	 * @return true if it is full or false otherwise.
+	 */
+	bool isFull() const {
+		return (this->count() == this->maxEntries());
 	}
 };
 
