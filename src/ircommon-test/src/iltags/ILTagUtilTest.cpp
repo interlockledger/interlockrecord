@@ -60,8 +60,6 @@ TEST_F(ILTagUtilTest, sameID) {
 	ASSERT_TRUE(ILTagUtil::sameID(t1, t2));
 	ASSERT_TRUE(ILTagUtil::sameID(t1, t3));
 	ASSERT_FALSE(ILTagUtil::sameID(t1, t4));
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
 }
 
 //------------------------------------------------------------------------------
