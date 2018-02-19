@@ -115,7 +115,7 @@ public:
 
 class IRPayload {
 
-}
+};
 
 class IRRootBlockPayload{
 private:
