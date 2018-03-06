@@ -56,13 +56,12 @@ public:
 	 *
 	 * @param[in] type The algorithm type.
 	 */
-	IRHash(IRHashAlg type):
-			_type(type) {}
+	IRHash(IRHashAlg type);
 
 	/**
 	 * Disposes this instance and releases all associated resources.
 	 */
-	virtual ~IRHash() = default;
+	virtual ~IRHash();
 
 	/**
 	 * Returns the hash type.
@@ -83,7 +82,7 @@ public:
 	 *
 	 * @return The size of the hash in bits.
 	 */
-	virtual std::uint64_t size() const;
+	virtual std::uint64_t size() const = 0;
 
 	/**
 	 * Returns the size of this hash in bytes.
@@ -120,7 +119,7 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
 class IRCopyHash  : public IRHash {
-private:
+protected:
 	/**
 	 * The inner state.
 	 */
@@ -156,19 +155,19 @@ public:
  */
 template <class BotanHashImpl, IRHashAlg Type>
 class IRBotanHash : public IRHash {
-private:
+protected:
 	BotanHashImpl _hash;
 public:
 	IRBotanHash(): IRHash(Type) {}
 
-	virtual ~IRBotanHash() = default;
+	virtual ~IRBotanHash(){}
 
 	virtual void reset() {
 		this->_hash.clear();
 	}
 
 	virtual std::uint64_t size() const {
-		return this->_hash.output_length();
+		return this->_hash.output_length() * 8;
 	}
 
 	virtual void update(const void * buff, std::uint64_t size) {
@@ -176,7 +175,7 @@ public:
 	}
 
 	virtual bool finalize(void * out, std::uint64_t size) {
-		if (size < this->size()) {
+		if (size < this->sizeInBytes()) {
 			return false;
 		}
 		this->_hash.final((std::uint8_t *)out);
