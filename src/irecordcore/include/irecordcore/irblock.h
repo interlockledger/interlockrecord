@@ -28,10 +28,18 @@
 #define _IRECORDCORE_IRBLOCK_H_
 
 #include <irecordcore/irtypes.h>
+#include <string>
 
 namespace irecordcore {
 namespace block {
 
+/**
+ * This enumeration defines the record types as defined at
+ * https://devel.opencs.com.br/redmine/projects/interlockledger-docs/wiki/ILBlock.
+ *
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2018.03.06
+ */
 typedef enum IRRecordType {
 	IR_ROOT_RECORD_TYPE = 0,
 	IR_DATA_RECORD_TYPE = 1,
@@ -40,7 +48,7 @@ typedef enum IRRecordType {
 } IRRecordType;
 
 /**
- * This class implements the header of a block.
+ * This class implements the DTO that holds the header of a block.
  *
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @since 2018.02.17
@@ -113,10 +121,6 @@ public:
 	}
 };
 
-class IRPayload {
-
-};
-
 class IRRootBlockPayload{
 private:
 	std::uint16_t _version;
@@ -141,7 +145,6 @@ private:
 public:
 
 };
-
 
 } // namespace block
 } //namespace irecordcore

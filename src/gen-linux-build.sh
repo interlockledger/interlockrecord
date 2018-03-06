@@ -39,7 +39,7 @@ fi
 echo "Creating $BUILD_DIR..."
 mkdir "$BUILD_DIR"
 pushd "$BUILD_DIR" >/dev/null
-cmake ../src -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECLIPSE_VERSION=4.6
+cmake ../src -G"Eclipse CDT4 - Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECLIPSE_VERSION=4.6
 popd >/dev/null
 echo "Build environment created inside '$BUILD_DIR'. Load it as an Eclipse CDT project."
 
