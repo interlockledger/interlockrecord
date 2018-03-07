@@ -117,6 +117,8 @@ public:
  *
  * @since 2018.02.01
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class holds all the information inside an internal secure buffer.
+ * Given that, do not forget to dispose this instance in order to release memory.
  */
 class IRCopyHash  : public IRHash {
 protected:
@@ -127,9 +129,11 @@ protected:
 public:
 	/**
 	 * Creates a new instance of this class.
+	 *
+	 * @param[in] reserved Reserved bytes in the internal buffer.
 	 */
-	IRCopyHash():IRHash(IR_HASH_COPY),
-			_state(0, true) {}
+	IRCopyHash(std::uint64_t reserved = 0):IRHash(IR_HASH_COPY),
+			_state(reserved, true) {}
 
 	/**
 	 * Disposes this instance and releases all associated resources.

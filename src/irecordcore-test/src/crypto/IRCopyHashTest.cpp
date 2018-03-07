@@ -25,6 +25,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRCopyHashTest.h"
+#include "CryptoSamples.h"
+#include <irecordcore/irhash.h>
+#include <cstring>
+
+using namespace irecordcore;
+using namespace irecordcore::crypto;
 
 //==============================================================================
 // class IRCopyHashTest
@@ -46,9 +52,72 @@ void IRCopyHashTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRCopyHashTest,Constructor) {
+	IRCopyHash * h;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	h = new IRCopyHash();
+	ASSERT_EQ(IR_HASH_COPY, h->type());
+	delete h;
+
+	h = new IRCopyHash(128);
+	ASSERT_EQ(IR_HASH_COPY, h->type());
+	delete h;
 }
+
+//------------------------------------------------------------------------------
+TEST_F(IRCopyHashTest, size) {
+	IRCopyHash h;
+	std::uint8_t out[20];
+	std::uint64_t size;
+	const std::uint8_t * p;
+	const std::uint8_t * pEnd;
+
+	ASSERT_EQ(0, h.size());
+
+	size = 0;
+	p = CRYPTOSAMPLES_SAMPLE;
+	pEnd = p + sizeof(CRYPTOSAMPLES_SAMPLE);
+	while (p < pEnd) {
+		ASSERT_EQ(size * 8, h.size());
+		h.update(p, 2);
+		p += 2;
+		size += 2;
+		ASSERT_EQ(size * 8, h.size());
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRCopyHashTest, reset) {
+	IRCopyHash h;
+
+	h.reset();
+	ASSERT_EQ(0, h.size());
+
+	h.update(CRYPTOSAMPLES_SAMPLE, sizeof(CRYPTOSAMPLES_SAMPLE));
+
+	h.reset();
+	ASSERT_EQ(0, h.size());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRCopyHashTest, update) {
+	IRCopyHash h;
+	std::uint8_t out[sizeof(CRYPTOSAMPLES_SAMPLE)];
+	const std::uint8_t * p;
+	const std::uint8_t * pEnd;
+
+	ASSERT_EQ(0, h.size());
+
+	p = CRYPTOSAMPLES_SAMPLE;
+	pEnd = p + sizeof(CRYPTOSAMPLES_SAMPLE);
+	while (p < pEnd) {
+		h.update(p, 2);
+		p += 2;
+
+		std::memset(out, 0, sizeof(out));
+		ASSERT_TRUE(h.finalize(out, sizeof(out)));
+		ASSERT_EQ(0, std::memcmp(out, CRYPTOSAMPLES_SAMPLE, h.sizeInBytes()));
+	}
+}
+
 //------------------------------------------------------------------------------
 
