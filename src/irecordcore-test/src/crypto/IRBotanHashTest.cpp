@@ -104,6 +104,24 @@ TEST_F(IRBotanHashTest, reset) {
 	ASSERT_EQ(0, memcmp(exp, out, sizeof(exp)));
 }
 
+//------------------------------------------------------------------------------
+TEST_F(IRBotanHashTest, update) {
+	IRDummyBotanHash h;
+	std::uint8_t out[20];
+	const std::uint8_t * p;
+	const std::uint8_t * pEnd;
+
+	p = CRYPTOSAMPLES_SAMPLE;
+	pEnd = p + sizeof(CRYPTOSAMPLES_SAMPLE);
+
+	while (p < pEnd) {
+		h.update(p, 2);
+		p += 2;
+	}
+	ASSERT_TRUE(h.finalize(out, sizeof(out)));
+	ASSERT_EQ(0, memcmp(IRBotanHashTest_SAMPLE, out,
+			sizeof(IRBotanHashTest_SAMPLE)));
+}
 
 //------------------------------------------------------------------------------
 TEST_F(IRBotanHashTest, finalizeEmpty) {
@@ -118,8 +136,7 @@ TEST_F(IRBotanHashTest, finalizeEmpty) {
 //------------------------------------------------------------------------------
 TEST_F(IRBotanHashTest, finalize) {
 	IRDummyBotanHash h;
-	std::uint8_t exp[20];
-	std::uint8_t out[sizeof(exp)];
+	std::uint8_t out[20];
 
 	h.update(CRYPTOSAMPLES_SAMPLE, sizeof(CRYPTOSAMPLES_SAMPLE));
 	ASSERT_TRUE(h.finalize(out, sizeof(out)));
