@@ -38,6 +38,7 @@ configure_file (
 
 # Sources
 add_library(irecordcore STATIC
+	include/irecordcore/irblock.h
 	include/irecordcore/irtags.h
 	include/irecordcore/irhash.h
 	include/irecordcore/IRCHandle.h
