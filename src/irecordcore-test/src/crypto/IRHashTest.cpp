@@ -25,7 +25,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRHashTest.h"
-#include "IRBotanHashTest.h"
 #include <irecordcore/irhash.h>
 
 using namespace irecordcore;
