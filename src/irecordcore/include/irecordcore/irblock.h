@@ -80,6 +80,10 @@ public:
 		return this->_instanceID;
 	}
 
+	const IRTypedRaw & instanceID() const {
+		return this->_instanceID;
+	}
+
 	std::uint64_t blockSerial() const {
 		return this->_blockSerial;
 	}

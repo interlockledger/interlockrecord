@@ -25,6 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRRecordTypeTest.h"
+#include <irecordcore/irblock.h>
+using namespace irecordcore::block;
 
 //==============================================================================
 // class IRRecordTypeTest
@@ -47,8 +49,11 @@ void IRRecordTypeTest::TearDown() {
 //------------------------------------------------------------------------------
 TEST_F(IRRecordTypeTest,Constructor) {
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
-}
-//------------------------------------------------------------------------------
+	ASSERT_EQ(0, IR_ROOT_RECORD_TYPE);
+	ASSERT_EQ(1, IR_DATA_RECORD_TYPE);
+	ASSERT_EQ(2, IR_CLOSING_RECORD_TYPE);
+	ASSERT_EQ(3, IR_EMERGENCY_CLOSING_RECORD_TYPE);
 
+}
+
+//------------------------------------------------------------------------------
