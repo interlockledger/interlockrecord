@@ -32,7 +32,18 @@ using namespace irecordcore::block;
 //==============================================================================
 // Class IRBlockHeader
 //------------------------------------------------------------------------------
-IRBlockHeader::IRBlockHeader(): _version(0), _recordType(IR_ROOT_RECORD_TYPE), _instanceID(64), _blockSerial(0), _blockOffset(0), _parentBlockOffset(0), _applicationID(0), _timestamp(0) {
+IRBlockHeader::IRBlockHeader(): _version(0), _recordType(IR_ROOT_RECORD_TYPE), 
+	_instanceID(64), _blockSerial(0), _blockOffset(0), _parentBlockOffset(0), 
+	_applicationID(0), _timestamp(0) {
 }
 
 //------------------------------------------------------------------------------
+IRRootBlockPayload::IRRootBlockPayload(): _version(0), _networkID(0),
+	_emergencyKey(64), _creationTimestamp(0), _friendlyName(""),
+	_ownerName(""), _comments(""), _parentId(64) {
+}
+
+//------------------------------------------------------------------------------
+IRClosingPayload::IRClosingPayload() : _emergency(false), _version(0),
+_reason(0), _comments(""), _successorId(64) {
+}
