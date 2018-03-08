@@ -36,12 +36,18 @@ namespace crypto {
  * @since 2018.02.01
  */
 typedef enum IRHashAlg {
-	// From https://devel.opencs.com.br/redmine/projects/interlockledger-docs/wiki/Hash_algorithms
+	// From https://github.com/interlockledger/specification/blob/master/crypto/hash.md
 	IR_HASH_SHA1 = 0,
 	IR_HASH_SHA256 = 1,
 	IR_HASH_SHA512 = 2,
 	IR_HASH_SHA3_256 = 3,
 	IR_HASH_SHA3_512 = 4,
+	IR_HASH_SHA224 = 5,
+	IR_HASH_SHA384 = 6,
+	IR_HASH_SHA3_224 = 7,
+	IR_HASH_SHA3_384 = 8,
+	IR_WHIRLPOOL = 9,
+	IR_RIPEMD_160 = 10,
 	IR_HASH_COPY = 0xFFFF
 } IRHashAlg;
 
@@ -51,7 +57,7 @@ typedef enum IRHashAlg {
  * @since 2018.02.01
  */
 typedef enum IRSignAlg {
-	// From https://devel.opencs.com.br/redmine/projects/interlockledger-docs/wiki/Signature_algorithms
+	// From https://github.com/interlockledger/specification/blob/master/crypto/dsign.md
 	IR_SIG_RSA = 0,
 	IR_SIG_RSA_1_5 = 1,
 	IR_SIG_DSA = 2,
