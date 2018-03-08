@@ -39,17 +39,6 @@ public:
 	}
 };
 
-static const std::uint8_t IRBotanHashTest_EMPTY[20] = {
-		0xda, 0x39, 0xa3, 0xee, 0x5e, 0x6b, 0x4b, 0x0d, 0x32, 0x55,
-		0xbf, 0xef, 0x95, 0x60, 0x18, 0x90, 0xaf, 0xd8, 0x07, 0x09};
-
-// SHA1 of CRYPTOSAMPLES_SAMPLE
-// Samples generated with:
-//		printf "Human sacrifice, dogs and cats living together, mass hysteria!" | openssl sha1 -binary| xxd -g1
-static const std::uint8_t IRBotanHashTest_SAMPLE[20] = {
-		0x30, 0xb7, 0xb3, 0x2d, 0x08, 0xf2, 0x70, 0xcf, 0xe3, 0x30,
-		0x0e, 0xff, 0x12, 0x61, 0xdf, 0x53,	0x45, 0x72, 0x60, 0x34};
-
 //==============================================================================
 // class IRBotanHashTest
 //------------------------------------------------------------------------------
@@ -96,8 +85,8 @@ TEST_F(IRBotanHashTest, reset) {
 	h.reset();
 	h.update(CRYPTOSAMPLES_SAMPLE, sizeof(CRYPTOSAMPLES_SAMPLE));
 	ASSERT_TRUE(h.finalize(out, sizeof(out)));
-	ASSERT_EQ(0, memcmp(IRBotanHashTest_SAMPLE, out,
-			sizeof(IRBotanHashTest_SAMPLE)));
+	ASSERT_EQ(0, memcmp(CRYPTOSAMPLES_SHA1_SAMPLE, out,
+			sizeof(CRYPTOSAMPLES_SHA1_SAMPLE)));
 
 	h.reset();
 	ASSERT_TRUE(h.finalize(out, sizeof(out)));
@@ -119,8 +108,8 @@ TEST_F(IRBotanHashTest, update) {
 		p += 2;
 	}
 	ASSERT_TRUE(h.finalize(out, sizeof(out)));
-	ASSERT_EQ(0, memcmp(IRBotanHashTest_SAMPLE, out,
-			sizeof(IRBotanHashTest_SAMPLE)));
+	ASSERT_EQ(0, memcmp(CRYPTOSAMPLES_SHA1_SAMPLE, out,
+			sizeof(CRYPTOSAMPLES_SHA1_SAMPLE)));
 }
 
 //------------------------------------------------------------------------------
@@ -130,7 +119,7 @@ TEST_F(IRBotanHashTest, finalizeEmpty) {
 	std::uint8_t out[sizeof(exp)];
 
 	ASSERT_TRUE(h.finalize(exp, sizeof(exp)));
-	ASSERT_EQ(0, memcmp(exp, IRBotanHashTest_EMPTY, sizeof(exp)));
+	ASSERT_EQ(0, memcmp(exp, CRYPTOSAMPLES_SHA1_EMPTY, sizeof(exp)));
 }
 
 //------------------------------------------------------------------------------
@@ -140,8 +129,8 @@ TEST_F(IRBotanHashTest, finalize) {
 
 	h.update(CRYPTOSAMPLES_SAMPLE, sizeof(CRYPTOSAMPLES_SAMPLE));
 	ASSERT_TRUE(h.finalize(out, sizeof(out)));
-	ASSERT_EQ(0, memcmp(IRBotanHashTest_SAMPLE, out,
-			sizeof(IRBotanHashTest_SAMPLE)));
+	ASSERT_EQ(0, memcmp(CRYPTOSAMPLES_SHA1_SAMPLE, out,
+			sizeof(CRYPTOSAMPLES_SHA1_SAMPLE)));
 }
 
 //------------------------------------------------------------------------------

@@ -34,7 +34,15 @@
  */
 extern const std::uint8_t CRYPTOSAMPLES_SAMPLE[62];
 
+/**
+ * SHA1 of empty.
+ */
+extern const std::uint8_t CRYPTOSAMPLES_SHA1_EMPTY[20];
 
+/**
+ * SHA1 of CRYPTOSAMPLES_SAMPLE.
+ */
+extern const std::uint8_t CRYPTOSAMPLES_SHA1_SAMPLE[20];
 
 
 #endif /* _CRYPTO_CRYPTOSAMPLES_H_ */
