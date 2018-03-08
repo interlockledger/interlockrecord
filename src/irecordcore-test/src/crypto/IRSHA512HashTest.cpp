@@ -25,6 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRSHA512HashTest.h"
+#include <irecordcore/irhash.h>
+#include "CryptoSamples.h"
+
+using namespace irecordcore;
+using namespace irecordcore::crypto;
 
 //==============================================================================
 // class IRSHA512HashTest
@@ -46,9 +51,53 @@ void IRSHA512HashTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRSHA512HashTest,Constructor) {
+	IRSHA512Hash * h;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	h = new IRSHA512Hash();
+	ASSERT_EQ(IR_HASH_SHA512, h->type());
+	delete h;
 }
+
+//------------------------------------------------------------------------------
+TEST_F(IRSHA512HashTest, size) {
+	IRSHA512Hash h;
+
+	ASSERT_EQ(512, h.size());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRSHA512HashTest, update) {
+	IRSHA512Hash h;
+	std::uint8_t out[64];
+	const std::uint8_t * p;
+	const std::uint8_t * pEnd;
+
+	p = CRYPTOSAMPLES_SAMPLE;
+	pEnd = p + sizeof(CRYPTOSAMPLES_SAMPLE);
+
+	while (p < pEnd) {
+		h.update(p, 2);
+		p += 2;
+	}
+	ASSERT_TRUE(h.finalize(out, sizeof(out)));
+	ASSERT_EQ(0, memcmp(CRYPTOSAMPLES_SHA512_SAMPLE, out,
+			sizeof(CRYPTOSAMPLES_SHA512_SAMPLE)));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRSHA512HashTest, finalize) {
+	IRSHA512Hash h;
+	std::uint8_t exp[64];
+	std::uint8_t out[sizeof(exp)];
+
+	ASSERT_TRUE(h.finalize(exp, sizeof(exp)));
+	ASSERT_EQ(0, memcmp(exp, CRYPTOSAMPLES_SHA512_EMPTY, sizeof(exp)));
+
+	h.update(CRYPTOSAMPLES_SAMPLE, sizeof(CRYPTOSAMPLES_SAMPLE));
+	ASSERT_TRUE(h.finalize(out, sizeof(out)));
+	ASSERT_EQ(0, memcmp(CRYPTOSAMPLES_SHA512_SAMPLE, out,
+			sizeof(CRYPTOSAMPLES_SHA512_SAMPLE)));
+}
+
 //------------------------------------------------------------------------------
 

@@ -191,7 +191,7 @@ typedef IRBotanHash<Botan::SHA_160, IR_HASH_SHA1> IRSHA1Hash;
 
 typedef IRBotanHash<Botan::SHA_256, IR_HASH_SHA256> IRSHA256Hash;
 
-typedef IRBotanHash<Botan::SHA_512, IR_HASH_SHA256> IRSHA512Hash;
+typedef IRBotanHash<Botan::SHA_512, IR_HASH_SHA512> IRSHA512Hash;
 
 /**
  * This class template encapsulates the SHA3 hash algorithm implemented by
