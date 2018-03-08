@@ -187,10 +187,28 @@ public:
 	}
 };
 
+/**
+ * This class implements the SHA1 algorithm.
+ *
+ * @since 2018.02.01
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ */
 typedef IRBotanHash<Botan::SHA_160, IR_HASH_SHA1> IRSHA1Hash;
 
+/**
+ * This class implements the SHA256 algorithm.
+ *
+ * @since 2018.02.01
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ */
 typedef IRBotanHash<Botan::SHA_256, IR_HASH_SHA256> IRSHA256Hash;
 
+/**
+ * This class implements the SHA512 algorithm.
+ *
+ * @since 2018.02.01
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ */
 typedef IRBotanHash<Botan::SHA_512, IR_HASH_SHA512> IRSHA512Hash;
 
 /**
