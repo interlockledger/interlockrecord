@@ -44,5 +44,25 @@ extern const std::uint8_t CRYPTOSAMPLES_SHA1_EMPTY[20];
  */
 extern const std::uint8_t CRYPTOSAMPLES_SHA1_SAMPLE[20];
 
+/**
+ * SHA256 of empty.
+ */
+extern const std::uint8_t CRYPTOSAMPLES_SHA256_EMPTY[32];
+
+/**
+ * SHA256 of CRYPTOSAMPLES_SAMPLE.
+ */
+extern const std::uint8_t CRYPTOSAMPLES_SHA256_SAMPLE[32];
+
+/**
+ * SHA512 of empty.
+ */
+extern const std::uint8_t CRYPTOSAMPLES_SHA512_EMPTY[64];
+
+/**
+ * SHA512 of CRYPTOSAMPLES_SAMPLE.
+ */
+extern const std::uint8_t CRYPTOSAMPLES_SHA512_SAMPLE[64];
+
 
 #endif /* _CRYPTO_CRYPTOSAMPLES_H_ */
