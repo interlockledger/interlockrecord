@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRBlockHeaderTest.h"
+#include <irecordcore/irblock.h>
+
+using namespace irecordcore;
+using namespace irecordcore::block;
 
 //==============================================================================
 // class IRBlockHeaderTest
@@ -47,8 +51,19 @@ void IRBlockHeaderTest::TearDown() {
 //------------------------------------------------------------------------------
 TEST_F(IRBlockHeaderTest,Constructor) {
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	IRBlockHeader * bh;
+
+	bh = new IRBlockHeader();
+
+	ASSERT_EQ(0, bh->version);
+	ASSERT_EQ(IR_ROOT_RECORD_TYPE, bh->recordType);
+	ASSERT_EQ(64, bh->instanceID);
+	ASSERT_EQ(0, bh->blockSerial);
+	ASSERT_EQ(0, bh->blockOffset);
+	ASSERT_EQ(0, bh->setParentBlockOffset);
+	ASSERT_EQ(0, bh->applicationID);
+	ASSERT_EQ(0, bh->timestamp);
+
+	delete bh;
 }
 //------------------------------------------------------------------------------
-

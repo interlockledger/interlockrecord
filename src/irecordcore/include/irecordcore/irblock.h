@@ -137,6 +137,70 @@ private:
 	IRTypedRaw _parentId;
 public:
 
+	IRRootBlockPayload();
+
+	virtual ~IRRootBlockPayload() = default;
+
+	std::uint16_t version() const {
+		return this->_version;
+	}
+
+	std::uint64_t networkID() const {
+		return this->_networkID;
+	}
+
+	void setNetworkID(std::uint64_t n) {
+		this->_networkID = n;
+	}
+
+	IRTypedRaw & emergencyKey() {
+		return this->_emergencyKey;
+	}
+
+	const IRTypedRaw & emergencyKey() const {
+		return this->_emergencyKey;
+	}
+
+	std::uint64_t creationTimestamp() const {
+		return this->_creationTimestamp;
+	}
+
+	void setCreationTimestamp(std::uint64_t t) {
+		this->_creationTimestamp = t;
+	}
+
+	std::string friendlyName() const {
+		return this->_friendlyName;
+	}
+
+	void setFriendlyName(std::string f) {
+		this->_friendlyName = f;
+	}
+
+	std::string ownerName() const {
+		return this->_ownerName;
+	}
+
+	void setOwnerName(std::string o) {
+		this->_ownerName = o;
+	}
+
+	std::string comments() const {
+		return this->_comments;
+	}
+
+	void setComments(std::string c) {
+		this->_comments = c;
+	}
+
+	IRTypedRaw & parentId() {
+		return this->_parentId;
+	}
+
+	const IRTypedRaw & parentId() const {
+		return this->_parentId;
+	}
+
 };
 
 class IRClosingPayload {
@@ -148,6 +212,45 @@ private:
 	IRTypedRaw _successorId;
 public:
 
+	IRClosingPayload();
+
+	virtual ~IRClosingPayload() = default;
+
+	bool emergency() const {
+		return this->_emergency;
+	}
+
+	void setEmergency(bool e) {
+		this->_emergency = e;
+	}
+
+	std::uint16_t version() const {
+		return this->_version;
+	}
+
+	std::uint16_t reason() const {
+		return this->_reason;
+	}
+
+	void setReason(std::uint16_t r) {
+		this->_reason = r;
+	}
+
+	std::string comments() const {
+		return this->_comments;
+	}
+
+	void setComments(std::string c) {
+		this->_comments = c;
+	}
+
+	IRTypedRaw & successorId() {
+		return this->_successorId;
+	}
+
+	const IRTypedRaw & successorId() const {
+		return this->_successorId;
+	}
 };
 
 } // namespace block
