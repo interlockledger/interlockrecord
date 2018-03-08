@@ -60,7 +60,7 @@ void IRCopyHash::update(const void * buff, std::uint64_t size) {
 
 //------------------------------------------------------------------------------
 bool IRCopyHash::finalize(void * out, std::uint64_t size) {
-	if (size < this->size()) {
+	if (size < this->sizeInBytes()) {
 		return false;
 	}
 	std::memcpy(out, this->_state.roBuffer(), this->_state.size());
