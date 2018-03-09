@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRRootBlockPayloadTest.h"
+#include <irecordcore/irblock.h>
+
+using namespace irecordcore;
+using namespace irecordcore::block;
 
 //==============================================================================
 // class IRRootBlockPayloadTest
@@ -47,8 +51,19 @@ void IRRootBlockPayloadTest::TearDown() {
 //------------------------------------------------------------------------------
 TEST_F(IRRootBlockPayloadTest,Constructor) {
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	IRRootBlockPayload * rbp;
+
+	rbp = new IRRootBlockPayload();
+
+	ASSERT_EQ(0, rbp->version);
+	ASSERT_EQ(0, rbp->networkID);
+	ASSERT_EQ(64, rbp->emergencyKey);
+	ASSERT_EQ(0, rbp->creationTimestamp);
+	ASSERT_EQ("", rbp->friendlyName);
+	ASSERT_EQ("", rbp->ownerName);
+	ASSERT_EQ("", rbp->comments);
+	ASSERT_EQ(64, rbp->parentId);
+
+	delete rbp;
 }
 //------------------------------------------------------------------------------
-
