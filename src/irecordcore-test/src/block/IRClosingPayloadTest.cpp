@@ -55,16 +55,13 @@ TEST_F(IRClosingPayloadTest,Constructor) {
 
 	cp = new IRClosingPayload();
 
-	ASSERT_EQ(false, cp->emergency);
-	ASSERT_EQ(0, cp->version);
-	ASSERT_EQ(0, cp->reason);
-	ASSERT_EQ("", cp->comments);
-	ASSERT_EQ(64, cp->successorId);
+	ASSERT_FALSE(cp->emergency());
+	ASSERT_EQ(0, cp->version());
+	ASSERT_EQ(0, cp->reason());
+	ASSERT_STREQ("", cp->comments().c_str());
+	ASSERT_EQ(64, cp->successorId().size());
 
 	delete cp;
 }
 //------------------------------------------------------------------------------
 
-IRClosingPayload::IRClosingPayload() : _emergency(false), _version(0),
-_reason(0), _comments(""), _successorId(64) {
-}

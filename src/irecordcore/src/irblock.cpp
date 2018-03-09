@@ -37,13 +37,18 @@ IRBlockHeader::IRBlockHeader(): _version(0), _recordType(IR_ROOT_RECORD_TYPE),
 	_applicationID(0), _timestamp(0) {
 }
 
+//==============================================================================
+// Class IRRootBlockPayload
 //------------------------------------------------------------------------------
 IRRootBlockPayload::IRRootBlockPayload(): _version(0), _networkID(0),
 	_emergencyKey(64), _creationTimestamp(0), _friendlyName(""),
 	_ownerName(""), _comments(""), _parentId(64) {
 }
 
+//==============================================================================
+// Class IRClosingPayload
 //------------------------------------------------------------------------------
 IRClosingPayload::IRClosingPayload() : _emergency(false), _version(0),
-_reason(0), _comments(""), _successorId(64) {
+		_reason(0), _comments(""), _successorId(64) {
 }
+//------------------------------------------------------------------------------

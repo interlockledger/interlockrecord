@@ -55,14 +55,14 @@ TEST_F(IRRootBlockPayloadTest,Constructor) {
 
 	rbp = new IRRootBlockPayload();
 
-	ASSERT_EQ(0, rbp->version);
-	ASSERT_EQ(0, rbp->networkID);
-	ASSERT_EQ(64, rbp->emergencyKey);
-	ASSERT_EQ(0, rbp->creationTimestamp);
-	ASSERT_EQ("", rbp->friendlyName);
-	ASSERT_EQ("", rbp->ownerName);
-	ASSERT_EQ("", rbp->comments);
-	ASSERT_EQ(64, rbp->parentId);
+	ASSERT_EQ(0, rbp->version());
+	ASSERT_EQ(0, rbp->networkID());
+	ASSERT_EQ(0, rbp->emergencyKey().size());
+	ASSERT_EQ(0, rbp->creationTimestamp());
+	ASSERT_STREQ("", rbp->friendlyName().c_str());
+	ASSERT_STREQ("", rbp->ownerName().c_str());
+	ASSERT_STREQ("", rbp->comments().c_str());
+	ASSERT_EQ(64, rbp->parentId().size());
 
 	delete rbp;
 }

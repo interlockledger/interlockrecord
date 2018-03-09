@@ -55,14 +55,14 @@ TEST_F(IRBlockHeaderTest,Constructor) {
 
 	bh = new IRBlockHeader();
 
-	ASSERT_EQ(0, bh->version);
-	ASSERT_EQ(IR_ROOT_RECORD_TYPE, bh->recordType);
-	ASSERT_EQ(64, bh->instanceID);
-	ASSERT_EQ(0, bh->blockSerial);
-	ASSERT_EQ(0, bh->blockOffset);
-	ASSERT_EQ(0, bh->setParentBlockOffset);
-	ASSERT_EQ(0, bh->applicationID);
-	ASSERT_EQ(0, bh->timestamp);
+	ASSERT_EQ(0, bh->version());
+	ASSERT_EQ(IR_ROOT_RECORD_TYPE, bh->recordType());
+	ASSERT_EQ(0, bh->instanceID().size());
+	ASSERT_EQ(0, bh->blockSerial());
+	ASSERT_EQ(0, bh->blockOffset());
+	ASSERT_EQ(0, bh->parentBlockOffset());
+	ASSERT_EQ(0, bh->applicationID());
+	ASSERT_EQ(0, bh->timestamp());
 
 	delete bh;
 }
