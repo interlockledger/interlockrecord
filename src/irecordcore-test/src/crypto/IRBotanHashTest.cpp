@@ -32,6 +32,9 @@
 using namespace irecordcore;
 using namespace irecordcore::crypto;
 
+//==============================================================================
+// class IRDummyBotanHash
+//------------------------------------------------------------------------------
 class IRDummyBotanHash: public IRBotanHash < Botan::SHA_160, IR_HASH_SHA1 > {
 public:
 	const Botan::SHA_160 & getBotanImpl() const {
@@ -115,11 +118,10 @@ TEST_F(IRBotanHashTest, update) {
 //------------------------------------------------------------------------------
 TEST_F(IRBotanHashTest, finalizeEmpty) {
 	IRDummyBotanHash h;
-	std::uint8_t exp[20];
-	std::uint8_t out[sizeof(exp)];
+	std::uint8_t out[20];
 
-	ASSERT_TRUE(h.finalize(exp, sizeof(exp)));
-	ASSERT_EQ(0, memcmp(exp, CRYPTOSAMPLES_SHA1_EMPTY, sizeof(exp)));
+	ASSERT_TRUE(h.finalize(out, sizeof(out)));
+	ASSERT_EQ(0, memcmp(out, CRYPTOSAMPLES_SHA1_EMPTY, sizeof(out)));
 }
 
 //------------------------------------------------------------------------------
@@ -131,6 +133,11 @@ TEST_F(IRBotanHashTest, finalize) {
 	ASSERT_TRUE(h.finalize(out, sizeof(out)));
 	ASSERT_EQ(0, memcmp(CRYPTOSAMPLES_SHA1_SAMPLE, out,
 			sizeof(CRYPTOSAMPLES_SHA1_SAMPLE)));
+
+	h.reset();
+	for (std::uint64_t i = 0; i < sizeof(out); i++) {
+		ASSERT_FALSE(h.finalize(out, i));
+	}
 }
 
 //------------------------------------------------------------------------------
