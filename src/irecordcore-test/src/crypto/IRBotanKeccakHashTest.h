@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2017-2018, Open Communications Security
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of the <organization> nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -24,64 +24,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _CRYPTO_CRYPTOSAMPLES_H_
-#define _CRYPTO_CRYPTOSAMPLES_H_
+#ifndef __IRBOTANKECCAKHASHTEST_H__
+#define __IRBOTANKECCAKHASHTEST_H__
 
-#include <cstdint>
+#include <gtest/gtest.h>
 
-/*
- * "Human sacrifice, dogs and cats living together, mass hysteria!"
- */
-extern const std::uint8_t CRYPTOSAMPLES_SAMPLE[62];
+class IRBotanKeccakHashTest : public testing::Test {
+public:
+	IRBotanKeccakHashTest();
+	virtual ~IRBotanKeccakHashTest();
+	virtual void SetUp();
+	virtual void TearDown();
+};
+#endif //__IRBOTANKECCAKHASHTEST_H__
 
-/**
- * SHA1 of empty.
- */
-extern const std::uint8_t CRYPTOSAMPLES_SHA1_EMPTY[20];
-
-/**
- * SHA1 of CRYPTOSAMPLES_SAMPLE.
- */
-extern const std::uint8_t CRYPTOSAMPLES_SHA1_SAMPLE[20];
-
-/**
- * SHA256 of empty.
- */
-extern const std::uint8_t CRYPTOSAMPLES_SHA256_EMPTY[32];
-
-/**
- * SHA256 of CRYPTOSAMPLES_SAMPLE.
- */
-extern const std::uint8_t CRYPTOSAMPLES_SHA256_SAMPLE[32];
-
-/**
- * SHA512 of empty.
- */
-extern const std::uint8_t CRYPTOSAMPLES_SHA512_EMPTY[64];
-
-/**
- * SHA512 of CRYPTOSAMPLES_SAMPLE.
- */
-extern const std::uint8_t CRYPTOSAMPLES_SHA512_SAMPLE[64];
-
-/**
- * SHA3-256 of empty.
- */
-extern const std::uint8_t CRYPTOSAMPLES_SHA3_256_EMPTY[32];
-
-/**
- * SHA3-256 of CRYPTOSAMPLES_SAMPLE.
- */
-extern const std::uint8_t CRYPTOSAMPLES_SHA3_256_SAMPLE[32];
-
-/**
- * SHA3-512 of empty.
- */
-extern const std::uint8_t CRYPTOSAMPLES_SHA3_512_EMPTY[64];
-
-/**
- * SHA3-512 of CRYPTOSAMPLES_SAMPLE.
- */
-extern const std::uint8_t CRYPTOSAMPLES_SHA3_512_SAMPLE[64];
-
-#endif /* _CRYPTO_CRYPTOSAMPLES_H_ */

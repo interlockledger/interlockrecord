@@ -33,7 +33,7 @@
 #include <botan/sha160.h>
 #include <botan/sha2_32.h>
 #include <botan/sha2_64.h>
-#include <botan/keccak.h>
+#include <botan/sha3.h>
 
 namespace irecordcore {
 namespace crypto {
@@ -217,13 +217,15 @@ typedef IRBotanHash<Botan::SHA_512, IR_HASH_SHA512> IRSHA512Hash;
  *
  * @since 2018.02.06
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @tparam BotanHashImpl This parameter can be Botan::Keccak_1600 or
+ * Botan::SHA_3.
  * @tparam OutputSize The output size. Must be 224, 256, 384, or 512.
  * @tparam Type The hash type.
  */
-template <size_t OutputSize, IRHashAlg Type>
+template <class BotanHashImpl, size_t OutputSize, IRHashAlg Type>
 class IRBotanKeccakHash : public IRHash {
-private:
-	Botan::Keccak_1600 _hash;
+protected:
+	BotanHashImpl _hash;
 public:
 	IRBotanKeccakHash(): IRHash(Type),_hash(OutputSize) {}
 
@@ -234,7 +236,7 @@ public:
 	}
 
 	virtual std::uint64_t size() const {
-		return this->_hash.output_length();
+		return this->_hash.output_length() * 8;
 	}
 
 	virtual void update(const void * buff, std::uint64_t size) {
@@ -242,7 +244,7 @@ public:
 	}
 
 	virtual bool finalize(void * out, std::uint64_t size) {
-		if (size < this->size()) {
+		if (size < this->sizeInBytes()) {
 			return false;
 		}
 		this->_hash.final((std::uint8_t *)out);
@@ -250,9 +252,9 @@ public:
 	}
 };
 
-typedef IRBotanKeccakHash<256, IR_HASH_SHA3_256> IRSHA3_256Hash;
+typedef IRBotanKeccakHash<Botan::SHA_3,256, IR_HASH_SHA3_256> IRSHA3_256Hash;
 
-typedef IRBotanKeccakHash<512, IR_HASH_SHA3_512> IRSHA3_512Hash;
+typedef IRBotanKeccakHash<Botan::SHA_3, 512, IR_HASH_SHA3_512> IRSHA3_512Hash;
 
 class IRHashFactory {
 public:

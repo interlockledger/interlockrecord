@@ -24,7 +24,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "IRSHA3_256HashTest.h"
+#include "IRBotanKeccakHashTest.h"
 #include <irecordcore/irhash.h>
 #include "CryptoSamples.h"
 
@@ -32,42 +32,66 @@ using namespace irecordcore;
 using namespace irecordcore::crypto;
 
 //==============================================================================
-// class IRSHA3_256HashTest
+// class IRDummyBotanHash
 //------------------------------------------------------------------------------
-IRSHA3_256HashTest::IRSHA3_256HashTest() {
+typedef IRBotanKeccakHash <Botan::SHA_3, 256, IR_HASH_SHA3_256> IRDummyBotanKeccakHash;
+
+//==============================================================================
+// class IRBotanKeccakHashTest
+//------------------------------------------------------------------------------
+IRBotanKeccakHashTest::IRBotanKeccakHashTest() {
 }
 
 //------------------------------------------------------------------------------
-IRSHA3_256HashTest::~IRSHA3_256HashTest() {
+IRBotanKeccakHashTest::~IRBotanKeccakHashTest() {
 }
 
 //------------------------------------------------------------------------------
-void IRSHA3_256HashTest::SetUp() {
+void IRBotanKeccakHashTest::SetUp() {
 }
 
 //------------------------------------------------------------------------------
-void IRSHA3_256HashTest::TearDown() {
+void IRBotanKeccakHashTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRSHA3_256HashTest,Constructor) {
-	IRSHA3_256Hash * h;
+TEST_F(IRBotanKeccakHashTest, Constructor) {
+	IRDummyBotanKeccakHash * h;
 
-	h = new IRSHA3_256Hash();
+	h = new IRDummyBotanKeccakHash();
 	ASSERT_EQ(IR_HASH_SHA3_256, h->type());
 	delete h;
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRSHA3_256HashTest, size) {
-	IRSHA3_256Hash h;
+TEST_F(IRBotanKeccakHashTest, size) {
+	IRDummyBotanKeccakHash h;
 
 	ASSERT_EQ(256, h.size());
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRSHA3_256HashTest, update) {
-	IRSHA3_256Hash h;
+TEST_F(IRBotanKeccakHashTest, reset) {
+	IRDummyBotanKeccakHash h;
+	std::uint8_t exp[32];
+	std::uint8_t out[sizeof(exp)];
+
+	ASSERT_TRUE(h.finalize(exp, sizeof(exp)));
+	h.reset();
+
+	h.update(CRYPTOSAMPLES_SAMPLE, sizeof(CRYPTOSAMPLES_SAMPLE));
+	ASSERT_TRUE(h.finalize(out, sizeof(out)));
+	ASSERT_EQ(0, memcmp(CRYPTOSAMPLES_SHA3_256_SAMPLE, out,
+			sizeof(CRYPTOSAMPLES_SHA3_256_SAMPLE)));
+
+	h.reset();
+	ASSERT_TRUE(h.finalize(out, sizeof(out)));
+	ASSERT_EQ(0, memcmp(exp, out, sizeof(exp)));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBotanKeccakHashTest, update) {
+	IRDummyBotanKeccakHash h;
 	std::uint8_t out[32];
 	const std::uint8_t * p;
 	const std::uint8_t * pEnd;
@@ -85,18 +109,29 @@ TEST_F(IRSHA3_256HashTest, update) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRSHA3_256HashTest, finalize) {
-	IRSHA3_256Hash h;
-	std::uint8_t exp[32];
-	std::uint8_t out[sizeof(exp)];
+TEST_F(IRBotanKeccakHashTest, finalizeEmpty) {
+	IRDummyBotanKeccakHash h;
+	std::uint8_t out[32];
 
-	ASSERT_TRUE(h.finalize(exp, sizeof(exp)));
-	ASSERT_EQ(0, memcmp(exp, CRYPTOSAMPLES_SHA3_256_EMPTY, sizeof(exp)));
+	h.reset();
+	ASSERT_TRUE(h.finalize(out, sizeof(out)));
+	ASSERT_EQ(0, memcmp(out, CRYPTOSAMPLES_SHA3_256_EMPTY, sizeof(out)));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBotanKeccakHashTest, finalize) {
+	IRDummyBotanKeccakHash h;
+	std::uint8_t out[32];
 
 	h.update(CRYPTOSAMPLES_SAMPLE, sizeof(CRYPTOSAMPLES_SAMPLE));
 	ASSERT_TRUE(h.finalize(out, sizeof(out)));
 	ASSERT_EQ(0, memcmp(CRYPTOSAMPLES_SHA3_256_SAMPLE, out,
 			sizeof(CRYPTOSAMPLES_SHA3_256_SAMPLE)));
+
+	h.reset();
+	for (std::uint64_t i = 0; i < sizeof(out); i++) {
+		ASSERT_FALSE(h.finalize(out, i));
+	}
 }
 //------------------------------------------------------------------------------
 
