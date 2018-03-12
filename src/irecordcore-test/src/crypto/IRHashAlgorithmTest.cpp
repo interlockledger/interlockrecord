@@ -98,7 +98,7 @@ TEST_F(IRHashAlgorithmTest,Constructor) {
 //------------------------------------------------------------------------------
 TEST_F(IRHashAlgorithmTest, sizeInBytes) {
 
-	for(std::uint64_t i; i < 128; i++) {
+	for(std::uint64_t i = 0; i < 128; i++) {
 		DummyIRHashAlgorithm h(i);
 		ASSERT_EQ(i / 8, h.sizeInBytes());
 	}

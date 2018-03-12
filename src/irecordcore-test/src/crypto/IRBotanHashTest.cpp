@@ -26,7 +26,7 @@
  */
 #include "IRBotanHashTest.h"
 #include <irecordcore/irhash.h>
-#include <botan-2/botan/sha160.h>
+#include <botan/sha160.h>
 #include "CryptoSamples.h"
 
 using namespace irecordcore;

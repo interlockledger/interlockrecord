@@ -67,3 +67,62 @@ TEST_F(IRBlockHeaderTest,Constructor) {
 	delete bh;
 }
 //------------------------------------------------------------------------------
+
+TEST_F(IRBlockHeaderTest, blockSerial) {
+	IRBlockHeader bh;
+	const IRBlockHeader & cbh = bh;
+
+	ASSERT_EQ(0, bh.blockSerial());
+	ASSERT_EQ(0, cbh.blockSerial());
+	bh.setBlockSerial(1);
+	ASSERT_EQ(1, bh.blockSerial());
+	ASSERT_EQ(1, cbh.blockSerial());
+}
+//------------------------------------------------------------------------------
+
+TEST_F(IRBlockHeaderTest, blockOffset) {
+	IRBlockHeader bo;
+	const IRBlockHeader & cbo = bo;
+
+	ASSERT_EQ(0, bo.blockOffset());
+	ASSERT_EQ(0, cbo.blockOffset());
+	bo.setBlockOffset(1);
+	ASSERT_EQ(1, bo.blockOffset());
+	ASSERT_EQ(1, cbo.blockOffset());
+}
+//------------------------------------------------------------------------------
+
+TEST_F(IRBlockHeaderTest, parentBlockOffset) {
+	IRBlockHeader pbo;
+	const IRBlockHeader & cpbo = pbo;
+
+	ASSERT_EQ(0, pbo.parentBlockOffset());
+	ASSERT_EQ(0, cpbo.parentBlockOffset());
+	pbo.setParentBlockOffset(1);
+	ASSERT_EQ(1, pbo.parentBlockOffset());
+	ASSERT_EQ(1, cpbo.parentBlockOffset());
+}
+//------------------------------------------------------------------------------
+
+TEST_F(IRBlockHeaderTest, applicationID) {
+	IRBlockHeader aid;
+	const IRBlockHeader & caid = aid;
+
+	ASSERT_EQ(0, aid.applicationID());
+	ASSERT_EQ(0, caid.applicationID());
+	aid.setApplicationID(1);
+	ASSERT_EQ(1, aid.applicationID());
+	ASSERT_EQ(1, caid.applicationID());
+}
+//------------------------------------------------------------------------------
+
+TEST_F(IRBlockHeaderTest, timestamp) {
+	IRBlockHeader ts;
+	const IRBlockHeader & cts = ts;
+
+	ASSERT_EQ(0, ts.timestamp());
+	ASSERT_EQ(0, cts.timestamp());
+	ts.setTimestamp(1);
+	ASSERT_EQ(1, ts.timestamp());
+	ASSERT_EQ(1, cts.timestamp());
+}
