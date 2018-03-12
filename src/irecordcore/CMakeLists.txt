@@ -41,11 +41,13 @@ add_library(irecordcore STATIC
 	include/irecordcore/irblock.h
 	include/irecordcore/irtags.h
 	include/irecordcore/irhash.h
+	include/irecordcore/irmac.h
 	include/irecordcore/IRCHandle.h
 	include/irecordcore/version.h
 	include/irecordcore/ircrypto.h
 	src/irblock.cpp
 	src/irhash.cpp
+	src/irmac.cpp
 	src/IRCHandle.cpp
 	src/irtags.cpp
 	)

@@ -24,17 +24,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef __IRSIGNALGTEST_H__
-#define __IRSIGNALGTEST_H__
+#include "IRHMACTest.h"
 
-#include <gtest/gtest.h>
+//==============================================================================
+// class IRHMACTest
+//------------------------------------------------------------------------------
+IRHMACTest::IRHMACTest() {
+}
 
-class IRSignAlgTest : public testing::Test {
-public:
-	IRSignAlgTest();
-	virtual ~IRSignAlgTest();
-	virtual void SetUp();
-	virtual void TearDown();
-};
-#endif //__IRSIGNALGTEST_H__
+//------------------------------------------------------------------------------
+IRHMACTest::~IRHMACTest() {
+}
+
+//------------------------------------------------------------------------------
+void IRHMACTest::SetUp() {
+}
+
+//------------------------------------------------------------------------------
+void IRHMACTest::TearDown() {
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRHMACTest,Constructor) {
+
+	//TODO Implementation required!
+	std::cout << "Implementation required!";
+}
+//------------------------------------------------------------------------------
 
