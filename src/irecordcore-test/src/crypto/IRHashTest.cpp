@@ -34,15 +34,9 @@ using namespace irecordcore::crypto;
 // class DummyIRHash
 //------------------------------------------------------------------------------
 class DummyIRHash: public IRHash {
-private:
-	 std::uint64_t _size;
 public:
-	DummyIRHash(IRHashAlg type):IRHash(type), _size(0){}
+	DummyIRHash(IRHashAlg type):IRHash(type) {}
 	virtual ~DummyIRHash() = default;
-
-	void setSize( std::uint64_t size) {
-		this->_size = size;
-	}
 
 	virtual void reset();
 
@@ -59,7 +53,7 @@ void DummyIRHash::reset() {
 
 //------------------------------------------------------------------------------
 std::uint64_t DummyIRHash::size() const {
-	return this->_size;
+	return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -121,18 +115,3 @@ TEST_F(IRHashTest, type) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRHashTest, sizeInBytes) {
-	DummyIRHash h(IR_HASH_SHA1);
-
-	h.setSize(0);
-	ASSERT_EQ(0, h.sizeInBytes());
-
-	h.setSize(8);
-	ASSERT_EQ(1, h.sizeInBytes());
-
-	h.setSize(32);
-	ASSERT_EQ(4, h.sizeInBytes());
-}
-
-//------------------------------------------------------------------------------
-

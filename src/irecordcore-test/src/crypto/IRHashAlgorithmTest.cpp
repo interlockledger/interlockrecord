@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2017-2018, Open Communications Security
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of the <organization> nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -24,74 +24,83 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include "IRHashAlgorithmTest.h"
 #include <irecordcore/irhash.h>
-#include <cstring>
 
 using namespace irecordcore;
 using namespace irecordcore::crypto;
 
 //==============================================================================
-// Class IRHashAlgorithm
+// class DummyIRHash
 //------------------------------------------------------------------------------
-std::uint64_t IRHashAlgorithm::sizeInBytes() const {
-	return this->size() / 8;
+class DummyIRHashAlgorithm: public IRHashAlgorithm {
+private:
+	 std::uint64_t _size;
+public:
+	 DummyIRHashAlgorithm(std::uint64_t size):IRHashAlgorithm(), _size(size){}
+
+	virtual ~DummyIRHashAlgorithm() = default;
+
+	virtual void reset();
+
+	virtual std::uint64_t size() const;
+
+	virtual void update(const void * buff, std::uint64_t size);
+
+	virtual bool finalize(void * out, std::uint64_t size);
+};
+
+//------------------------------------------------------------------------------
+void DummyIRHashAlgorithm::reset() {
+}
+
+//------------------------------------------------------------------------------
+std::uint64_t DummyIRHashAlgorithm::size() const {
+	return this->_size;
+}
+
+//------------------------------------------------------------------------------
+void DummyIRHashAlgorithm::update(const void * buff, std::uint64_t size) {
+}
+
+//------------------------------------------------------------------------------
+bool DummyIRHashAlgorithm::finalize(void * out, std::uint64_t size) {
+	return false;
 }
 
 //==============================================================================
-// Class IRHash
+// class IRHashAlgorithmTest
 //------------------------------------------------------------------------------
-IRHash::IRHash(IRHashAlg type): IRHashAlgorithm(), 	_type(type) {
+IRHashAlgorithmTest::IRHashAlgorithmTest() {
 }
 
 //------------------------------------------------------------------------------
-IRHash::~IRHash() {
-}
-
-//==============================================================================
-// Class IRCopyHash
-//------------------------------------------------------------------------------
-void IRCopyHash::reset() {
-	this->_state.setSize(0);
-	this->_state.shrink();
+IRHashAlgorithmTest::~IRHashAlgorithmTest() {
 }
 
 //------------------------------------------------------------------------------
-std::uint64_t IRCopyHash::size() const {
-	return this->_state.size() * 8;
+void IRHashAlgorithmTest::SetUp() {
 }
 
 //------------------------------------------------------------------------------
-void IRCopyHash::update(const void * buff, std::uint64_t size) {
-	this->_state.write(buff, size);
+void IRHashAlgorithmTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-bool IRCopyHash::finalize(void * out, std::uint64_t size) {
-	if (size < this->sizeInBytes()) {
-		return false;
-	}
-	std::memcpy(out, this->_state.roBuffer(), this->_state.size());
-	return true;
+TEST_F(IRHashAlgorithmTest,Constructor) {
+	DummyIRHashAlgorithm * h;
+
+	h = new DummyIRHashAlgorithm(1);
+	ASSERT_EQ(1, h->size());
+	delete h;
 }
 
-//==============================================================================
-// Class IRHashFactory
 //------------------------------------------------------------------------------
-IRHash * IRHashFactory::create(std::uint16_t type) {
+TEST_F(IRHashAlgorithmTest, sizeInBytes) {
 
-	switch(type) {
-	case IR_HASH_SHA1:
-		return new IRSHA1Hash();
-	case IR_HASH_SHA256:
-		return new IRSHA256Hash();
-	case IR_HASH_SHA512:
-		return new IRSHA512Hash();
-	case IR_HASH_SHA3_256:
-		return new IRSHA3_256Hash();
-	case IR_HASH_SHA3_512:
-		return new IRSHA3_512Hash();
-	default:
-		return nullptr;
+	for(std::uint64_t i; i < 128; i++) {
+		DummyIRHashAlgorithm h(i);
+		ASSERT_EQ(i / 8, h.sizeInBytes());
 	}
 }
 

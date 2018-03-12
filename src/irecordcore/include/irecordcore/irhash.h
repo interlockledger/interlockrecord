@@ -39,12 +39,65 @@ namespace irecordcore {
 namespace crypto {
 
 /**
+ * This abstract class defines the interface for all hash like algorithms that
+ * compress an arbitrary byte sequence into a fixed size byte array.
+ *
+ * @since 2018.03.09
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ */
+class IRHashAlgorithm {
+public:
+	IRHashAlgorithm() = default;
+
+	virtual ~IRHashAlgorithm() = default;
+
+	/**
+	 * Resets this instance.
+	 */
+	virtual void reset() = 0;
+
+	/**
+	 * Returns the size of this hash in bits.
+	 *
+	 * @return The size of the hash in bits.
+	 */
+	virtual std::uint64_t size() const = 0;
+
+	/**
+	 * Returns the size of this hash in bytes.
+	 *
+	 * @return The size of the hash in bytes.
+	 * @note The default implementation just returns IRHashAlgorithm::size()
+	 * divided 8.
+	 */
+	virtual std::uint64_t sizeInBytes() const;
+
+	/**
+	 * Updates this hash.
+	 *
+	 * @param[in] buff The data.
+	 * @param[in] size The size of buff in bytes.
+	 */
+	virtual void update(const void * buff, std::uint64_t size) = 0;
+
+	/**
+	 * Finalizes the computation of the hash.
+	 *
+	 * @param[out] out The buffer that will receive the data.
+	 * @param[in] size Size of the buffer out. It mus be always equal or larger
+	 * than sizeInBytes().
+	 * @return true for success or false otherwise.
+	 */
+	virtual bool finalize(void * out, std::uint64_t size) = 0;
+};
+
+/**
  * This is the base class for all hash algorithms.
  *
  * @since 2018.02.01
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
-class IRHash {
+class IRHash : public IRHashAlgorithm {
 private:
 	/**
 	 * Type of the hash.
@@ -71,45 +124,6 @@ public:
 	IRHashAlg type() const {
 		return this->_type;
 	}
-
-	/**
-	 * Resets this instance.
-	 */
-	virtual void reset() = 0;
-
-	/**
-	 * Returns the size of this hash in bits.
-	 *
-	 * @return The size of the hash in bits.
-	 */
-	virtual std::uint64_t size() const = 0;
-
-	/**
-	 * Returns the size of this hash in bytes.
-	 *
-	 * @return The size of the hash in bytes.
-	 */
-	std::uint64_t sizeInBytes() const {
-		return this->size() / 8;
-	}
-
-	/**
-	 * Updates this hash.
-	 *
-	 * @param[in] buff The data.
-	 * @param[in] size The size of buff in bytes.
-	 */
-	virtual void update(const void * buff, std::uint64_t size) = 0;
-
-	/**
-	 * Finalizes the computation of the hash.
-	 *
-	 * @param[out] out The buffer that will receive the data.
-	 * @param[in] size Size of the buffer out. It mus be always equal or larger
-	 * than sizeInBytes().
-	 * @return true for success or false otherwise.
-	 */
-	virtual bool finalize(void * out, std::uint64_t size) = 0;
 };
 
 /**
@@ -171,7 +185,11 @@ public:
 	}
 
 	virtual std::uint64_t size() const {
-		return this->_hash.output_length() * 8;
+		return this->sizeInBytes() * 8;
+	}
+
+	virtual std::uint64_t sizeInBytes() const {
+		return this->_hash.output_length();
 	}
 
 	virtual void update(const void * buff, std::uint64_t size) {
@@ -236,7 +254,11 @@ public:
 	}
 
 	virtual std::uint64_t size() const {
-		return this->_hash.output_length() * 8;
+		return this->sizeInBytes() * 8;
+	}
+
+	virtual std::uint64_t sizeInBytes() const {
+		return this->_hash.output_length();
 	}
 
 	virtual void update(const void * buff, std::uint64_t size) {
