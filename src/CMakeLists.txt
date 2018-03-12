@@ -38,6 +38,12 @@ include("cmake/GTest.cmake")
 set(BOTAN2_VERBOSE 1)
 include("cmake/Botan2.cmake")
 
+# Warnings on GCC
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+	set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall") 
+	set (CMAKE_CFLAGS_DEBUG "${CMAKE_CFLAGS_DEBUG} -Wall") 
+endif()
+
 # Threads
 find_package(Threads REQUIRED)
 if (CMAKE_USE_PTHREADS_INIT)
