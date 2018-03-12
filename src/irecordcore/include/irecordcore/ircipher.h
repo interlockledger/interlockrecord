@@ -24,92 +24,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _IRECORDCORE_IRKEY_H_
-#define _IRECORDCORE_IRKEY_H_
+#ifndef _IRECORDCORE_IRCIPHER_H_
+#define _IRECORDCORE_IRCIPHER_H_
 
 #include <cstdint>
-#include <ircommon/irpmem.h>
-#include <ircommon/irbuffer.h>
 
 namespace irecordcore {
 namespace crypto {
 
-/**
- * Base class for all cryptographic keys.
- *
- * @since 2018.03.12
- * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
- */
-class IRKey {
+class IRBlockCipherAlgorithm {
 public:
-	IRKey() = default;
+	IRBlockCipherAlgorithm() = default;
+	virtual ~IRBlockCipherAlgorithm() = default;
 
-	virtual ~IRKey() = default;
-
-	virtual bool serialize(ircommon::IRBuffer & out) = 0;
-};
-
-/**
- * Base class for all secret keys.
- *
- * @since 2018.03.12
- * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
- */
-class IRSecretKey: public IRKey {
-public:
-	IRSecretKey() = default;
-
-	virtual ~IRSecretKey() = default;
-
-	virtual std::uint64_t size() = 0;
-
-	virtual std::uint64_t sizeInBytes() = 0;
-};
-
-/**
- * Base class for all software based secret keys. This implementation supports
- * in-memory encryption.
- *
- * @since 2018.03.12
- * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
- */
-class IRSecretKeyImpl: public IRSecretKey {
-private:
-	ircommon::crypto::IRProtectedMemory _key;
-
-	bool _protected;
-public:
-	IRSecretKeyImpl(const void * key, std::uint64_t keySize);
-
-	virtual ~IRSecretKeyImpl();
-
-	virtual std::uint64_t size();
-
-	virtual std::uint64_t sizeInBytes();
-
-	bool isProtected() const {
-		return this->_protected;
-	}
-
-	void protect();
-
-	void uprotect();
-
-	/**
-	 * Returns the raw key.
-	 *
-	 * @return The raw key value or nullptr if it is not available.
-	 */
-	const void * key() const {
-		if (this->isProtected()) {
-			return nullptr;
-		} else {
-			return this->_key.value();
-		}
-	}
+	void setKey(const void )
 };
 
 } //namespace crypto
 } //namespace irecordcore
 
-#endif /* _IRECORDCORE_IRKEY_H_ */
+#endif /* _IRECORDCORE_IRCIPHER_H_ */
