@@ -48,7 +48,7 @@ IRRootBlockPayload::IRRootBlockPayload(): _version(0), _networkID(0),
 //==============================================================================
 // Class IRClosingPayload
 //------------------------------------------------------------------------------
-IRClosingPayload::IRClosingPayload() : _emergency(false), _version(0),
+IRClosingPayload::IRClosingPayload() : _version(0), _emergency(false),
 		_reason(0), _comments(""), _successorId(64) {
 }
 //------------------------------------------------------------------------------

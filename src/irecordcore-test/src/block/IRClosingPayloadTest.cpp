@@ -55,13 +55,60 @@ TEST_F(IRClosingPayloadTest,Constructor) {
 
 	cp = new IRClosingPayload();
 
-	ASSERT_FALSE(cp->emergency());
 	ASSERT_EQ(0, cp->version());
+	ASSERT_FALSE(cp->emergency());
 	ASSERT_EQ(0, cp->reason());
 	ASSERT_STREQ("", cp->comments().c_str());
-	ASSERT_EQ(64, cp->successorId().size());
+	ASSERT_EQ(0, cp->successorId().size());
 
 	delete cp;
 }
 //------------------------------------------------------------------------------
 
+TEST_F(IRClosingPayloadTest, version) {
+	IRClosingPayload cp;
+	const IRClosingPayload & ccp = cp;
+
+	ASSERT_EQ(0, cp.version());
+	ASSERT_EQ(0, ccp.version());
+	cp.setVersion(1);
+	ASSERT_EQ(1, cp.version());
+	ASSERT_EQ(1, ccp.version());
+}
+//------------------------------------------------------------------------------
+
+TEST_F(IRClosingPayloadTest, emergency) {
+	IRClosingPayload cp;
+	const IRClosingPayload & ccp = cp;
+
+	ASSERT_FALSE(cp.emergency());
+	ASSERT_FALSE(ccp.emergency());
+	cp.setEmergency(true);
+	ASSERT_TRUE(cp.emergency());
+	ASSERT_TRUE(ccp.emergency());
+}
+//------------------------------------------------------------------------------
+
+TEST_F(IRClosingPayloadTest, reason) {
+	IRClosingPayload cp;
+	const IRClosingPayload & ccp = cp;
+
+	ASSERT_EQ(0, cp.reason());
+	ASSERT_EQ(0, ccp.reason());
+	cp.setReason(1);
+	ASSERT_EQ(1, cp.reason());
+	ASSERT_EQ(1, ccp.reason());
+}
+//------------------------------------------------------------------------------
+
+TEST_F(IRClosingPayloadTest, comments) {
+	IRClosingPayload cp;
+	const IRClosingPayload & ccp = cp;
+
+	ASSERT_EQ("", cp.comments());
+	ASSERT_EQ("", ccp.comments());
+	cp.setComments("TEST");
+	ASSERT_EQ("TEST", cp.comments());
+	ASSERT_EQ("TEST", ccp.comments());
+}
+//------------------------------------------------------------------------------

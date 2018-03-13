@@ -72,6 +72,10 @@ public:
 		return this->_version;
 	}
 
+	void setVersion(std::uint16_t v) {
+		this->_version = v;
+	}
+
 	IRRecordType recordType() const {
 		return this->_recordType;
 	}
@@ -145,6 +149,10 @@ public:
 		return this->_version;
 	}
 
+	void setVersion(std::uint16_t v) {
+		this->_version = v;
+	}
+
 	std::uint64_t networkID() const {
 		return this->_networkID;
 	}
@@ -205,8 +213,8 @@ public:
 
 class IRClosingPayload {
 private:
-	bool _emergency;
 	std::uint16_t _version;
+	bool _emergency;
 	std::uint16_t _reason;
 	std::string _comments;
 	IRTypedRaw _successorId;
@@ -226,6 +234,10 @@ public:
 
 	std::uint16_t version() const {
 		return this->_version;
+	}
+
+	void setVersion(std::uint16_t v) {
+		this->_version = v;
 	}
 
 	std::uint16_t reason() const {

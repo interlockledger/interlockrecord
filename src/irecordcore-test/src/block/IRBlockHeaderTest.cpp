@@ -68,6 +68,18 @@ TEST_F(IRBlockHeaderTest,Constructor) {
 }
 //------------------------------------------------------------------------------
 
+TEST_F(IRBlockHeaderTest, version) {
+	IRBlockHeader bh;
+	const IRBlockHeader & cbh = bh;
+
+	ASSERT_EQ(0, bh.version());
+	ASSERT_EQ(0, cbh.version());
+	bh.setVersion(1);
+	ASSERT_EQ(1, bh.version());
+	ASSERT_EQ(1, cbh.version());
+}
+//------------------------------------------------------------------------------
+
 TEST_F(IRBlockHeaderTest, blockSerial) {
 	IRBlockHeader bh;
 	const IRBlockHeader & cbh = bh;
