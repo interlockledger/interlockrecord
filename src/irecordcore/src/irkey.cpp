@@ -34,15 +34,29 @@ using namespace irecordcore::crypto;
 //==============================================================================
 // Class IRKey
 //------------------------------------------------------------------------------
+IRKey::IRKey(bool exportable): _exportable(exportable) {
+}
+
+//------------------------------------------------------------------------------
 bool IRKey::serialize(ircommon::IRBuffer & out) {
 	return false;
 }
+
+//------------------------------------------------------------------------------
+bool IRKey::exportKey(void * key, std::uint64_t & keySize) {
+	keySize = 0;
+	return false;
+}
+
+//==============================================================================
+// Class IRSecretKey
+//------------------------------------------------------------------------------
 
 //==============================================================================
 // Class IRSecretKeyImpl
 //------------------------------------------------------------------------------
 IRSecretKeyImpl::IRSecretKeyImpl(const void * key, std::uint64_t keySize):
-		IRSecretKey(), _key(keySize) {
+		IRSecretKey(true), _key(keySize) {
 
 	this->_key.lock();
 	std::memcpy(this->_key.value(), key, keySize);
@@ -80,15 +94,18 @@ void IRSecretKeyImpl::unlock() {
 }
 
 //------------------------------------------------------------------------------
-std::uint64_t  IRSecretKeyImpl::copy(void * key, std::uint64_t keySize) {
+bool IRSecretKeyImpl::exportKey(void * key, std::uint64_t & keySize) {
 
-	if (keySize < this->sizeInBytes()) {
-		return 0;
+	if ((!key) || (keySize < this->sizeInBytes())) {
+		keySize = this->sizeInBytes();
+		return false;
+	} else {
+		keySize = this->sizeInBytes();
+		this->lock();
+		std::memcpy(key, this->key(), keySize);
+		this->unlock();
+		return true;
 	}
-	this->lock();
-	std::memcpy(key, this->key(), this->sizeInBytes());
-	this->unlock();
-	return this->sizeInBytes();
 }
 
 //------------------------------------------------------------------------------

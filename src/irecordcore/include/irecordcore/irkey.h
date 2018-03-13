@@ -41,16 +41,27 @@ namespace crypto {
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
 class IRKey {
+private:
+	bool _exportable;
 public:
 	/**
 	 * Creates a new instance of this class.
 	 */
-	IRKey() = default;
+	IRKey(bool exportable);
 
 	/**
 	 * Disposes this instance and releases all associated resources.
 	 */
 	virtual ~IRKey() = default;
+
+	/**
+	 * Verifies if this key is software based or hardware based.
+	 *
+	 * @return true if the key is backed by software or false otherwise.
+	 */
+	bool exportable() const {
+		return this->_exportable;
+	}
 
 	/**
 	 * Serializes the key using the Interlock Record format.
@@ -60,10 +71,33 @@ public:
 	 * @note The default implementation always returns false.
 	 */
 	virtual bool serialize(ircommon::IRBuffer & out);
+
+	/**
+	 * Exports the raw key using the format specified each key type.
+	 *
+	 * <p>On success, this method returns true, the raw key is copied to key
+	 * and the actual size o the key is returned in keySize. If this key is not
+	 * exportable, it returns false, the buffer key will remain unchanged and
+	 * keySize will return as 0.</p>
+	 *
+	 * <p>If the key is insufficient to hold the key or is set to NULL, this
+	 * method will return false and the number of bytes required to hold the
+	 * key will be returned in keySize.</p>
+	 *
+	 * @param[out] key The buffer that will receive the key.
+	 * @param[in,out] keySize On input, it is the size of key in bytes. On
+	 * output, it is the actual size of the key in bytes.
+	 * @return true for success or false otherwise.
+	 * @see IRKey::exportable()
+	 */
+	virtual bool exportKey(void * key, std::uint64_t & keySize);
 };
 
 /**
  * Base class for all secret keys.
+ *
+ * <p>It is important to notice that all keys exported by instances of this
+ * class, if supported, will be the raw value of the key.</p>
  *
  * @since 2018.03.12
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
@@ -73,7 +107,7 @@ public:
 	/**
 	 * Creates a new instance of this class.
 	 */
-	IRSecretKey() = default;
+	IRSecretKey(bool exportable): IRKey(exportable) {}
 
 	/**
 	 * Disposes this instance and releases all associated resources.
@@ -96,7 +130,9 @@ public:
 };
 
 /**
- * This class implements the software a based secret key.
+ * This class implements the software a based secret key. It is important to
+ * notice that the raw key stored by this class will be encrypted in memory
+ * in order to minimize the success of potential memory scan attacks.
  *
  * @since 2018.03.12
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
@@ -104,11 +140,32 @@ public:
  */
 class IRSecretKeyImpl: public IRSecretKey {
 private:
+	/**
+	 * The protected key in memory.
+	 */
 	ircommon::crypto::IRProtectedMemory _key;
+
+	/**
+	 * Locks this instance for reading.
+	 */
+	void lock();
+
+	/**
+	 * Unlocks this instance.
+	 */
+	void unlock();
+
+	/**
+	 * Returns a pointer to the raw key.
+	 *
+	 * @return The pointer to the raw key.
+	 */
+	const void * key() const {
+		return this->_key.value();
+	}
 public:
 	/**
-	 * Creates a new instance of this class. Once created, the instance will be
-	 * unlocked for reading.
+	 * Creates a new instance of this class.
 	 *
 	 * @param[in] key The raw key.
 	 * @param[in] keySize The size of the key in bytes.
@@ -125,49 +182,7 @@ public:
 
 	virtual std::uint64_t sizeInBytes();
 
-	/**
-	 * Locks this instance for reading. It also grants exclusive access to the
-	 * key's actual value. Once called, this instance must be released by a call
-	 * to unlock().
-	 *
-	 * <p>It is important to notice that this method should not be called more
-	 * than once in a row by the same thread because it will lead to deadlocks.
-	 * </p>
-	 *
-	 * @except std::runtime_error In case of runtime error.
-	 */
-	void lock();
-
-	/**
-	 * Unlocks this instance. It releases the exclusive lock to the actual value
-	 * of the key.
-	 *
-	 * @except std::runtime_error In case of error.
-	 */
-	void unlock();
-
-	/**
-	 * Returns the raw key value. The actual key value will be available if the
-	 * key is locked for reading.
-	 *
-	 * @return The raw key value or nullptr if it is not available.
-	 * @see lock()
-	 * @see unlock()
-	 */
-	const void * key() const {
-		return this->_key.value();
-	}
-
-	/**
-	 * Copies the value of the key into a buffer.
-	 *
-	 * @param[out] key The output key.
-	 * @param[in] keysize The size of the key in bytes.
-	 * @return The actual number of bytes written or 0 for failure.
-	 * @note Do not call this method if this instance is already locked for
-	 * reading by the same thread. Doing so will lead to deadlocks.
-	 */
-	std::uint64_t copy(void * key, std::uint64_t keySize);
+	virtual bool exportKey(void * key, std::uint64_t & keySize);
 
 	/**
 	 * Serializes the key using the Interlock Record format.
@@ -177,8 +192,6 @@ public:
 	 *
 	 * @param[out] out The output stream.
 	 * @return true on success or false otherwise.
-	 * @note Do not call this method if this instance is already locked for
-	 * reading by the same thread. Doing so will lead to deadlocks.
 	 */
 	virtual bool serialize(ircommon::IRBuffer & out);
 };

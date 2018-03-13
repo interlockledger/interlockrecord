@@ -65,10 +65,14 @@ TEST_F(IRSecretKeyImplTest,Constructor) {
 
 	k = new IRSecretKeyImpl(IRSecretKeyImplTest_SAMPLE,
 			sizeof(IRSecretKeyImplTest_SAMPLE));
-	ASSERT_EQ(sizeof(IRSecretKeyImplTest_SAMPLE), k->sizeInBytes());
-	ASSERT_NE(0, std::memcmp(k->key(), IRSecretKeyImplTest_SAMPLE,
-			sizeof(IRSecretKeyImplTest_SAMPLE)));
 	delete k;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRSecretKeyImplTest, exportable) {
+	IRSecretKeyImpl k(IRSecretKeyImplTest_SAMPLE,
+			sizeof(IRSecretKeyImplTest_SAMPLE));
+	ASSERT_TRUE(k.exportable());
 }
 
 //------------------------------------------------------------------------------
@@ -92,37 +96,34 @@ TEST_F(IRSecretKeyImplTest, sizeInBytes) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRSecretKeyImplTest, lockUnlock) {
-	IRSecretKeyImpl k(IRSecretKeyImplTest_SAMPLE,
-			sizeof(IRSecretKeyImplTest_SAMPLE));
-
-	ASSERT_NE(0, std::memcmp(k.key(), IRSecretKeyImplTest_SAMPLE,
-			sizeof(IRSecretKeyImplTest_SAMPLE)));
-	k.lock();
-	ASSERT_EQ(0, std::memcmp(k.key(), IRSecretKeyImplTest_SAMPLE,
-			sizeof(IRSecretKeyImplTest_SAMPLE)));
-	k.unlock();
-}
-
-//------------------------------------------------------------------------------
-TEST_F(IRSecretKeyImplTest, copy) {
+TEST_F(IRSecretKeyImplTest, exportKey) {
 	IRSecretKeyImpl k(IRSecretKeyImplTest_SAMPLE,
 			sizeof(IRSecretKeyImplTest_SAMPLE));
 	std::uint8_t out[sizeof(IRSecretKeyImplTest_SAMPLE) + 1];
+	std::uint64_t outSize;
 
-	ASSERT_EQ(sizeof(IRSecretKeyImplTest_SAMPLE), k.copy(out,
-			sizeof(IRSecretKeyImplTest_SAMPLE)));
+	outSize = sizeof(IRSecretKeyImplTest_SAMPLE);
+	ASSERT_TRUE(k.exportKey(out, outSize));
+	ASSERT_EQ(sizeof(IRSecretKeyImplTest_SAMPLE), outSize);
 	ASSERT_EQ(0, std::memcmp(out, IRSecretKeyImplTest_SAMPLE,
 			sizeof(IRSecretKeyImplTest_SAMPLE)));
 
-	ASSERT_EQ(sizeof(IRSecretKeyImplTest_SAMPLE), k.copy(out, sizeof(out)));
+	outSize = sizeof(out);
+	ASSERT_TRUE(k.exportKey(out, outSize));
+	ASSERT_EQ(sizeof(IRSecretKeyImplTest_SAMPLE), outSize);
 	ASSERT_EQ(0, std::memcmp(out, IRSecretKeyImplTest_SAMPLE,
 			sizeof(IRSecretKeyImplTest_SAMPLE)));
 
 	for (unsigned int size = 0; size < sizeof(IRSecretKeyImplTest_SAMPLE);
 			size++) {
-		ASSERT_EQ(0, k.copy(out, size));
+		outSize = size;
+		ASSERT_FALSE(k.exportKey(out, outSize));
+		ASSERT_EQ(sizeof(IRSecretKeyImplTest_SAMPLE), outSize);
 	}
+
+	outSize = sizeof(out);
+	ASSERT_FALSE(k.exportKey(nullptr, outSize));
+	ASSERT_EQ(sizeof(IRSecretKeyImplTest_SAMPLE), outSize);
 }
 
 //------------------------------------------------------------------------------

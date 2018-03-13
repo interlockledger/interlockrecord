@@ -53,13 +53,46 @@ void IRKeyTest::TearDown() {
 TEST_F(IRKeyTest, Constructor) {
 	IRKey * k;
 
-	k = new IRKey();
+	k = new IRKey(false);
+	delete k;
+
+	k = new IRKey(true);
 	delete k;
 }
 
 //------------------------------------------------------------------------------
+TEST_F(IRKeyTest, exportable) {
+	IRKey * k;
+
+	k = new IRKey(false);
+	ASSERT_FALSE(k->exportable());
+	delete k;
+
+	k = new IRKey(true);
+	ASSERT_TRUE(k->exportable());
+	delete k;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRKeyTest, exportKey) {
+	IRKey k(false);
+	std::uint64_t outSize;
+	std::uint8_t out[128];
+
+	for (unsigned int size = 0; size <= sizeof(out); size ++) {
+		outSize = size;
+		ASSERT_FALSE(k.exportKey(out, outSize));
+		ASSERT_EQ(0, outSize);
+
+		outSize = size;
+		ASSERT_FALSE(k.exportKey(nullptr, outSize));
+		ASSERT_EQ(0, outSize);
+	}
+}
+
+//------------------------------------------------------------------------------
 TEST_F(IRKeyTest, serialize) {
-	IRKey k;
+	IRKey k(false);
 	ircommon::IRBuffer out;
 
 	ASSERT_FALSE(k.serialize(out));
