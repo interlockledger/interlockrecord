@@ -30,6 +30,7 @@
 #include <ircommon/iltag.h>
 #include <ircommon/iltagstd.h>
 #include <irecordcore/irtypes.h>
+#include <irecordcore/irblock.h>
 
 namespace irecordcore {
 namespace tags {
@@ -229,12 +230,36 @@ public:
  *
  * @since 2018.02.01
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @author Cesar Luiz Feraccin Jun Takada Chino (fchino at opencs.com.br)
  */
 class IRHeaderTag: ircommon::iltags::ILBaseTagListTag {
 public:
 	IRHeaderTag();
 
 	virtual ~IRHeaderTag() = default;
+
+	/**
+	 * Verifies the header's integrity.
+	 *
+	 * @return true if the header is OK or false otherwise.
+	 */
+	bool checkIntegrity();
+
+	/**
+	 * Sets the fields of the header.
+	 *
+	 * @param[in] header The header values.
+	 * @return true for success or false otherwise.
+	 */
+	bool setHeader(const irecordcore::block::IRBlockHeader & header);
+
+	/**
+	 * Extracts the header values from this tag.
+	 *
+	 * @param[out] header The header fields.
+	 * @return true for success or false otherwise.
+	 */
+	bool extractHeader(irecordcore::block::IRBlockHeader & header);
 };
 
 /**
@@ -259,6 +284,8 @@ public:
 	virtual bool deserializeValue(
 			const ircommon::iltags::ILTagFactory & factory,
 			const void * buff, std::uint64_t size);
+
+	// Add the getters (rw/ro).
 };
 
 /**
@@ -276,6 +303,7 @@ protected:
 	virtual bool serializeValue(ircommon::IRBuffer & out) const;
 public:
 	IRBlockTag();
+
 	virtual ~IRBlockTag() = default;
 
 	virtual std::uint64_t size() const;
@@ -283,6 +311,8 @@ public:
 	virtual bool deserializeValue(
 			const ircommon::iltags::ILTagFactory & factory,
 			const void * buff, std::uint64_t size);
+
+	// Add the getters (rw/ro).
 };
 
 /**
