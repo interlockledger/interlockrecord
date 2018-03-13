@@ -80,6 +80,18 @@ void IRSecretKeyImpl::unlock() {
 }
 
 //------------------------------------------------------------------------------
+std::uint64_t  IRSecretKeyImpl::copy(void * key, std::uint64_t keySize) {
+
+	if (keySize < this->sizeInBytes()) {
+		return 0;
+	}
+	this->lock();
+	std::memcpy(key, this->key(), this->sizeInBytes());
+	this->unlock();
+	return this->sizeInBytes();
+}
+
+//------------------------------------------------------------------------------
 bool IRSecretKeyImpl::serialize(ircommon::IRBuffer & out) {
 	bool retval;
 

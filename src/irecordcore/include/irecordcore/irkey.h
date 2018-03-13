@@ -96,10 +96,11 @@ public:
 };
 
 /**
- * Base class for all software based secret keys.
+ * This class implements the software a based secret key.
  *
  * @since 2018.03.12
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note This class is thread safe.
  */
 class IRSecretKeyImpl: public IRSecretKey {
 private:
@@ -111,6 +112,7 @@ public:
 	 *
 	 * @param[in] key The raw key.
 	 * @param[in] keySize The size of the key in bytes.
+	 * @except std::runtime_error In case of runtime error.
 	 */
 	IRSecretKeyImpl(const void * key, std::uint64_t keySize);
 
@@ -124,18 +126,29 @@ public:
 	virtual std::uint64_t sizeInBytes();
 
 	/**
-	 * Locks this instance for reading.
+	 * Locks this instance for reading. It also grants exclusive access to the
+	 * key's actual value. Once called, this instance must be released by a call
+	 * to unlock().
+	 *
+	 * <p>It is important to notice that this method should not be called more
+	 * than once in a row by the same thread because it will lead to deadlocks.
+	 * </p>
+	 *
+	 * @except std::runtime_error In case of runtime error.
 	 */
 	void lock();
 
 	/**
-	 * Unlocks this instance.
+	 * Unlocks this instance. It releases the exclusive lock to the actual value
+	 * of the key.
+	 *
+	 * @except std::runtime_error In case of error.
 	 */
 	void unlock();
 
 	/**
-	 * Returns the raw key. Its value will be public if and only if the key
-	 * is locked.
+	 * Returns the raw key value. The actual key value will be available if the
+	 * key is locked for reading.
 	 *
 	 * @return The raw key value or nullptr if it is not available.
 	 * @see lock()
@@ -146,6 +159,17 @@ public:
 	}
 
 	/**
+	 * Copies the value of the key into a buffer.
+	 *
+	 * @param[out] key The output key.
+	 * @param[in] keysize The size of the key in bytes.
+	 * @return The actual number of bytes written or 0 for failure.
+	 * @note Do not call this method if this instance is already locked for
+	 * reading by the same thread. Doing so will lead to deadlocks.
+	 */
+	std::uint64_t copy(void * key, std::uint64_t keySize);
+
+	/**
 	 * Serializes the key using the Interlock Record format.
 	 *
 	 * <p>The serialization of this implementation is the raw value of the key
@@ -153,6 +177,8 @@ public:
 	 *
 	 * @param[out] out The output stream.
 	 * @return true on success or false otherwise.
+	 * @note Do not call this method if this instance is already locked for
+	 * reading by the same thread. Doing so will lead to deadlocks.
 	 */
 	virtual bool serialize(ircommon::IRBuffer & out);
 };
