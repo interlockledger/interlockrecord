@@ -102,21 +102,21 @@ TEST_F(IRBase64AlphabetTest, getChar) {
 
 	map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	a = new IRBase64Alphabet(false);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(map[i], a->getChar(i));
 	}
 	delete a;
 
 	map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 	a = new IRBase64Alphabet(true);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(map[i], a->getChar(i));
 	}
 	delete a;
 
 	map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$%";
 	a = new IRBase64Alphabet('$', '%');
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(map[i], a->getChar(i));
 	}
 	delete a;
@@ -129,7 +129,7 @@ TEST_F(IRBase64AlphabetTest, getValue) {
 
 	map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	a = new IRBase64Alphabet(false);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(i, a->getValue(map[i]));
 	}
 	for (int i = 0; i < 256; i++) {
@@ -141,7 +141,7 @@ TEST_F(IRBase64AlphabetTest, getValue) {
 
 	map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 	a = new IRBase64Alphabet(true);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(i, a->getValue(map[i]));
 	}
 	for (int i = 0; i < 256; i++) {
@@ -153,7 +153,7 @@ TEST_F(IRBase64AlphabetTest, getValue) {
 
 	map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$%";
 	a = new IRBase64Alphabet('$', '%');
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(i, a->getValue(map[i]));
 	}
 	for (int i = 0; i < 256; i++) {

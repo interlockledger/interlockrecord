@@ -66,7 +66,7 @@ bool IRCodec::decode(const std::string & src, int srcStart, int srcSize,
 	if ((srcStart < 0) || (dstSize < 0) || (!dst)) {
 		return false;
 	}
-	if (src.size() < (srcStart + srcSize)) {
+	if (src.size() < ((unsigned int)(srcStart + srcSize))) {
 		return false;
 	}
 	if (dstSize < this->getDecodedSize(srcSize)) {
@@ -86,8 +86,8 @@ bool IRCodec::decode(const std::string & src, int srcStart, int srcSize,
 //------------------------------------------------------------------------------
 IRBase2NCodec::IRBase2NCodec(std::shared_ptr<IRAlphabet> alphabet, int blockSize,
 		int paddingChar, bool ignoreSpaces):
-		IRCodec(), _blockSize(blockSize), _paddingChar(paddingChar),
-		_alphabet(alphabet), _ignoreSpaces(ignoreSpaces) {
+				IRCodec(), _alphabet(alphabet), _blockSize(blockSize),
+				_paddingChar(paddingChar), _ignoreSpaces(ignoreSpaces) {
 
 	int charSize = 1;
 	while ((charSize < 8) && ((0x1 << charSize) != this->_alphabet->size())) {
@@ -238,7 +238,6 @@ int IRBase2NCodec::getEncodedSize(int srcSize) const {
 
 //------------------------------------------------------------------------------
 int IRBase2NCodec::getDecodedSize(int srcSize) const {
-	int decSize;
 
 	// Padding and ignored characters are not considered.
 	return (srcSize * this->characterSize()) / 8;

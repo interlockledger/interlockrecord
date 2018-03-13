@@ -67,12 +67,12 @@ TEST_F(IRGenericAlphabetTest, getValue) {
 	std::string map("0123456789");
 	IRGenericAlphabet a(map.c_str(), map.size());
 
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(i, a.getValue(map[i]));
 	}
 
 	for (int i = 0; i < 256; i++) {
-		if (map.find_first_of(i) == -1) {
+		if (map.find_first_of(i) == ((std::string::size_type)-1)) {
 			ASSERT_EQ(-1, a.getValue(i));
 		} else {
 			ASSERT_NE(-1, a.getValue(i));
@@ -85,7 +85,7 @@ TEST_F(IRGenericAlphabetTest, getChar) {
 	std::string map("0123456789");
 	IRGenericAlphabet a(map.c_str(), map.size());
 
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(map[i], a.getChar(i));
 	}
 }

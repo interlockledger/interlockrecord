@@ -153,7 +153,7 @@ TEST_F(IRCodecTest, removePadding) {
 	std::string src;
 
 	src = "0123456789";
-	for (int i = 0; i <= src.size(); i++) {
+	for (unsigned int i = 0; i <= src.size(); i++) {
 		ASSERT_EQ(i, c.removePaddingExt(src.c_str(), i));
 	}
 }

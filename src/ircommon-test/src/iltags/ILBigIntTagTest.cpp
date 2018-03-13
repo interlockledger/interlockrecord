@@ -78,7 +78,7 @@ TEST_F(ILBigIntTagTest, serialize) {
 	IRBuffer exp;
 	std::uint8_t buff[16];
 
-	for (int i = 0; i < sizeof(buff); i++) {
+	for (unsigned int i = 0; i < sizeof(buff); i++) {
 		buff[i] = i;
 	}
 	ASSERT_TRUE(t.value().set(buff, sizeof(buff)));

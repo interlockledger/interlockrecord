@@ -66,7 +66,7 @@ TEST_F(ILILIntArrayTagTest, size) {
 	std::uint64_t v = 0xFF;
 	for(int i = 0; i < 8; i++) {
 		std::uint64_t expected = ILInt::size(t.count());
-		for(int j = 0; j < t.count(); j++) {
+		for(unsigned int j = 0; j < t.count(); j++) {
 			expected += ILInt::size(t[j]);
 		}
 		ASSERT_EQ(expected, t.size());
@@ -103,7 +103,7 @@ TEST_F(ILILIntArrayTagTest, serialize) {
 	ASSERT_TRUE(exp.writeILInt(ILTag::TAG_ILINT64_ARRAY));
 	ASSERT_TRUE(exp.writeILInt(t.size()));
 	ASSERT_TRUE(exp.writeILInt(t.count()));
-	for(int i = 0; i < t.count(); i++) {
+	for(unsigned int i = 0; i < t.count(); i++) {
 		ASSERT_TRUE(exp.writeILInt(t[i]));
 	}
 	ASSERT_EQ(exp.size(), out.size());
@@ -137,7 +137,7 @@ TEST_F(ILILIntArrayTagTest, deserialize) {
 	t.clear();
 	ASSERT_TRUE(t.deserializeValue(f, src.roBuffer(), src.size()));
 	ASSERT_EQ(8, t.count());
-	for(int i = 0; i < t.count(); i++) {
+	for(unsigned int i = 0; i < t.count(); i++) {
 		ASSERT_EQ(values[i], t[i]);
 	}
 }

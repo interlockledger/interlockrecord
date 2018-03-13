@@ -39,15 +39,14 @@ using namespace ircommon;
 // Class IRBuffer
 //------------------------------------------------------------------------------
 IRBuffer::IRBuffer(const void * buff, std::uint64_t buffSize):
-		_secure(false), _inc(0), _buff(nullptr),
-		_robuff((const std::uint8_t *)buff),
-		_size(buffSize), _buffSize(buffSize), _position(0) {
+		_buff(nullptr),	_robuff((const std::uint8_t *)buff),
+		_size(buffSize), _buffSize(buffSize), _position(0),
+		_inc(0), _secure(false) {
 }
 
 //------------------------------------------------------------------------------
 IRBuffer::IRBuffer(std::uint64_t reserved, bool secure, std::uint64_t inc):
-		_secure(secure), _inc(inc), _robuff(nullptr),
-		_size(0), _position(0){
+		_robuff(nullptr),_size(0), _position(0), _inc(inc), _secure(secure) {
 
 	if (inc == 0) {
 		throw std::invalid_argument("inc cannot be 0");
@@ -66,7 +65,6 @@ IRBuffer::~IRBuffer() {
 
 //------------------------------------------------------------------------------
 bool IRBuffer::setSize(std::uint64_t size) {
-	bool retval;
 
 	if (this->readOnly()) {
 		return false;
@@ -95,7 +93,7 @@ void IRBuffer::setPosition(std::uint64_t position) {
 }
 
 //------------------------------------------------------------------------------
-std::uint64_t IRBuffer::skip(std::int64_t delta) {
+std::uint64_t IRBuffer::skip(std::uint64_t delta) {
 	std::uint64_t newPos;
 	std::uint64_t retval;
 
@@ -112,11 +110,10 @@ std::uint64_t IRBuffer::skip(std::int64_t delta) {
 }
 
 //------------------------------------------------------------------------------
-std::uint64_t IRBuffer::rewind(std::int64_t delta) {
+std::uint64_t IRBuffer::rewind(std::uint64_t delta) {
 	std::uint64_t newPos;
 	std::uint64_t retval;
 
-	// TODO Optimize later
 	if (delta < this->position()) {
 		newPos = this->_position - delta;
 		retval = delta;
@@ -156,7 +153,6 @@ bool IRBuffer::reserve(std::uint64_t newSize) {
 
 //------------------------------------------------------------------------------
 bool IRBuffer::write(const void * buff, std::uint64_t buffSize) {
-	std::uint64_t w;
 
 	if (this->readOnly()) {
 		return false;

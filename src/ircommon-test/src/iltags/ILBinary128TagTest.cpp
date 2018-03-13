@@ -66,7 +66,7 @@ TEST_F(ILBinary128TagTest, serialize) {
 	IRBuffer exp;
 	std::uint8_t buff[16];
 
-	for (int i = 0; i < sizeof(buff); i++) {
+	for (unsigned int i = 0; i < sizeof(buff); i++) {
 		buff[i] = i;
 	}
 	ASSERT_TRUE(t.setValue(buff, sizeof(buff)));

@@ -66,7 +66,7 @@ TEST_F(ILStringTagTest,Constructor) {
 TEST_F(ILStringTagTest, size) {
 	ILStringTag t;
 
-	for (int size = 0; size < std::strlen(ILStringTagTest_SAMPLE); size++) {
+	for (unsigned int size = 0; size < std::strlen(ILStringTagTest_SAMPLE); size++) {
 		t.setValue(ILStringTagTest_SAMPLE, size);
 		ASSERT_EQ(size, t.size());
 	}
@@ -95,7 +95,7 @@ TEST_F(ILStringTagTest, getSetValueCStrInt) {
 	ILStringTag t;
 	std::string s;
 
-	for (int size = 0; size < std::strlen(ILStringTagTest_SAMPLE); size++) {
+	for (unsigned int size = 0; size < std::strlen(ILStringTagTest_SAMPLE); size++) {
 		t.setValue(ILStringTagTest_SAMPLE, size);
 		s.assign(ILStringTagTest_SAMPLE, size);
 		ASSERT_STREQ(s.c_str(), t.value().c_str());

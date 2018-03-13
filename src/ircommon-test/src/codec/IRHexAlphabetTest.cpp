@@ -109,7 +109,7 @@ TEST_F(IRHexAlphabetTest, getValue) {
 
 	map = "0123456789ABCDEF0123456789abcdef";
 	a = new IRHexAlphabet(false);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(i % 16, a->getValue(map[i]));
 	}
 	for (int i = 0; i < 256; i++) {
@@ -121,7 +121,7 @@ TEST_F(IRHexAlphabetTest, getValue) {
 
 	map = "0123456789ABCDEF0123456789abcdef";
 	a = new IRHexAlphabet(true);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(i % 16, a->getValue(map[i]));
 	}
 	for (int i = 0; i < 256; i++) {

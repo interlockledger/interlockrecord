@@ -68,7 +68,7 @@ TEST_F(ILInt32TagTest, serialize) {
 	std::int32_t v;
 
 	v = 0;
-	for (int i = 0; i < sizeof(v); i++) {
+	for (unsigned int i = 0; i < sizeof(v); i++) {
 		v = (v << 8) | i;
 	}
 	t.setValue(v);
@@ -88,7 +88,7 @@ TEST_F(ILInt32TagTest, deserializeValue) {
 	ILTagFactory f;
 
 	v = 0;
-	for (int i = 0; i < sizeof(v); i++) {
+	for (unsigned int i = 0; i < sizeof(v); i++) {
 		v = (v << 8) | i;
 	}
 	ASSERT_TRUE(src.writeInt(v));

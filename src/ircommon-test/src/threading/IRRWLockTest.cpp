@@ -123,7 +123,7 @@ TEST_F(IRRWLockTest, Sync) {
 		}));
 	}
 
-	for (int i = 0; i < threads.size(); i++) {
+	for (unsigned int i = 0; i < threads.size(); i++) {
 		threads[i]->join();
 	}
 
@@ -131,7 +131,7 @@ TEST_F(IRRWLockTest, Sync) {
 	auto lastTStamp =
 			std::chrono::high_resolution_clock::time_point(std::chrono::high_resolution_clock::duration(0));
 	std::uint64_t mDuration = UINT64_MAX;
-	for (int i = 0; i < log.size(); i++) {
+	for (unsigned int i = 0; i < log.size(); i++) {
 		auto timing = std::chrono::duration_cast<std::chrono::milliseconds>(log[i].tstamp - lastTStamp);
 		//std::cout << log[i].value << " " << timing.count() << "\n";
 		if (log[i].value < 0) {

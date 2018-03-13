@@ -851,7 +851,7 @@ public:
 class IRJsonStringTokenizer: public IRJsonTokenizer {
 private:
 	std::string _in;
-	int _pos;
+	std::uint64_t _pos;
 protected:
 	virtual int getc();
 	virtual void ungetc();
@@ -891,7 +891,7 @@ public:
 	 *
 	 * @return The current reading point.
 	 */
-	int position() const {
+	std::uint64_t position() const {
 		return this->_pos;
 	}
 

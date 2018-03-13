@@ -92,7 +92,7 @@ TEST_F(IRProtectedMemoryTest, protectUnprotect) {
 	ASSERT_NE(0, std::memcmp(exp, p.value(), p.size()));
 
 	// Set a value
-	for (int i = 0; i < sizeof(exp); i++) {
+	for (unsigned int i = 0; i < sizeof(exp); i++) {
 		exp[i] = i;
 	}
 	ASSERT_TRUE(p.lock());

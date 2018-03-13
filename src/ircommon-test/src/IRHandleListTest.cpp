@@ -86,7 +86,7 @@ TEST_F(IRHandleListTest, insert) {
 		ASSERT_TRUE(l.contains(id1));
 	}
 	ASSERT_EQ(16, l.size());
-	for (int i = 0; i < handles.size(); i++) {
+	for (unsigned int i = 0; i < handles.size(); i++) {
 		int v;
 		ASSERT_TRUE(l.get(handles[i], v));
 		ASSERT_EQ(i, v);
@@ -104,7 +104,7 @@ TEST_F(IRHandleListTest, remove) {
 		id = l.insert(i);
 		handles.push_back(id);
 	}
-	for (int i = 0; i < handles.size(); i++) {
+	for (unsigned int i = 0; i < handles.size(); i++) {
 		id = handles[i];
 		ASSERT_TRUE(l.remove(id));
 		ASSERT_FALSE(l.contains(id));
@@ -176,7 +176,6 @@ TEST_F(IRHandleListTest, contains) {
 //------------------------------------------------------------------------------
 TEST_F(IRHandleListTest, listHandles) {
 	IRHandleList<int> l(0);
-	std::uint32_t id;
 	std::vector<std::uint32_t> ids;
 	std::set<std::uint32_t> dups;
 	int i;
@@ -186,7 +185,7 @@ TEST_F(IRHandleListTest, listHandles) {
 	}
 	l.listHandles(ids);
 	ASSERT_EQ(16, ids.size());
-	for (int i = 0; i < ids.size(); i++) {
+	for (unsigned int i = 0; i < ids.size(); i++) {
 		ASSERT_TRUE(l.contains(ids[i]));
 		ASSERT_EQ(dups.end(), dups.find(ids[i]));
 		dups.insert(ids[i]);
@@ -242,7 +241,7 @@ TEST_F(IRHandleListTest, Concurrency) {
 				} while (l.size() > 0);
 			})));
 
-	for (int i = 0; i < threads.size(); i++){
+	for (unsigned int i = 0; i < threads.size(); i++){
 		threads[i]->join();
 	}
 }

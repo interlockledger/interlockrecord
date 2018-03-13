@@ -67,7 +67,7 @@ TEST_F(IRARC4Test,Constructor) {
 	delete c;
 
 	c = new IRARC4(IRARC4Test_KEY, sizeof(IRARC4Test_KEY));
-	for (int i = 0; i < sizeof(IRARC4Test_KEYSTREAM); i++) {
+	for (unsigned int i = 0; i < sizeof(IRARC4Test_KEYSTREAM); i++) {
 		ASSERT_EQ(IRARC4Test_KEYSTREAM[i], c->next());
 	}
 	delete c;
@@ -84,7 +84,7 @@ TEST_F(IRARC4Test,setKey) {
 
 	// Set the key
 	c.setKey(IRARC4Test_KEY, sizeof(IRARC4Test_KEY));
-	for (int i = 0; i < sizeof(IRARC4Test_KEYSTREAM); i++) {
+	for (unsigned int i = 0; i < sizeof(IRARC4Test_KEYSTREAM); i++) {
 		ASSERT_EQ(IRARC4Test_KEYSTREAM[i], c.next());
 	}
 }
@@ -103,7 +103,7 @@ TEST_F(IRARC4Test, remixKey) {
 	c.setKey(IRARC4Test_KEY, sizeof(IRARC4Test_KEY));
 	c.remixKey(IRARC4Test_KEY, sizeof(IRARC4Test_KEY));
 	int count = 0;
-	for (int i = 0; i < sizeof(IRARC4Test_KEYSTREAM); i++) {
+	for (unsigned int i = 0; i < sizeof(IRARC4Test_KEYSTREAM); i++) {
 		if (IRARC4Test_KEYSTREAM[i] != c.next()) {
 			count++;
 		}
@@ -141,7 +141,7 @@ TEST_F(IRARC4Test, saveLoad) {
 TEST_F(IRARC4Test, next) {
 	IRARC4 c(IRARC4Test_KEY, sizeof(IRARC4Test_KEY));
 
-	for (int i = 0; i < sizeof(IRARC4Test_KEYSTREAM); i++) {
+	for (unsigned int i = 0; i < sizeof(IRARC4Test_KEYSTREAM); i++) {
 		ASSERT_EQ(IRARC4Test_KEYSTREAM[i], c.next());
 	}
 }
@@ -166,7 +166,7 @@ TEST_F(IRARC4Test, apply) {
 	std::uint8_t exp[256];
 	std::uint8_t buff[sizeof(exp)];
 
-	for (int i = 0; i < sizeof(exp); i++) {
+	for (unsigned int i = 0; i < sizeof(exp); i++) {
 		exp[i] = i;
 	}
 	std::memcpy(buff, exp, sizeof(exp));

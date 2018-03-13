@@ -350,7 +350,6 @@ TEST_F(ILBaseTagListTagTest, insertPtrLimited) {
 //------------------------------------------------------------------------------
 TEST_F(ILBaseTagListTagTest, remove) {
 	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
-	ILTag * t;
 
 	ASSERT_EQ(0, tag.count());
 	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 0, 1)));
@@ -385,7 +384,6 @@ TEST_F(ILBaseTagListTagTest, remove) {
 //------------------------------------------------------------------------------
 TEST_F(ILBaseTagListTagTest, clear) {
 	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
-	ILTag * t;
 
 	ASSERT_EQ(0, tag.count());
 	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 0, 1)));
@@ -406,7 +404,6 @@ TEST_F(ILBaseTagListTagTest, clear) {
 TEST_F(ILBaseTagListTagTest, accessOperatorRO) {
 	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
 	const ILBaseTagListTag & roTag(tag);
-	ILTag * t;
 
 	ASSERT_EQ(0, tag.count());
 	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 0, 1)));
@@ -423,7 +420,6 @@ TEST_F(ILBaseTagListTagTest, accessOperatorRO) {
 //------------------------------------------------------------------------------
 TEST_F(ILBaseTagListTagTest, accessOperatorRW) {
 	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
-	ILTag * t;
 
 	ASSERT_EQ(0, tag.count());
 	ASSERT_TRUE(tag.add(ILBaseTagListTagTest::createSample(0xFF + 0, 1)));
@@ -440,7 +436,6 @@ TEST_F(ILBaseTagListTagTest, accessOperatorRW) {
 //------------------------------------------------------------------------------
 TEST_F(ILBaseTagListTagTest, serialize) {
 	ILBaseTagListTag tag(ILTag::TAG_ILTAG_ARRAY);
-	ILTag * t;
 	IRBuffer out;
 	IRBuffer expected;
 
@@ -452,7 +447,7 @@ TEST_F(ILBaseTagListTagTest, serialize) {
 	// Serialize by hand
 	ASSERT_TRUE(expected.writeILInt(tag.id()));
 	ASSERT_TRUE(expected.writeILInt(tag.size()));
-	for (int i = 0; i < tag.count(); i++) {
+	for (unsigned int i = 0; i < tag.count(); i++) {
 		ASSERT_TRUE(tag[i]->serialize(expected));
 	}
 
@@ -479,7 +474,7 @@ TEST_F(ILBaseTagListTagTest, deserializeValue) {
 	ASSERT_TRUE(tag.deserializeValue(f, serialized.roBuffer(), serialized.size()));
 
 	ASSERT_EQ(256, tag.count());
-	for (int i = 0; i < tag.count(); i++) {
+	for (unsigned int i = 0; i < tag.count(); i++) {
 		ASSERT_EQ(0xFF + i, tag[i]->id());
 		ASSERT_EQ(i, tag[i]->size());
 	}

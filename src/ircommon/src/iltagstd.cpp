@@ -90,7 +90,7 @@ std::uint64_t ILILIntTag::size() const {
 //------------------------------------------------------------------------------
 bool ILILIntTag::deserializeValue(const ILTagFactory & factory,
 			const void * buff, std::uint64_t size) {
-	return (ILInt::decode(buff, size, &(this->_value)) == size);
+	return ((unsigned int)(ILInt::decode(buff, size, &(this->_value))) == size);
 }
 
 //==============================================================================
@@ -125,7 +125,6 @@ std::uint64_t ILBigDecimalTag::size() const {
 //------------------------------------------------------------------------------
 bool ILBigDecimalTag::deserializeValue(const ILTagFactory & factory,
 		const void * buff, std::uint64_t size) {
-	std::uint64_t v;
 
 	if (size < sizeof(this->_scale)){
 		return false;

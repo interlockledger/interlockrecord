@@ -160,15 +160,16 @@ TEST_F(IRBase2NCodecTest, ConstructorFail) {
 	char map[256];
 	IRBase2NCodec * c;
 
-	for (int i = 0; i < sizeof(map); i++) {
+	for (unsigned int i = 0; i < sizeof(map); i++) {
 		map[i] = i;
 	}
-	for (int i = 3; i <= sizeof(map); i++) {
+	for (unsigned int i = 3; i <= sizeof(map); i++) {
 		if ((i != 2) && (i != 4) && (i != 8) && (i != 16) && (i != 32) &&
 				(i != 64) && (i != 128)) {
 			try {
 				c = new IRBase2NCodec(std::make_shared<IRGenericAlphabet>(map, i));
 				FAIL();
+				delete c;
 			} catch (std::invalid_argument & e) {}
 		}
 	}
@@ -180,7 +181,7 @@ TEST_F(IRBase2NCodecTest, ConstructorSizes) {
 	char map[256];
 	IRBase2NCodec * c;
 
-	for (int i = 0; i < sizeof(map); i++) {
+	for (unsigned int i = 0; i < sizeof(map); i++) {
 		map[i] = i;
 	}
 
@@ -603,7 +604,6 @@ TEST_F(IRBase2NCodecTest, encodeDecode64NoPadding) {
 	int decSize;
 	std::string enc;
 
-	int dstSize;
 	for (int srcSize = 0; srcSize <= 1024; srcSize++) {
 		std::generate_n(src, srcSize, rand);
 		enc.clear();
@@ -623,7 +623,6 @@ TEST_F(IRBase2NCodecTest, encodeDecode64Padding) {
 	int decSize;
 	std::string enc;
 
-	int dstSize;
 	for (int srcSize = 0; srcSize <= 1024; srcSize++) {
 		std::generate_n(src, srcSize, rand);
 		enc.clear();
@@ -643,7 +642,6 @@ TEST_F(IRBase2NCodecTest, encodeDecode32NoPadding) {
 	int decSize;
 	std::string enc;
 
-	int dstSize;
 	for (int srcSize = 0; srcSize <= 1024; srcSize++) {
 		std::generate_n(src, srcSize, rand);
 		enc.clear();
@@ -663,7 +661,6 @@ TEST_F(IRBase2NCodecTest, encodeDecode32Padding) {
 	int decSize;
 	std::string enc;
 
-	int dstSize;
 	for (int srcSize = 0; srcSize <= 1024; srcSize++) {
 		std::generate_n(src, srcSize, rand);
 		enc.clear();

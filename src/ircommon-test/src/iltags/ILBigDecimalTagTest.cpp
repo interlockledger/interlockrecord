@@ -79,11 +79,11 @@ TEST_F(ILBigDecimalTagTest, size) {
 	ILBigDecimalTag t;
 	std::uint8_t buff[32];
 
-	for (int i = 0; i < sizeof(buff); i++) {
+	for (unsigned int i = 0; i < sizeof(buff); i++) {
 		buff[i] = i;
 	}
 
-	for (int i = 0; i < sizeof(buff); i++) {
+	for (unsigned int i = 0; i < sizeof(buff); i++) {
 		ASSERT_TRUE(t.setIntegral(buff, i));
 		ASSERT_EQ(sizeof(std::int32_t) + i, t.size());
 	}
@@ -96,11 +96,11 @@ TEST_F(ILBigDecimalTagTest, serialize) {
 	IRBuffer out;
 	IRBuffer exp;
 
-	for (int i = 0; i < sizeof(buff); i++) {
+	for (unsigned int i = 0; i < sizeof(buff); i++) {
 		buff[i] = i;
 	}
 
-	for (int i = 0; i < sizeof(buff); i++) {
+	for (unsigned int i = 0; i < sizeof(buff); i++) {
 		out.setSize(0);
 		exp.setSize(0);
 
@@ -125,11 +125,11 @@ TEST_F(ILBigDecimalTagTest, deserializeValue) {
 	IRBuffer exp;
 	ILTagFactory f;
 
-	for (int i = 0; i < sizeof(buff); i++) {
+	for (unsigned int i = 0; i < sizeof(buff); i++) {
 		buff[i] = i;
 	}
 
-	for (int i = 0; i < sizeof(buff); i++) {
+	for (unsigned int i = 0; i < sizeof(buff); i++) {
 		exp.setSize(0);
 		ASSERT_TRUE(exp.writeInt((std::int32_t)i));
 		ASSERT_TRUE(exp.write(t.integral().roBuffer(), t.integral().size()));

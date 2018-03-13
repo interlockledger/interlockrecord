@@ -77,7 +77,7 @@ TEST_F(ILBasicFixedOpaqueTagTest, getSetValue) {
 	ILBasicFixedOpaqueTag<0xFF, 8> t;
 	std::uint8_t buff[16];
 
-	for (int i = 0; i < sizeof(buff); i++) {
+	for (unsigned int i = 0; i < sizeof(buff); i++) {
 		buff[i] = i;
 	}
 
@@ -98,7 +98,7 @@ TEST_F(ILBasicFixedOpaqueTagTest, serialize) {
 	IRBuffer out;
 	IRBuffer exp;
 
-	for (int i = 0; i < sizeof(buff); i++) {
+	for (unsigned int i = 0; i < sizeof(buff); i++) {
 		buff[i] = i;
 	}
 
@@ -119,7 +119,7 @@ TEST_F(ILBasicFixedOpaqueTagTest, deserializeValue) {
 	std::uint8_t buff[16];
 	ILTagFactory f;
 
-	for (int i = 0; i < sizeof(buff); i++) {
+	for (unsigned int i = 0; i < sizeof(buff); i++) {
 		buff[i] = i;
 	}
 

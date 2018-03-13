@@ -131,7 +131,7 @@ std::uint64_t ILBaseTagListTag::size() const {
 	std::uint64_t total;
 
 	total = 0;
-	for (int i = 0; i < this->count(); i++) {
+	for (unsigned int i = 0; i < this->count(); i++) {
 		if (this->_list[i] == nullptr) {
 			total += 1;
 		} else {
@@ -145,7 +145,6 @@ std::uint64_t ILBaseTagListTag::size() const {
 bool ILBaseTagListTag::deserializeValue(const ILTagFactory & factory,
 			const void * buff, std::uint64_t size) {
 	IRBuffer inp(buff, size);
-	std::uint64_t count;
 
 	this->clear();
 	while (inp.available() != 0) {

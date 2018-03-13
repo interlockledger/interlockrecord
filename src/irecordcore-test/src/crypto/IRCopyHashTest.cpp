@@ -66,7 +66,6 @@ TEST_F(IRCopyHashTest,Constructor) {
 //------------------------------------------------------------------------------
 TEST_F(IRCopyHashTest, size) {
 	IRCopyHash h;
-	std::uint8_t out[20];
 	std::uint64_t size;
 	const std::uint8_t * p;
 	const std::uint8_t * pEnd;

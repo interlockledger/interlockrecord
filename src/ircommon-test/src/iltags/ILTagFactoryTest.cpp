@@ -146,7 +146,7 @@ TEST_F(ILTagFactoryTest, deserialize) {
 	ILTag * t;
 	ILRawTag * r;
 
-	for (int i = 0; i < sizeof(buff); i++) {
+	for (unsigned int i = 0; i < sizeof(buff); i++) {
 		buff[i] = i;
 	}
 
@@ -259,11 +259,10 @@ TEST_F(ILTagFactoryTest, deserializeStrict) {
 	IRBuffer b;
 	std::uint8_t buff[256];
 	ILTag * t;
-	ILRawTag * r;
 
 	f.setStrictMode(true);
 
-	for (int i = 0; i < sizeof(buff); i++) {
+	for (unsigned int i = 0; i < sizeof(buff); i++) {
 		buff[i] = i;
 	}
 

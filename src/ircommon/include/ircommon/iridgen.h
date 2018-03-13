@@ -56,7 +56,7 @@ public:
 	 *
 	 * @param[in] seed The generator seed.
 	 */
-	IRIDGenerator(std::uint32_t seed = 0):_obfuscator(seed), _counter(0){
+	IRIDGenerator(std::uint32_t seed = 0): _counter(0), _obfuscator(seed){
 	}
 
 	/**

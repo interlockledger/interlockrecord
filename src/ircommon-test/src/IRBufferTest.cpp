@@ -508,8 +508,6 @@ TEST_F(IRBufferTest, readRW) {
 //------------------------------------------------------------------------------
 TEST_F(IRBufferTest, writeRO) {
 	IRBuffer b(IRBufferTest_SAMPLE, IRBufferTest_SAMPLE_SIZE);
-	char buff[512];
-	std::uint64_t read;
 
 	b.setPosition(1);
 	ASSERT_EQ(1, b.position());
@@ -524,11 +522,9 @@ TEST_F(IRBufferTest, writeRO) {
 //------------------------------------------------------------------------------
 TEST_F(IRBufferTest, writeRW) {
 	const char * p;
-	const char * pEnd;
 	IRBuffer b;
 
 	p = IRBufferTest_SAMPLE;
-	pEnd = p + IRBufferTest_SAMPLE_SIZE;
 
 	ASSERT_TRUE(b.write(p, 0));
 	ASSERT_EQ(0, b.size());

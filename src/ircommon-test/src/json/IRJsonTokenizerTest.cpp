@@ -35,7 +35,7 @@ using namespace ircommon::json;
 class IRJsonDummyTokenizer: public IRJsonTokenizer {
 private:
 	std::string _buff;
-	int _pos;
+	std::uint64_t _pos;
 	bool _got;
 protected:
 	virtual int getc();
@@ -61,7 +61,7 @@ public:
 		return this->_buff;
 	}
 
-	int pos(){
+	std::uint64_t pos(){
 		return this->_pos;
 	}
 

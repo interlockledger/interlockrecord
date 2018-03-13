@@ -225,7 +225,7 @@ public:
 	 * @return The number of skipped bytes.
 	 * @note This operation will never pass the end of data.
 	 */
-	std::uint64_t skip(std::int64_t delta);
+	std::uint64_t skip(std::uint64_t delta);
 
 	/**
 	 * Moves the read/write position backward a given number of bytes.
@@ -233,7 +233,7 @@ public:
 	 * @param[in] delta The number of bytes to skip.
 	 * @return The number of skipped bytes.
 	 */
-	std::uint64_t rewind(std::int64_t delta);
+	std::uint64_t rewind(std::uint64_t delta);
 
 	/**
 	 * Prepares the internal buffer to grow up to a certain number of bytes.

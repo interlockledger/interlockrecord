@@ -108,7 +108,7 @@ TEST_F(IRBase32AlphabetTest, getValue) {
 
 	map = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567abcdefghijklmnopqrstuvwxyz234567";
 	a = new IRBase32Alphabet(false, false);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(i % 32, a->getValue(map[i]));
 	}
 	for (int i = 0; i < 256; i++) {
@@ -119,7 +119,7 @@ TEST_F(IRBase32AlphabetTest, getValue) {
 	delete a;
 
 	a = new IRBase32Alphabet(true, false);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(i % 32, a->getValue(map[i]));
 	}
 	for (int i = 0; i < 256; i++) {
@@ -131,7 +131,7 @@ TEST_F(IRBase32AlphabetTest, getValue) {
 
 	map = "0123456789ABCDEFGHIJKLMNOPQRSTUV0123456789abcdefghijklmnopqrstuv";
 	a = new IRBase32Alphabet(false, true);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(i % 32, a->getValue(map[i]));
 	}
 	for (int i = 0; i < 256; i++) {
@@ -142,7 +142,7 @@ TEST_F(IRBase32AlphabetTest, getValue) {
 	delete a;
 
 	a = new IRBase32Alphabet(true, true);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(i % 32, a->getValue(map[i]));
 	}
 	for (int i = 0; i < 256; i++) {
@@ -161,28 +161,28 @@ TEST_F(IRBase32AlphabetTest, getChar) {
 
 	map = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 	a = new IRBase32Alphabet(false, false);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(map[i], a->getChar(i));
 	}
 	delete a;
 
 	map = "abcdefghijklmnopqrstuvwxyz234567";
 	a = new IRBase32Alphabet(true, false);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(map[i], a->getChar(i));
 	}
 	delete a;
 
 	map = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
 	a = new IRBase32Alphabet(false, true);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(map[i], a->getChar(i));
 	}
 	delete a;
 
 	map = "0123456789abcdefghijklmnopqrstuv";
 	a = new IRBase32Alphabet(true, true);
-	for (int i = 0; i < map.size(); i++) {
+	for (unsigned int i = 0; i < map.size(); i++) {
 		ASSERT_EQ(map[i], a->getChar(i));
 	}
 	delete a;

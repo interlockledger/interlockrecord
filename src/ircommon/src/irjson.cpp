@@ -308,7 +308,7 @@ void IRJsonSerializer::serializeString(const std::string & v, std::string & out)
 
 	// TODO escaped unicode is not supported yet.
 	out.push_back('\"');
-	for (int i = 0; i < v.size(); i++) {
+	for (unsigned int i = 0; i < v.size(); i++) {
 		int c = v[i] & 0xFF;
 		switch (c) {
 		case '\"':
@@ -375,7 +375,7 @@ void IRJsonSerializer::serializeObject(const IRJsonObject & v, std::string & out
 	out.push_back('{');
 	this->endLine(out);
 	this->levelUp();
-	for (int i = 0; i < attr.size(); i++) {
+	for (unsigned int i = 0; i < attr.size(); i++) {
 		this->beginLine(out);
 		this->serializeString(attr[i], out);
 		out.push_back(':');
@@ -573,6 +573,8 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractString() {
 				return IRJsonTokenizer::INVALID;
 			}
 			break;
+		default:
+			break;
 		}
 	} while (state != ST_END);
 	return IRJsonTokenizer::VAL_STRING;
@@ -689,6 +691,8 @@ IRJsonTokenizer::TokenType IRJsonTokenizer::extractNumeric(int initialChar) {
 				this->_token.pop_back();
 				state = ST_END;
 			}
+			break;
+		default:
 			break;
 		}
 	} while (state != ST_END);
