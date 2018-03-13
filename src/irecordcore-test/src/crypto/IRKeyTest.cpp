@@ -25,6 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRKeyTest.h"
+#include <irecordcore/irkey.h>
+#include <ircommon/irbuffer.h>
+
+using namespace irecordcore;
+using namespace irecordcore::crypto;
 
 //==============================================================================
 // class IRKeyTest
@@ -45,10 +50,21 @@ void IRKeyTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRKeyTest,Constructor) {
+TEST_F(IRKeyTest, Constructor) {
+	IRKey * k;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	k = new IRKey();
+	delete k;
 }
+
+//------------------------------------------------------------------------------
+TEST_F(IRKeyTest, serialize) {
+	IRKey k;
+	ircommon::IRBuffer out;
+
+	ASSERT_FALSE(k.serialize(out));
+	ASSERT_EQ(0, out.size());
+}
+
 //------------------------------------------------------------------------------
 
