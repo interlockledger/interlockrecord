@@ -83,7 +83,7 @@ void IRHMAC::mask(std::uint8_t * pad, std::uint8_t mask) {
 }
 
 //------------------------------------------------------------------------------
-void IRHMAC::setKey(const void * key, std::uint64_t keySize) {
+bool IRHMAC::setKey(const void * key, std::uint64_t keySize) {
 
 	std::memset(this->_opad, 0, this->blockSize());
 	if (keySize > this->blockSize()) {
@@ -97,6 +97,7 @@ void IRHMAC::setKey(const void * key, std::uint64_t keySize) {
 	this->mask(this->_opad, 0x5c);
 	this->mask(this->_ipad, 0x36);
 	this->reset();
+	return true;
 }
 
 //------------------------------------------------------------------------------

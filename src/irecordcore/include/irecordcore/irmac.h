@@ -28,6 +28,7 @@
 #define _IRECORDCORE_IRMAC_H_
 
 #include <irecordcore/irhash.h>
+#include <irecordcore/irkey.h>
 
 namespace irecordcore {
 namespace crypto {
@@ -59,7 +60,15 @@ public:
 	 * @param[in] key The key.
 	 * @param[in] keySize The size of the key in bytes.
 	 */
-	virtual void setKey(const void * key, std::uint64_t keySize) = 0;
+	virtual bool setKey(const void * key, std::uint64_t keySize) = 0;
+
+	/**
+	 * Sets the key of this MAC algorithm. It is important to notice that
+	 * any call to this method will reset this instance.
+	 *
+	 * @param[in] key The key.
+	 */
+	virtual bool setKey(IRSecretKey & key) = 0;
 };
 
 /**
@@ -109,7 +118,9 @@ public:
 		return this->_blockSize;
 	}
 
-	virtual void setKey(const void * key, std::uint64_t keySize);
+	virtual bool setKey(const void * key, std::uint64_t keySize);
+
+	virtual bool setKey(IRSecretKey & key);
 
 	virtual void reset();
 
