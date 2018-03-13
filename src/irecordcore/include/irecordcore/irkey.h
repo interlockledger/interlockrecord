@@ -42,11 +42,24 @@ namespace crypto {
  */
 class IRKey {
 public:
+	/**
+	 * Creates a new instance of this class.
+	 */
 	IRKey() = default;
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRKey() = default;
 
-	virtual bool serialize(ircommon::IRBuffer & out) = 0;
+	/**
+	 * Serializes the key using the Interlock Record format.
+	 *
+	 * @param[out] out The output stream.
+	 * @return true on success or false otherwise.
+	 * @note The default implementation always returns false.
+	 */
+	virtual bool serialize(ircommon::IRBuffer & out);
 };
 
 /**
@@ -57,18 +70,33 @@ public:
  */
 class IRSecretKey: public IRKey {
 public:
+	/**
+	 * Creates a new instance of this class.
+	 */
 	IRSecretKey() = default;
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRSecretKey() = default;
 
+	/**
+	 * Retuns the size of the key in bits.
+	 *
+	 * @return The size of the key in bits.
+	 */
 	virtual std::uint64_t size() = 0;
 
+	/**
+	 * Retuns the size of the key in bytes.
+	 *
+	 * @return The size of the key in bytes.
+	 */
 	virtual std::uint64_t sizeInBytes() = 0;
 };
 
 /**
- * Base class for all software based secret keys. This implementation supports
- * in-memory encryption.
+ * Base class for all software based secret keys.
  *
  * @since 2018.03.12
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
@@ -76,37 +104,57 @@ public:
 class IRSecretKeyImpl: public IRSecretKey {
 private:
 	ircommon::crypto::IRProtectedMemory _key;
-
-	bool _protected;
 public:
+	/**
+	 * Creates a new instance of this class. Once created, the instance will be
+	 * unlocked for reading.
+	 *
+	 * @param[in] key The raw key.
+	 * @param[in] keySize The size of the key in bytes.
+	 */
 	IRSecretKeyImpl(const void * key, std::uint64_t keySize);
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRSecretKeyImpl();
 
 	virtual std::uint64_t size();
 
 	virtual std::uint64_t sizeInBytes();
 
-	bool isProtected() const {
-		return this->_protected;
-	}
-
-	void protect();
-
-	void uprotect();
+	/**
+	 * Locks this instance for reading.
+	 */
+	void lock();
 
 	/**
-	 * Returns the raw key.
+	 * Unlocks this instance.
+	 */
+	void unlock();
+
+	/**
+	 * Returns the raw key. Its value will be public if and only if the key
+	 * is locked.
 	 *
 	 * @return The raw key value or nullptr if it is not available.
+	 * @see lock()
+	 * @see unlock()
 	 */
 	const void * key() const {
-		if (this->isProtected()) {
-			return nullptr;
-		} else {
-			return this->_key.value();
-		}
+		return this->_key.value();
 	}
+
+	/**
+	 * Serializes the key using the Interlock Record format.
+	 *
+	 * <p>The serialization of this implementation is the raw value of the key
+	 * itself.</p>
+	 *
+	 * @param[out] out The output stream.
+	 * @return true on success or false otherwise.
+	 */
+	virtual bool serialize(ircommon::IRBuffer & out);
 };
 
 } //namespace crypto

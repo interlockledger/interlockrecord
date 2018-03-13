@@ -52,6 +52,10 @@ add_executable(irecordcore-test
 	src/crypto/IRHashTest.h
 	src/crypto/IRHMACTest.cpp
 	src/crypto/IRHMACTest.h
+	src/crypto/IRKeyTest.cpp
+	src/crypto/IRKeyTest.h
+	src/crypto/IRSecretKeyImplTest.cpp
+	src/crypto/IRSecretKeyImplTest.h
 	src/crypto/IRSHA1HashTest.cpp
 	src/crypto/IRSHA1HashTest.h
 	src/crypto/IRSHA256HashTest.cpp
