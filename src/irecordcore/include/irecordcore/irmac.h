@@ -99,10 +99,12 @@ public:
 	 * @param[in] hash The hash algorithm. This class will claim full ownership
 	 * of this instance.
 	 * @param[in] blockSize The block size. It must be always equal to or larger
-	 * than the output of the hash algorithm used (defaults to 64 as defined by
-	 * the RFC).
+	 * than the output of the hash algorithm used. Use 0 to let the implementation
+	 * decide what block size should be used.
+	 * @exception std::invalid_argument If the block size is smaller than the
+	 * size of the output of the inner hash.
 	 */
-	IRHMAC(IRHashAlgorithm * hash, std::uint64_t blockSize = 64);
+	IRHMAC(IRHashAlgorithm * hash, std::uint64_t blockSize = 0);
 
 	/**
 	 * Disposes this instance and releases all associated resources.

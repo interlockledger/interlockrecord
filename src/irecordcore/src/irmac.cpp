@@ -46,11 +46,26 @@ IRMAC::~IRMAC() {
 // Class IRHMAC
 //------------------------------------------------------------------------------
 IRHMAC::IRHMAC(IRHashAlgorithm * hash, std::uint64_t blockSize): IRMAC(),
-		_hash(hash), _blockSize(blockSize){
+		_hash(hash){
 
-	if (this->_blockSize < this->_hash->sizeInBytes()) {
+	if (blockSize == 0) {
+		if (this->_hash->sizeInBytes() <= 32) {
+			// RFC2104
+			blockSize = 64;
+		} else if (this->_hash->sizeInBytes() <= 64) {
+			// RFC4868
+			blockSize = 128;
+		} else {
+			throw std::invalid_argument("Unsupported hash algorithm.");
+		}
+	}
+
+	if (blockSize < this->_hash->sizeInBytes()) {
 		throw std::invalid_argument("Invalid block size.");
 	}
+
+	this->_blockSize = blockSize;
+
 	this->_ipad = new std::uint8_t[this->_blockSize];
 	this->_opad = new std::uint8_t[this->_blockSize];
 	this->setKey(nullptr, 0);
@@ -93,11 +108,35 @@ bool IRHMAC::setKey(const void * key, std::uint64_t keySize) {
 	} else {
 		std::memcpy(this->_opad, key, keySize);
 	}
-	std::memcpy(this->_opad, this->_ipad, this->_blockSize);
+	std::memcpy(this->_ipad, this->_opad, this->_blockSize);
 	this->mask(this->_opad, 0x5c);
 	this->mask(this->_ipad, 0x36);
 	this->reset();
 	return true;
+}
+
+//------------------------------------------------------------------------------
+bool IRHMAC::setKey(IRSecretKey & key) {
+	std::uint64_t rawKeySize;
+	std::uint8_t * rawKey;
+	bool retval;
+
+	if (!key.exportable()) {
+		return false;
+	}
+	rawKeySize = key.sizeInBytes();
+	if (rawKeySize == 0) {
+		return false;
+	}
+	rawKey = new std::uint8_t[rawKeySize];
+	if (key.exportKey(rawKey, rawKeySize)) {
+		retval = this->setKey(rawKey, rawKeySize);
+	} else {
+		retval = false;
+	}
+	ircommon::IRUtils::clearMemory(rawKey, rawKeySize);
+	delete [] rawKey;
+	return retval;
 }
 
 //------------------------------------------------------------------------------
@@ -133,7 +172,7 @@ bool IRHMAC::finalize(void * out, std::uint64_t size) {
 	this->_hash->reset();
 	this->_hash->update(this->_opad, this->_blockSize);
 	this->_hash->update(out, this->sizeInBytes());
-	return this->finalize(out, size);
+	return this->_hash->finalize(out, size);
 }
 
 //------------------------------------------------------------------------------
