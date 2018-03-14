@@ -29,10 +29,27 @@
 
 #include <cstdint>
 
-/*
+/**
  * "Human sacrifice, dogs and cats living together, mass hysteria!"
+ * Peter Venkman
  */
 extern const std::uint8_t CRYPTOSAMPLES_SAMPLE[62];
+
+/**
+ * "If aliens visit us, the outcome would be much as when Columbus landed in America, which didn't turn out well for the Native Americans."
+ * Stephen Hawking (1942–2018)
+ */
+extern const std::uint8_t CRYPTOSAMPLES_SAMPLE2[134];
+
+/**
+ * "Simple... logic."
+ */
+extern const std::uint8_t CRYPTOSAMPLES_KEY128[16];
+
+/**
+ * "Kosh: You have always been here."
+ */
+extern const std::uint8_t CRYPTOSAMPLES_KEY256[32];
 
 /**
  * SHA1 of empty.
@@ -83,5 +100,21 @@ extern const std::uint8_t CRYPTOSAMPLES_SHA3_512_EMPTY[64];
  * SHA3-512 of CRYPTOSAMPLES_SAMPLE.
  */
 extern const std::uint8_t CRYPTOSAMPLES_SHA3_512_SAMPLE[64];
+
+/**
+ * HMAC-SHA256("", "")
+ */
+extern const std::uint8_t CRYPTOSAMPLES_HMAC_SHA256_EMPTY_EMPTY[32];
+
+/**
+ * HMAC-SHA256(CRYPTOSAMPLES_KEY128, CRYPTOSAMPLES_SAMPLE2)
+ */
+extern const std::uint8_t CRYPTOSAMPLES_HMAC_SHA256_KEY128_SAMPLE2[32];
+
+/**
+ * HMAC-SHA256(CRYPTOSAMPLES_SAMPLE, CRYPTOSAMPLES_SAMPLE2)
+ */
+extern const std::uint8_t CRYPTOSAMPLES_HMAC_SHA256_SAMPLE_SAMPLE2[32];
+
 
 #endif /* _CRYPTO_CRYPTOSAMPLES_H_ */
