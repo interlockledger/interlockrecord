@@ -154,7 +154,16 @@ public:
         /**
 		 * The ILTag sequence tag. It contains the serialization of a sequence of tags.
 		 */
-		TAG_ILTAG_SEQ = 22
+		TAG_ILTAG_SEQ = 22,
+		/**
+		* The ILTag range tag. It contains a range of ILTagId.
+		*/
+		TAG_RANGE = 23,
+		/**
+		* The ILTag version tag. It contains the semantic version number (major.minor.revision.build).
+		*/
+		TAG_VERSION = 24
+
 	} KnownStandardTagID;
 private:
 	/**
