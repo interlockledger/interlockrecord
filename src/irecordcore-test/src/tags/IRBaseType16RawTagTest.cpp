@@ -25,6 +25,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRBaseType16RawTagTest.h"
+#include <irecordcore/irtags.h>
+
+using namespace irecordcore;
+using namespace irecordcore::tags;
+using namespace ircommon;
+using namespace ircommon::iltags;
 
 //==============================================================================
 // class IRBaseType16RawTagTest
@@ -46,9 +52,20 @@ void IRBaseType16RawTagTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRBaseType16RawTagTest,Constructor) {
+	IRBaseType16RawTag * bt16rt;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	bt16rt = new IRBaseType16RawTag(0xFF, false);
+	ASSERT_EQ(0xFF, bt16rt->id());
+	ASSERT_FALSE(bt16rt->value().secure());
+	delete bt16rt;
+
+	bt16rt = new IRBaseType16RawTag(0xFFFF, true);
+	ASSERT_EQ(0xFFFF, bt16rt->id());
+	ASSERT_TRUE(bt16rt->value().secure());
+	delete bt16rt;
 }
 //------------------------------------------------------------------------------
+
+
+
 
