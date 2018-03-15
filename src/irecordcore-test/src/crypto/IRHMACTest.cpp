@@ -173,8 +173,32 @@ TEST_F(IRHMACTest, update) {
 	}
 	ASSERT_TRUE(m.finalize(out, sizeof(out)));
 	ASSERT_EQ(0, std::memcmp(CRYPTOSAMPLES_HMAC_SHA256_SAMPLE_SAMPLE2, out, sizeof(out)));
-
 }
+
+//------------------------------------------------------------------------------
+TEST_F(IRHMACTest, finalize) {
+	IRHMAC m(new IRSHA256Hash());
+	std::uint8_t out[64];
+
+	// EMPTY_EMPTY
+	for (unsigned int size = 32; size <= 64; size++) {
+		std::memset(out, 0xFF, sizeof(out));
+		m.reset();
+		ASSERT_TRUE(m.finalize(out, size));
+		ASSERT_EQ(0xFF, out[32]);
+		ASSERT_EQ(0, std::memcmp(CRYPTOSAMPLES_HMAC_SHA256_EMPTY_EMPTY, out, 32));
+	}
+
+	// EMPTY_EMPTY
+	for (unsigned int size = 0; size < 32; size++) {
+		std::memset(out, 0xFF, sizeof(out));
+		m.reset();
+		ASSERT_FALSE(m.finalize(out, size));
+		ASSERT_EQ(0xFF, out[0]);
+		ASSERT_EQ(0xFF, out[32]);
+	}
+}
+
 
 //------------------------------------------------------------------------------
 TEST_F(IRHMACTest, CryptoSamplesSHA256) {
