@@ -87,18 +87,12 @@ std::uint64_t IRRandom::next64() {
 
 //------------------------------------------------------------------------------
 float IRRandom::nextFloat() {
-	std::uint32_t v;
-
-	v = this->next32() & 0x7FFFFF;
-	return v / ((float)0x800000);
+	return (this->next32() & 0x7FFFFF) / ((float)0x800000);
 }
 
 //------------------------------------------------------------------------------
-double IRRandom::doubleFloat() {
-	std::uint64_t v;
-
-	v = this->next64() & 0xFFFFFFFFFFFFFll;
-	return v / ((double)0x10000000000000ll);
+double IRRandom::nextDouble() {
+	return (this->next64() & 0xFFFFFFFFFFFFFll) / ((double)0x10000000000000ll);
 }
 
 //==============================================================================

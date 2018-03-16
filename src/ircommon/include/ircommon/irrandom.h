@@ -113,7 +113,7 @@ public:
 	 *
 	 * @return The next float value.
 	 */
-	double doubleFloat();
+	double nextDouble();
 
 	/**
 	 * Returns the next bytes.
