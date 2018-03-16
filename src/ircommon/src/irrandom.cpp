@@ -24,134 +24,137 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <ircommon/irarc4.h>
+#include <ircommon/irrandom.h>
 #include <ircommon/irutils.h>
-#include <cstring>
+#include <algorithm>
 #include <ctime>
+#include <cstring>
+
 using namespace ircommon;
-using namespace ircommon::crypto;
 
 //==============================================================================
-// class IRARC4
+// Class IRRandom
 //------------------------------------------------------------------------------
-IRARC4::IRARC4() {
+bool IRRandom::nextBoolean() {
+	std::uint32_t v;
 
-	std::memset(&(this->_state), 0, sizeof(this->_state));
+	v = this->next32();
+	v = v ^ (v >> 16);
+	v = v ^ (v >> 8);
+	v = v ^ (v >> 4);
+	v = v ^ (v >> 2);
+	v = v ^ (v >> 1);
+	return (v & 0x1) == 1;
 }
 
 //------------------------------------------------------------------------------
-IRARC4::IRARC4(const void * key, int keySize): IRARC4() {
+std::uint8_t IRRandom::next() {
+	std::uint8_t v;
 
-	this->setKey(key, keySize);
+	this->nextBytes(&v, sizeof(v));
+	return v;
 }
 
 //------------------------------------------------------------------------------
-IRARC4::~IRARC4() {
+std::uint16_t IRRandom::next16() {
+	std::uint8_t tmp[2];
+	std::uint16_t v;
 
-	IRUtils::clearMemory(&(this->_state), sizeof(this->_state));
+	this->nextBytes(&tmp, sizeof(tmp));
+	IRUtils::BE2Int(tmp, v);
+	return v;
 }
 
 //------------------------------------------------------------------------------
-void IRARC4::setKey(const void * key, int keySize) {
-	std::uint8_t * s = this->_state[CURR].s;
-	for (int i = 0; i < 256; i++) {
-		s[i] = i;
-	}
-	this->remixKey(key, keySize);
+std::uint32_t IRRandom::next32() {
+	std::uint8_t tmp[4];
+	std::uint32_t v;
+
+	this->nextBytes(&tmp, sizeof(tmp));
+	IRUtils::BE2Int(tmp, v);
+	return v;
 }
 
 //------------------------------------------------------------------------------
-void IRARC4::remixKey(const void * key, int keySize) {
-	int i;
-	int j;
-	const std::uint8_t * k = (const std::uint8_t *)key;
-	std::uint8_t * s = this->_state[CURR].s;
-	std::uint8_t tmp;
+std::uint64_t IRRandom::next64() {
+	std::uint8_t tmp[8];
+	std::uint64_t v;
 
-	j = 0;
-	for (i = 0; i < 256; i++) {
-		j = (j + s[i] + k[i % keySize]) & 0xFF;
-		tmp = s[i];
-		s[i] = s[j];
-		s[j] = tmp;
-	}
-	this->_state[CURR].i = 0;
-	this->_state[CURR].j = 0;
+	this->nextBytes(&tmp, sizeof(tmp));
+	IRUtils::BE2Int(tmp, v);
+	return v;
 }
 
 //------------------------------------------------------------------------------
-void IRARC4::save() {
+float IRRandom::nextFloat() {
+	std::uint32_t v;
 
-	std::memcpy(&(this->_state[SAVED]), &(this->_state[CURR]), sizeof(State));
+	v = this->next32() & 0x7FFFFF;
+	return v / ((float)0x800000);
 }
 
 //------------------------------------------------------------------------------
-void IRARC4::load() {
+double IRRandom::doubleFloat() {
+	std::uint64_t v;
 
-	std::memcpy(&(this->_state[CURR]), &(this->_state[SAVED]), sizeof(State));
-}
-
-//------------------------------------------------------------------------------
-std::uint8_t IRARC4::next() {
-	int & i = this->_state[CURR].i;
-	int & j = this->_state[CURR].j;
-	std::uint8_t * s = this->_state[CURR].s;
-	std::uint8_t tmp;
-
-	i = (i + 1) & 0xFF;
-	j = (j + s[i]) & 0xFF;
-	tmp = s[i];
-	s[i] = this->_state[CURR].s[j];
-	s[j] = tmp;
-	return s[(s[i] + s[j]) & 0xFF];
-}
-
-//------------------------------------------------------------------------------
-void IRARC4::skip(int n) {
-
-	for (; n > 0; n--) {
-		this->next();
-	}
-}
-
-//------------------------------------------------------------------------------
-void IRARC4::apply(void * buff, std::uint64_t size) {
-	std::uint8_t * p;
-	std::uint8_t * pEnd;
-
-	p = (std::uint8_t *)buff;
-	pEnd = p + size;
-	for( ; p != pEnd; p++) {
-		*p = (*p ^ this->next());
-	}
+	v = this->next64() & 0xFFFFFFFFFFFFFll;
+	return v / ((double)0x10000000000000ll);
 }
 
 //==============================================================================
-// class IRARC4Random
+// Class IRRandom
 //------------------------------------------------------------------------------
-IRARC4Random::IRARC4Random(): _arc4() {
+IRXORShifRandom::IRXORShifRandom(): _state(0) {
 	this->setSeed(std::time(nullptr));
 }
 
 //------------------------------------------------------------------------------
-void IRARC4Random::setSeed(std::uint32_t seed) {
-	std::uint8_t tmp[4];
-	IRUtils::int2BE(seed, tmp);
-	this->setSeed(tmp, sizeof(tmp));
+void IRXORShifRandom::setSeed(std::uint32_t seed) {
+
+	this->_state = seed;
+	if (this->_state == 0) {
+		this->_state++;
+	}
 }
 
 //------------------------------------------------------------------------------
-void IRARC4Random::setSeed(const void * seed, std::uint64_t seedSize) {
-	this->_arc4.setKey(seed, seedSize);
+std::uint8_t IRXORShifRandom::next() {
+	return (std::uint8_t)(this->next32() & 0xFF);
 }
 
 //------------------------------------------------------------------------------
-void  IRARC4Random::nextBytes(void * out, std::uint64_t outSize) {
+std::uint16_t IRXORShifRandom::next16() {
+	return (std::uint16_t)(this->next32() & 0xFFFF);
+}
+
+//------------------------------------------------------------------------------
+std::uint32_t IRXORShifRandom::next32() {
+
+	// Marsaglia 13/17/15
+	this->_state = this->_state ^ (this->_state << 13);
+	this->_state = this->_state ^ (this->_state >> 17);
+	this->_state = this->_state ^ (this->_state << 15);
+	return this->_state;
+}
+//------------------------------------------------------------------------------
+std::uint64_t IRXORShifRandom::next64() {
+	return (((std::uint64_t)this->next32()) << 32) | this->next32();
+}
+
+//------------------------------------------------------------------------------
+void IRXORShifRandom::nextBytes(void * out, std::uint64_t outSize) {
+	std::uint32_t v;
 	std::uint8_t * p = (std::uint8_t *)out;
-	std::uint8_t * pEnd = p + outSize;
 
-	for ( ; p != pEnd; p++) {
-		*p = this->_arc4.next();
+	while (outSize > 0) {
+		v = this->next32();
+		std::uint64_t n = (outSize < 4)? outSize : 4;
+		for ( ; n > 0; n--) {
+			*p = ((v >> 24) & 0xFF);
+			v = v << 8;
+			p++;
+		}
+		outSize = outSize - n;
 	}
 }
 

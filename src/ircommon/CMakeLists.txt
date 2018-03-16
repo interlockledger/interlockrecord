@@ -55,6 +55,7 @@ add_library(ircommon STATIC
 	include/ircommon/irpmem.h
 	include/ircommon/irhndlst.h
 	include/ircommon/iridgen.h
+	include/ircommon/irrandom.h
 	src/irbuffer.cpp
 	src/irutils.cpp
 	src/irrwlock.cpp
@@ -69,6 +70,7 @@ add_library(ircommon STATIC
 	src/i32obfus.cpp
 	src/iltagstd.cpp
 	src/irjson.cpp
+	src/irrandom.cpp
 )
 
 target_include_directories(ircommon 

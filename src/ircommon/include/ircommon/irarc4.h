@@ -28,6 +28,7 @@
 #define _IRCOMMON_IRARC4_H_
 
 #include <cstdint>
+#include <ircommon/irrandom.h>
 
 namespace ircommon {
 namespace crypto {
@@ -133,6 +134,27 @@ public:
 	 * @since 2018.01.31
 	 */
 	void apply(void * buff, std::uint64_t size);
+};
+
+/**
+ * This class implements a random generator based on the ARC4 stream cipher.
+ *
+ * @since 2018.03.15
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ */
+class IRARC4Random: public ircommon::IRRandom {
+private:
+	IRARC4 _arc4;
+public:
+	IRARC4Random();
+
+	virtual ~IRARC4Random() = default;
+
+	virtual void setSeed(std::uint32_t seed);
+
+	void setSeed(const void * seed, std::uint64_t seedSize);
+
+	virtual void nextBytes(void * out, std::uint64_t outSize);
 };
 
 } // namespace crypto

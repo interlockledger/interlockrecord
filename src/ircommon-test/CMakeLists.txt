@@ -46,6 +46,8 @@ add_executable(ircommon-test
 	src/crypto/I32FeistelObfuscatorTest.h
 	src/crypto/I32ObfuscatorTest.cpp
 	src/crypto/I32ObfuscatorTest.h
+	src/crypto/IRARC4RandomTest.cpp
+	src/crypto/IRARC4RandomTest.h
 	src/crypto/IRARC4Test.cpp
 	src/crypto/IRARC4Test.h
 	src/crypto/IRProtectedMemoryTest.cpp
@@ -124,10 +126,14 @@ add_executable(ircommon-test
 	src/IRHandleListTest.h
 	src/IRIDGeneratorTest.cpp
 	src/IRIDGeneratorTest.h
+	src/IRRandomTest.cpp
+	src/IRRandomTest.h
 	src/IRSharedPtrHandleListTest.cpp
 	src/IRSharedPtrHandleListTest.h
 	src/IRUtilsTest.cpp
 	src/IRUtilsTest.h
+	src/IRXORShifRandomTest.cpp
+	src/IRXORShifRandomTest.h
 	src/json/IRJsonArrayTest.cpp
 	src/json/IRJsonArrayTest.h
 	src/json/IRJsonBooleanTest.cpp
@@ -158,7 +164,8 @@ add_executable(ircommon-test
 	src/threading/IRRWLockTest.cpp
 	src/threading/IRRWLockTest.h
 	src/threading/IRSemaphoreTest.cpp
-	src/threading/IRSemaphoreTest.h)
+	src/threading/IRSemaphoreTest.h
+)
 
 target_link_libraries(ircommon-test
 	ircommon
