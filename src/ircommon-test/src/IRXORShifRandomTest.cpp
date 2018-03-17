@@ -25,6 +25,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRXORShifRandomTest.h"
+#include <ircommon/irrandom.h>
+#include <cstring>
+
+using namespace ircommon;
+
+//==============================================================================
+// XORShift reference implementation
+//------------------------------------------------------------------------------
+std::uint16_t ref_xorshift32(std::uint32_t & state) {
+	state ^= state << 13;
+	state ^= state >> 17;
+	state ^= state << 15;
+	return (state >> 8) & 0xFFFF;
+}
 
 //==============================================================================
 // class IRXORShifRandomTest
@@ -46,9 +60,11 @@ void IRXORShifRandomTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRXORShifRandomTest,Constructor) {
+	IRXORShifRandom * r;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	r = new IRXORShifRandom();
+	delete r;
 }
+
 //------------------------------------------------------------------------------
 

@@ -83,6 +83,24 @@ double IRRandom::nextDouble() {
 	return (this->next64() & 0xFFFFFFFFFFFFFll) / ((double)0x10000000000000ll);
 }
 
+//------------------------------------------------------------------------------
+void IRRandom::nextBytesFrom32(IRRandom & random, void * out,
+		std::uint64_t outSize) {
+	std::uint32_t v;
+	std::uint8_t * p = (std::uint8_t *)out;
+
+	while (outSize > 0) {
+		v = random.next32();
+		std::uint64_t n = (outSize < 4)? outSize : 4;
+		for ( ; n > 0; n--) {
+			*p = ((v >> 24) & 0xFF);
+			v = v << 8;
+			p++;
+		}
+		outSize = outSize - n;
+	}
+}
+
 //==============================================================================
 // Class IRRandom
 //------------------------------------------------------------------------------
@@ -94,7 +112,30 @@ IRXORShifRandom::IRXORShifRandom() {
 void IRXORShifRandom::setSeed(std::uint64_t seed) {
 
 	this->_state[0] = seed;
-	this->_state[1] = 0;
+	this->_state[1] = 0x6a09e667bb67ae85ll ^ seed;
+}
+
+//------------------------------------------------------------------------------
+void IRXORShifRandom::setSeed(const void * seed, std::uint64_t seedSize) {
+	std::uint8_t tmp[16];
+	std::uint64_t s0;
+	std::uint64_t s1;
+
+	std::memset(tmp, 0, sizeof(tmp));
+	std::memcpy(tmp, seed, seedSize > 16 ? 16: seedSize);
+	IRUtils::BE2Int(tmp, s0);
+	IRUtils::BE2Int(tmp + 8, s1);
+	this->setSeed(s0, s1);
+}
+
+//------------------------------------------------------------------------------
+void IRXORShifRandom::setSeed(std::uint64_t seed0, std::uint64_t seed1) {
+
+	if ((seed0 == 0) && (seed1 == 0)) {
+		seed0 = 1;
+	}
+	this->_state[0] = seed0;
+	this->_state[1] = seed1;
 }
 
 //------------------------------------------------------------------------------
@@ -115,19 +156,7 @@ std::uint32_t IRXORShifRandom::next32() {
 
 //------------------------------------------------------------------------------
 void IRXORShifRandom::nextBytes(void * out, std::uint64_t outSize) {
-	std::uint32_t v;
-	std::uint8_t * p = (std::uint8_t *)out;
-
-	while (outSize > 0) {
-		v = this->next32();
-		std::uint64_t n = (outSize < 4)? outSize : 4;
-		for ( ; n > 0; n--) {
-			*p = ((v >> 24) & 0xFF);
-			v = v << 8;
-			p++;
-		}
-		outSize = outSize - n;
-	}
+	IRRandom::nextBytesFrom32(*this, out, outSize);
 }
 
 //------------------------------------------------------------------------------

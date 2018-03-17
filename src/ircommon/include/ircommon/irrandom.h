@@ -120,6 +120,17 @@ public:
 	 * @param[in] outSize The number of bytes to extract.
 	 */
 	virtual void nextBytes(void * out, std::uint64_t outSize) = 0;
+
+	/**
+	 * This helper method fills a byte array using the method
+	 * IRRandom::next32(). It can be used to implement IRRandom::nextBytes().
+	 *
+	 * @param[in] random The random instance.
+	 * @param[out] out The output buffer.
+	 * @param[in] outSize The number of bytes to extract.
+	 */
+	static void nextBytesFrom32(IRRandom & random, void * out,
+			std::uint64_t outSize);
 };
 
 /**
@@ -129,8 +140,8 @@ public:
  * @since 2018.03.15
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
-class IRXORShifRandom {
-private:
+class IRXORShifRandom : public IRRandom {
+protected:
 	std::uint64_t _state[2];
 public:
 	/**
@@ -147,20 +158,44 @@ public:
 	virtual ~IRXORShifRandom() = default;
 
 	/**
-	 * Sets the seed.
+	 * Sets the seed. In this implementation, only the fist first 64-bits of the
+	 * state will be set to the seed value. The other value of the state will be
+	 * set to the seed XORed by 0x6a09e667bb67ae85.
+	 *
+	 * <p>The value 0x6a09e667bb67ae85 is the concatenation of the the initial
+	 * value for the states h0 and h1 of the SHA-256 algorithm.</p>
+	 *
+	 * <p>This initialization procedure will ensure that at least one bit of the
+	 * state will not be zero.</p>
 	 *
 	 * @param[in] seed The seed value.
-	 * @note Since the seed cannot be 0, it will assume 1 if seed is 0.
 	 */
 	virtual void setSeed(std::uint64_t seed);
 
 	/**
-	 * Sets the seed.
+	 * Sets the seed. The ideal seed will have exact 16 bytes. If the seedSize
+	 * is smaller than 16, it will be padded with zeroes. If the state is larger
+	 * than 16, the remaining bytes will be ignored.
+	 *
+	 * <p>It is important to notice that, if all bits of the seed are 0, this
+	 * initialization procedure will set the value of the first 64-bits of the
+	 * state to 1.</p>
 	 *
 	 * @param[in] seed The seed value.
-	 * @note Since the seed cannot be 0, it will assume 1 if seed is 0.
+	 * @param[in] seedSize The seed size.
 	 */
-	void setSeed(const void * seed, std::uint64_t size);
+	void setSeed(const void * seed, std::uint64_t seedSize);
+
+	/**
+	 * Sets the seed.
+	 *
+	 * <p>It is important to notice that, if seed0 and seed1 are set to 0,
+	 * seed0 will assume the value 1.</p>
+	 *
+	 * @param[in] seed0 The first 64-bits of the internal state.
+	 * @param[in] seed1 The last 64-bits of the internal state.
+	 */
+	void setSeed(std::uint64_t seed0, std::uint64_t seed1);
 
 	/**
 	 * Returns the next value as specified by XORShit+.
