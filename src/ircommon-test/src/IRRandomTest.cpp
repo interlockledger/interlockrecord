@@ -35,15 +35,15 @@ using namespace ircommon;
 //------------------------------------------------------------------------------
 class IRDummyRandom: public IRRandom {
 private:
-	std::uint32_t _seed;
+	std::uint64_t _seed;
 public:
 	IRDummyRandom(): _seed(0) {}
 
 	virtual ~IRDummyRandom() = default;
 
-	virtual void setSeed(std::uint32_t seed);
+	virtual void setSeed(std::uint64_t seed);
 
-	std::uint32_t seed() const {
+	std::uint64_t seed() const {
 		return this->_seed;
 	}
 
@@ -51,7 +51,7 @@ public:
 };
 
 //------------------------------------------------------------------------------
-void IRDummyRandom::setSeed(std::uint32_t seed) {
+void IRDummyRandom::setSeed(std::uint64_t seed) {
 	this->_seed = seed;
 }
 
@@ -60,7 +60,8 @@ void IRDummyRandom::nextBytes(void * out, std::uint64_t outSize) {
 	std::uint8_t * p = (std::uint8_t *)out;
 
 	for (unsigned int i = 0; i < outSize; i++, p++) {
-		*p = (std::uint8_t)((i + this->_seed)& 0xFF);
+		*p = (std::uint8_t)(this->_seed & 0xFF);
+		this->_seed++;
 	}
 }
 
@@ -114,6 +115,11 @@ TEST_F(IRRandomTest, nextBytes) {
 		}
 		r.nextBytes(tmp, sizeof(tmp));
 		ASSERT_EQ(0, std::memcmp(exp, tmp, sizeof(tmp)));
+		for (std::uint32_t i = 0; i < sizeof(exp); i++) {
+			exp[i] = (std::uint8_t)(seed + i + sizeof(exp));
+		}
+		r.nextBytes(tmp, sizeof(tmp));
+		ASSERT_EQ(0, std::memcmp(exp, tmp, sizeof(tmp)));
 	}
 }
 
@@ -138,10 +144,10 @@ TEST_F(IRRandomTest, nextBoolean) {
 TEST_F(IRRandomTest, next) {
 	IRDummyRandom r;
 
-	for (unsigned int i = 0; i < 256; i++) {
-		r.setSeed(i);
-		ASSERT_EQ(i, r.next());
-	}
+	r.setSeed(0);
+	ASSERT_EQ(0x03, r.next());
+	ASSERT_EQ(0x07, r.next());
+	ASSERT_EQ(0x0B, r.next());
 }
 
 //------------------------------------------------------------------------------
@@ -149,10 +155,9 @@ TEST_F(IRRandomTest, next16) {
 	IRDummyRandom r;
 
 	r.setSeed(0);
-	ASSERT_EQ(0x0001, r.next16());
-
-	r.setSeed(0xFA);
-	ASSERT_EQ(0xFAFB, r.next16());
+	ASSERT_EQ(0x0203, r.next16());
+	ASSERT_EQ(0x0607, r.next16());
+	ASSERT_EQ(0x0A0B, r.next16());
 }
 
 //------------------------------------------------------------------------------
@@ -172,9 +177,7 @@ TEST_F(IRRandomTest, next64) {
 
 	r.setSeed(0);
 	ASSERT_EQ(0x0001020304050607ll, r.next64());
-
-	r.setSeed(0xFA);
-	ASSERT_EQ(0xFAFBFCFDFEFF0001ll, r.next64());
+	ASSERT_EQ(0x08090A0B0C0D0E0Fll, r.next64());
 }
 
 //------------------------------------------------------------------------------

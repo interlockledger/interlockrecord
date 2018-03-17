@@ -49,20 +49,12 @@ bool IRRandom::nextBoolean() {
 
 //------------------------------------------------------------------------------
 std::uint8_t IRRandom::next() {
-	std::uint8_t v;
-
-	this->nextBytes(&v, sizeof(v));
-	return v;
+	return (std::uint8_t)(this->next32() & 0xFF);
 }
 
 //------------------------------------------------------------------------------
 std::uint16_t IRRandom::next16() {
-	std::uint8_t tmp[2];
-	std::uint16_t v;
-
-	this->nextBytes(&tmp, sizeof(tmp));
-	IRUtils::BE2Int(tmp, v);
-	return v;
+	return (std::uint16_t)(this->next32() & 0xFFFF);
 }
 
 //------------------------------------------------------------------------------
@@ -77,12 +69,8 @@ std::uint32_t IRRandom::next32() {
 
 //------------------------------------------------------------------------------
 std::uint64_t IRRandom::next64() {
-	std::uint8_t tmp[8];
-	std::uint64_t v;
-
-	this->nextBytes(&tmp, sizeof(tmp));
-	IRUtils::BE2Int(tmp, v);
-	return v;
+	return (((std::uint64_t)this->next32()) << 32) +
+			((std::uint64_t)this->next32());
 }
 
 //------------------------------------------------------------------------------
@@ -98,41 +86,31 @@ double IRRandom::nextDouble() {
 //==============================================================================
 // Class IRRandom
 //------------------------------------------------------------------------------
-IRXORShifRandom::IRXORShifRandom(): _state(0) {
+IRXORShifRandom::IRXORShifRandom() {
 	this->setSeed(std::time(nullptr));
 }
 
 //------------------------------------------------------------------------------
-void IRXORShifRandom::setSeed(std::uint32_t seed) {
+void IRXORShifRandom::setSeed(std::uint64_t seed) {
 
-	this->_state = seed;
-	if (this->_state == 0) {
-		this->_state++;
-	}
+	this->_state[0] = seed;
+	this->_state[1] = 0;
 }
 
 //------------------------------------------------------------------------------
-std::uint8_t IRXORShifRandom::next() {
-	return (std::uint8_t)(this->next32() & 0xFF);
-}
+std::uint64_t IRXORShifRandom::nextValue() {
+	std::uint64_t x = this->_state[0];
+	const std::uint64_t y = this->_state[1];
 
-//------------------------------------------------------------------------------
-std::uint16_t IRXORShifRandom::next16() {
-	return (std::uint16_t)(this->next32() & 0xFFFF);
+	this->_state[0] = y;
+	x ^= x << 23;
+	this->_state[1] = x ^ y ^ (x >> 17) ^ (y >> 26);
+	return this->_state[1] + y;
 }
 
 //------------------------------------------------------------------------------
 std::uint32_t IRXORShifRandom::next32() {
-
-	// Marsaglia 13/17/15
-	this->_state = this->_state ^ (this->_state << 13);
-	this->_state = this->_state ^ (this->_state >> 17);
-	this->_state = this->_state ^ (this->_state << 15);
-	return this->_state;
-}
-//------------------------------------------------------------------------------
-std::uint64_t IRXORShifRandom::next64() {
-	return (((std::uint64_t)this->next32()) << 32) | this->next32();
+	return (std::uint32_t)((this->nextValue() >> 8) & 0xFFFFFFFF);
 }
 
 //------------------------------------------------------------------------------
