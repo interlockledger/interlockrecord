@@ -63,7 +63,7 @@ class XORShiftPlus:
 
 rand = XORShiftPlus()
 rand.state0 = 1
-rand.state1 = 2
+rand.state1 = 1
 
 print(rand.next())
 print(rand.next())
