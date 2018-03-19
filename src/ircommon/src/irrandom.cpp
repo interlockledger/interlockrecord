@@ -92,12 +92,12 @@ void IRRandom::nextBytesFrom32(IRRandom & random, void * out,
 	while (outSize > 0) {
 		v = random.next32();
 		std::uint64_t n = (outSize < 4)? outSize : 4;
+		outSize = outSize - n;
 		for ( ; n > 0; n--) {
 			*p = ((v >> 24) & 0xFF);
 			v = v << 8;
 			p++;
 		}
-		outSize = outSize - n;
 	}
 }
 
@@ -146,7 +146,8 @@ std::uint64_t IRXORShifRandom::nextValue() {
 	this->_state[0] = y;
 	x ^= x << 23;
 	this->_state[1] = x ^ y ^ (x >> 17) ^ (y >> 26);
-	return this->_state[1] + y;
+	std::uint64_t v = this->_state[1] + y;
+	return v;
 }
 
 //------------------------------------------------------------------------------

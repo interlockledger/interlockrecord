@@ -202,5 +202,28 @@ TEST_F(IRRandomTest, nextDouble) {
 	ASSERT_FLOAT_EQ(0.725736255, r.nextDouble());
 }
 
+
+//------------------------------------------------------------------------------
+TEST_F(IRRandomTest, nextBytesFrom32) {
+	IRDummyRandom r;
+	std::uint8_t buff[32];
+	std::uint8_t exp[32];
+
+	for (unsigned int size = 1; size <= sizeof(buff); size++) {
+		for (unsigned int i = 0; i < sizeof(buff); i++) {
+			if (i < size) {
+				exp[i] = i;
+			} else {
+				exp[i] = 0;
+			}
+		}
+		r.setSeed(0);
+		std::memset(buff, 0, sizeof(buff));
+		IRRandom::nextBytesFrom32(r, buff, size);
+		ASSERT_EQ(0, std::memcmp(exp, buff, sizeof(exp)));
+	}
+}
+
+
 //------------------------------------------------------------------------------
 
