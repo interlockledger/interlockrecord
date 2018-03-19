@@ -22,7 +22,7 @@ int main() {
 	s[1] = 0x4b0bdbb42366c4a6ll;
 
 	for (int i = 0; i < 8; i++) {
-		printf("%lull, %lull,\n", xorshift128plus(), xorshift128plus());
+		printf("0x%lXll, 0x%lXll,\n", xorshift128plus(), xorshift128plus());
 	}
 	return 0;
 }
