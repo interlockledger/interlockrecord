@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <inttypes.h>
 
 //------------------------------------------------------------------------------
 // Reference code extracted from https://en.wikipedia.org/wiki/Xorshift
@@ -21,8 +22,11 @@ int main() {
 	s[0] = 0xf5539d6bc442958ell;
 	s[1] = 0x4b0bdbb42366c4a6ll;
 
-	for (int i = 0; i < 8; i++) {
-		printf("0x%lXll, 0x%lXll,\n", xorshift128plus(), xorshift128plus());
+	for (int i = 0; i < 16; i++) {
+		printf(" 0x%" PRIX64 "ll,", xorshift128plus());
+		if (i & 0x01) {
+			printf("\n");
+		}
 	}
 	return 0;
 }
