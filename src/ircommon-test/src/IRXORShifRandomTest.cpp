@@ -25,6 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRXORShifRandomTest.h"
+#include <ircommon/irutils.h>
 #include <ircommon/irrandom.h>
 #include <cstring>
 
@@ -156,6 +157,27 @@ TEST_F(IRXORShifRandomTest, next32) {
 	for (int i = 0; i < 16; i++) {
 		std::uint32_t v = r.next32();
 		ASSERT_EQ((IRXORShifRandomTest_SAMPLES[i] >> 8) & 0xFFFFFFFF, v);
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRXORShifRandomTest, nextBytes) {
+	IRXORShifRandom r;
+	std::uint8_t out[32];
+	std::uint8_t exp[32];
+
+	std::memset(exp, 0, sizeof(exp));
+	r.setSeed(IRXORShifRandomTest_SAMPLE_SEED0, IRXORShifRandomTest_SAMPLE_SEED1);
+	for (unsigned int i = 0; i < sizeof(exp); i += 4) {
+		std::uint32_t v = r.next32();
+		IRUtils::int2BE(v, exp + i);
+	}
+
+	for (unsigned int size = 1; size <= sizeof(out); size++) {
+		r.setSeed(IRXORShifRandomTest_SAMPLE_SEED0, IRXORShifRandomTest_SAMPLE_SEED1);
+		std::memset(out, 0, sizeof(out));
+		r.nextBytes(out, size);
+		ASSERT_EQ(0, std::memcmp(exp, out, size));
 	}
 }
 
