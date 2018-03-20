@@ -26,6 +26,7 @@
  */
 #include "IRRandomTest.h"
 #include <ircommon/irrandom.h>
+#include <ircommon/irutils.h>
 #include <cstring>
 
 using namespace ircommon;
@@ -43,6 +44,8 @@ public:
 
 	virtual void setSeed(std::uint64_t seed);
 
+	virtual void setSeed(const void * seed, std::uint64_t seedSize);
+
 	std::uint64_t seed() const {
 		return this->_seed;
 	}
@@ -53,6 +56,10 @@ public:
 //------------------------------------------------------------------------------
 void IRDummyRandom::setSeed(std::uint64_t seed) {
 	this->_seed = seed;
+}
+
+//------------------------------------------------------------------------------
+void  IRDummyRandom::setSeed(const void * seed, std::uint64_t seedSize) {
 }
 
 //------------------------------------------------------------------------------

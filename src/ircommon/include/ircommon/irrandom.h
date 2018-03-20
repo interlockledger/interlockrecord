@@ -51,6 +51,14 @@ public:
 	virtual void setSeed(std::uint64_t seed) = 0;
 
 	/**
+	 * Sets the seed. Each implementation may
+	 *
+	 * @param[in] seed The seed value.
+	 * @param[in] seedSize The seed size.
+	 */
+	virtual void setSeed(const void * seed, std::uint64_t seedSize) = 0;
+
+	/**
 	 * Returns the next random boolean. The default implementation extracts a
 	 * 32 bit random value and returns the XOR of all of its bits. This should
 	 * ensure that all bits are used to compute the actual value, removing the
@@ -184,7 +192,7 @@ public:
 	 * @param[in] seed The seed value.
 	 * @param[in] seedSize The seed size.
 	 */
-	void setSeed(const void * seed, std::uint64_t seedSize);
+	virtual void setSeed(const void * seed, std::uint64_t seedSize);
 
 	/**
 	 * Sets the seed.
