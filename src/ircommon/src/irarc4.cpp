@@ -134,8 +134,8 @@ IRARC4Random::IRARC4Random(): _arc4() {
 }
 
 //------------------------------------------------------------------------------
-void IRARC4Random::setSeed(std::uint32_t seed) {
-	std::uint8_t tmp[4];
+void IRARC4Random::setSeed(std::uint64_t seed) {
+	std::uint8_t tmp[8];
 	IRUtils::int2BE(seed, tmp);
 	this->setSeed(tmp, sizeof(tmp));
 }
@@ -146,7 +146,7 @@ void IRARC4Random::setSeed(const void * seed, std::uint64_t seedSize) {
 }
 
 //------------------------------------------------------------------------------
-void  IRARC4Random::nextBytes(void * out, std::uint64_t outSize) {
+void IRARC4Random::nextBytes(void * out, std::uint64_t outSize) {
 	std::uint8_t * p = (std::uint8_t *)out;
 	std::uint8_t * pEnd = p + outSize;
 

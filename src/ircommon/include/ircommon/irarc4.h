@@ -150,9 +150,9 @@ public:
 
 	virtual ~IRARC4Random() = default;
 
-	virtual void setSeed(std::uint32_t seed);
+	virtual void setSeed(std::uint64_t seed);
 
-	void setSeed(const void * seed, std::uint64_t seedSize);
+	virtual void setSeed(const void * seed, std::uint64_t seedSize);
 
 	virtual void nextBytes(void * out, std::uint64_t outSize);
 };

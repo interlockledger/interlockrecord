@@ -25,6 +25,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRARC4RandomTest.h"
+#include <ircommon/irarc4.h>
+#include <ircommon/irutils.h>
+#include <cstring>
+
+using namespace ircommon;
+using namespace ircommon::crypto;
 
 //==============================================================================
 // class IRARC4RandomTest
@@ -45,10 +51,77 @@ void IRARC4RandomTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRARC4RandomTest,Constructor) {
+TEST_F(IRARC4RandomTest, Constructor) {
+	IRARC4Random * r;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	r = new IRARC4Random();
+	delete r;
 }
+
+//------------------------------------------------------------------------------
+TEST_F(IRARC4RandomTest, setSeedUInt64) {
+	IRARC4Random r;
+	IRARC4 a;
+	std::uint64_t key;
+	std::uint8_t seed[8];
+	std::uint8_t out[16];
+	std::uint8_t exp[16];
+
+	key = 0x0123456789ABCDEFll;
+	IRUtils::int2BE(key, seed);
+
+	a.setKey(seed, sizeof(seed));
+	std::memset(exp, 0, sizeof(exp));
+	a.apply(exp, sizeof(exp));
+
+	r.setSeed(key);
+	r.nextBytes(out, sizeof(out));
+	ASSERT_EQ(0, std::memcmp(exp, out, sizeof(exp)));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRARC4RandomTest, setSeedVoidUInt64) {
+	IRARC4Random r;
+	IRARC4 a;
+	std::uint64_t key;
+	std::uint8_t seed[8];
+	std::uint8_t out[16];
+	std::uint8_t exp[16];
+
+	key = 0x0123456789ABCDEFll;
+	IRUtils::int2BE(key, seed);
+
+	a.setKey(seed, sizeof(seed));
+	std::memset(exp, 0, sizeof(exp));
+	a.apply(exp, sizeof(exp));
+
+	r.setSeed(seed, sizeof(seed));
+	r.nextBytes(out, sizeof(out));
+	ASSERT_EQ(0, std::memcmp(exp, out, sizeof(exp)));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRARC4RandomTest, nextBytes) {
+	IRARC4Random r;
+	IRARC4 a;
+	std::uint64_t key;
+	std::uint8_t seed[8];
+	std::uint8_t out[16];
+	std::uint8_t exp[16];
+
+	key = 0x0123456789ABCDEFll;
+	IRUtils::int2BE(key, seed);
+
+	a.setKey(seed, sizeof(seed));
+	r.setSeed(seed, sizeof(seed));
+
+	for (unsigned int size = 1; size <= sizeof(exp); size++) {
+		std::memset(exp, 0, sizeof(exp));
+		a.apply(exp, size);
+		r.nextBytes(out, size);
+		ASSERT_EQ(0, std::memcmp(exp, out, size));
+	}
+}
+
 //------------------------------------------------------------------------------
 
