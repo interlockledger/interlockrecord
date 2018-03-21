@@ -28,12 +28,14 @@
 #define _IRCOMMON_IRRANDOM_H_
 
 #include <cstdint>
-#include <mutex>
 
 namespace ircommon {
 
 /**
  * This class implements the base class for all random generators.
+ *
+ * <p>It is important to notice that instances of this class and its subclasses
+ * should not be considered thread safe unless stated otherwise.</p>
  *
  * @since 2018.03.15
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
@@ -219,43 +221,6 @@ public:
 	 * @return The next 32-bit value.
 	 */
 	virtual std::uint32_t next32();
-
-	virtual void nextBytes(void * out, std::uint64_t outSize);
-};
-
-/**
- * This class implements IRRandom that can be shared among multiple threads.
- *
- * @since 2018.03.21
- * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
- */
-class IRSharedRandom : public IRRandom {
-protected:
-	IRRandom * random;
-
-	std::mutex _mutex;
-public:
-	IRSharedRandom(IRRandom * random);
-
-	virtual ~IRSharedRandom();
-
-	virtual void setSeed(std::uint64_t seed);
-
-	virtual void setSeed(const void * seed, std::uint64_t seedSize);
-
-	virtual bool nextBoolean();
-
-	virtual std::uint8_t next();
-
-	virtual std::uint16_t next16();
-
-	virtual std::uint32_t next32();
-
-	virtual std::uint64_t next64();
-
-	virtual float nextFloat();
-
-	virtual double nextDouble();
 
 	virtual void nextBytes(void * out, std::uint64_t outSize);
 };

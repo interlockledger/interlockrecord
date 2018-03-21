@@ -28,49 +28,9 @@
 #include <ircommon/irrandom.h>
 #include <ircommon/irutils.h>
 #include <cstring>
+#include "IRDummyRandom.h"
 
 using namespace ircommon;
-
-//==============================================================================
-// class IRDummyRandom
-//------------------------------------------------------------------------------
-class IRDummyRandom: public IRRandom {
-private:
-	std::uint64_t _seed;
-public:
-	IRDummyRandom(): _seed(0) {}
-
-	virtual ~IRDummyRandom() = default;
-
-	virtual void setSeed(std::uint64_t seed);
-
-	virtual void setSeed(const void * seed, std::uint64_t seedSize);
-
-	std::uint64_t seed() const {
-		return this->_seed;
-	}
-
-	virtual void nextBytes(void * out, std::uint64_t outSize);
-};
-
-//------------------------------------------------------------------------------
-void IRDummyRandom::setSeed(std::uint64_t seed) {
-	this->_seed = seed;
-}
-
-//------------------------------------------------------------------------------
-void  IRDummyRandom::setSeed(const void * seed, std::uint64_t seedSize) {
-}
-
-//------------------------------------------------------------------------------
-void IRDummyRandom::nextBytes(void * out, std::uint64_t outSize) {
-	std::uint8_t * p = (std::uint8_t *)out;
-
-	for (unsigned int i = 0; i < outSize; i++, p++) {
-		*p = (std::uint8_t)(this->_seed & 0xFF);
-		this->_seed++;
-	}
-}
 
 //==============================================================================
 // class IRRandomTest
@@ -100,7 +60,7 @@ TEST_F(IRRandomTest,Constructor) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRRandomTest, seed) {
+TEST_F(IRRandomTest, seedUInt64) {
 	IRDummyRandom r;
 
 	for (std::uint32_t seed = 0; seed < 16; seed++){
@@ -108,6 +68,18 @@ TEST_F(IRRandomTest, seed) {
 		ASSERT_EQ(seed, r.seed());
 	}
 }
+
+//------------------------------------------------------------------------------
+TEST_F(IRRandomTest, seedVoidUInt64) {
+	IRDummyRandom r;
+	std::uint8_t tmp[8];
+
+	for (std::uint32_t seed = 0; seed < 16; seed++){
+		r.setSeed(seed);
+		ASSERT_EQ(seed, r.seed());
+	}
+}
+
 
 //------------------------------------------------------------------------------
 TEST_F(IRRandomTest, nextBytes) {

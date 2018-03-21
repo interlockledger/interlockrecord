@@ -38,39 +38,41 @@ configure_file (
 
 # Sources
 add_library(ircommon STATIC
-	include/ircommon/irarc4.h
-	include/ircommon/irbuffer.h
-	include/ircommon/irjson.h
-	include/ircommon/irsemaph.h
-	include/ircommon/irfp.h
-	include/ircommon/iralphab.h
+	include/ircommon/i32obfus.h
+	include/ircommon/ilint.h
 	include/ircommon/iltag.h
 	include/ircommon/iltagstd.h
-	include/ircommon/irutils.h
-	include/ircommon/ilint.h
-	include/ircommon/version.h
+	include/ircommon/iralphab.h
+	include/ircommon/irarc4.h
+	include/ircommon/irbuffer.h
 	include/ircommon/ircodec.h
-	include/ircommon/i32obfus.h
-	include/ircommon/irrwlock.h
-	include/ircommon/irpmem.h
+	include/ircommon/irfp.h
 	include/ircommon/irhndlst.h
 	include/ircommon/iridgen.h
+	include/ircommon/irjson.h
+	include/ircommon/irpmem.h
 	include/ircommon/irrandom.h
-	src/irbuffer.cpp
-	src/irutils.cpp
-	src/irrwlock.cpp
-	src/ircodec.cpp
-	src/irsemaph.cpp
-	src/iltag.cpp
-	src/iralphab.cpp
-	src/irpmem.cpp
-	src/irarc4.cpp
-	src/ilint.cpp
-	src/irfp.cpp
+	include/ircommon/irrwlock.h
+	include/ircommon/irsemaph.h
+	include/ircommon/irshrand.h
+	include/ircommon/irutils.h
+	include/ircommon/version.h
 	src/i32obfus.cpp
+	src/ilint.cpp
+	src/iltag.cpp
 	src/iltagstd.cpp
+	src/iralphab.cpp
+	src/irarc4.cpp
+	src/irbuffer.cpp
+	src/ircodec.cpp
+	src/irfp.cpp
 	src/irjson.cpp
+	src/irpmem.cpp
 	src/irrandom.cpp
+	src/irrwlock.cpp
+	src/irsemaph.cpp
+	src/irshrand.cpp
+	src/irutils.cpp
 )
 
 target_include_directories(ircommon 
