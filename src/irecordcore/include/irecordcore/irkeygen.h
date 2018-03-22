@@ -27,29 +27,29 @@
 #ifndef _IRECORDCORE_IRKEYGEN_H_
 #define _IRECORDCORE_IRKEYGEN_H_
 
+#include <memory>
 #include <irecordcore/irkey.h>
 #include <irecordcore/irmac.h>
+#include <ircommon/irrandom.h>
 
 namespace irecordcore {
 namespace crypto {
 
+/**
+ * This is the base class for all key generators.
+ *
+ * @since 2018.03.14
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ */
 class IRKeyGenerator {
-private:
-	unsigned int _keySize;
 public:
-	IRKeyGenerator();
+	IRKeyGenerator() = default;
 
 	virtual ~IRKeyGenerator() = default;
 
-	unsigned int keySize() const {
-		return this->_keySize;
-	}
+	virtual unsigned int keySize() const = 0;
 
-	unsigned int keySizeInBytes() const {
-		return this->keySize() / 8;
-	}
-
-	virtual bool setKeySize(unsigned int keySize);
+	virtual bool setKeySize(unsigned int keySize) = 0;
 };
 
 /**
@@ -59,14 +59,22 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
 class IRSecretKeyGenerator : public IRKeyGenerator {
+private:
+	unsigned int _keySize;
 public:
-	IRSecretKeyGenerator() = default;
+	IRSecretKeyGenerator();
 
 	virtual ~IRSecretKeyGenerator() = default;
 
-	virtual bool generate(void * key, int keySize) = 0;
+	virtual unsigned int keySize() const;
 
-	virtual IRSecretKey * generate(int keySize) = 0;
+	virtual unsigned int keySizeInBytes() const;
+
+	virtual bool setKeySize(unsigned int keySize);
+
+	virtual bool generateRaw(void * key, int keySize) = 0;
+
+	virtual IRSecretKey * generate() = 0;
 };
 
 /**
@@ -77,11 +85,11 @@ public:
  */
 class IRSoftwareKeyGenerator : public IRSecretKeyGenerator {
 public:
-	IRSoftwareKeyGenerator();
+	IRSoftwareKeyGenerator() = default;
 
-	virtual ~IRSoftwareKeyGenerator();
+	virtual ~IRSoftwareKeyGenerator() = default;
 
-	virtual IRSecretKey * generate(int keySize);
+	virtual IRSecretKey * generate();
 };
 
 /**
@@ -93,14 +101,15 @@ public:
  */
 class IRRandomKeyGenerator : public IRSoftwareKeyGenerator {
 private:
-
+	std::shared_ptr<ircommon::IRRandom> _random;
 public:
-	IRRandomKeyGenerator();
-	virtual ~IRRandomKeyGenerator();
+	IRRandomKeyGenerator(ircommon::IRRandom * random);
 
-	virtual bool generate(void * key, int keySize);
+	IRRandomKeyGenerator(std::shared_ptr<ircommon::IRRandom> random);
 
-	virtual IRSecretKey * generate(int keySize);
+	virtual ~IRRandomKeyGenerator() = default;
+
+	virtual bool generateRaw(void * key, int keySize);
 };
 
 /**
@@ -112,7 +121,7 @@ public:
  */
 class IRPBKDF2KeyGenerator: public IRSoftwareKeyGenerator {
 private:
-	IRMAC * _prf;
+	std::unique_ptr<IRMAC> _prf;
 
 	unsigned int _rounds;
 
@@ -138,9 +147,7 @@ public:
 
 	void setSalt(const void * salt, std::uint64_t saltSize);
 
-	virtual bool generate(void * key, int keySize);
-
-	virtual IRSecretKey * generate(int keySize);
+	virtual bool generateRaw(void * key, int keySize);
 };
 
 } // namespace crypto
