@@ -63,13 +63,6 @@ IRDelayedRandom::IRDelayedRandom(IRRandom * random, std::uint64_t delay):
 }
 
 //------------------------------------------------------------------------------
-IRDelayedRandom::~IRDelayedRandom() {
-	if (this->_random) {
-		delete this->_random;
-	}
-}
-
-//------------------------------------------------------------------------------
 void IRDelayedRandom::delay(){
 	std::this_thread::sleep_for(std::chrono::milliseconds(this->_delay));
 }

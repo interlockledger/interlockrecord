@@ -27,6 +27,7 @@
 #ifndef _IRDUMMYRANDOM_H_
 #define _IRDUMMYRANDOM_H_
 
+#include <memory>
 #include <ircommon/irrandom.h>
 
 using namespace ircommon;
@@ -63,7 +64,7 @@ protected:
 	/**
 	 * Inner IRRandom instance.
 	 */
-	ircommon::IRRandom * _random;
+	std::unique_ptr<ircommon::IRRandom> _random;
 
 	std::uint64_t _delay;
 
@@ -81,7 +82,7 @@ public:
 	/**
 	 * Dispose this instance and releases all associated resources.
 	 */
-	virtual ~IRDelayedRandom();
+	virtual ~IRDelayedRandom() = default;
 
 	virtual void setSeed(std::uint64_t seed);
 
