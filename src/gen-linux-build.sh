@@ -31,17 +31,18 @@ cd ..
 BUILD_DIR="$(pwd)/build"
 popd > /dev/null
 
-
 if [ -d "$BUILD_DIR" ]; then
-	echo "'$BUILD_DIR' already exists."
+	echo "'$BUILD_DIR' already exists. Updating..."
+	pushd "$BUILD_DIR" >/dev/null
+	cmake ../src
+	popd > /dev/null
 	exit 1
+else
+	echo "Creating $BUILD_DIR..."
+	mkdir "$BUILD_DIR"
+	pushd "$BUILD_DIR" >/dev/null
+	cmake ../src -G"Eclipse CDT4 - Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECLIPSE_VERSION=4.6
+	popd >/dev/null
+	echo "Build environment created inside '$BUILD_DIR'. Load it as an Eclipse CDT project."
 fi
-echo "Creating $BUILD_DIR..."
-mkdir "$BUILD_DIR"
-pushd "$BUILD_DIR" >/dev/null
-cmake ../src -G"Eclipse CDT4 - Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_ECLIPSE_VERSION=4.6
-popd >/dev/null
-echo "Build environment created inside '$BUILD_DIR'. Load it as an Eclipse CDT project."
-
-
 
