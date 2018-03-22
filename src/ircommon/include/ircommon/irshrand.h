@@ -28,6 +28,7 @@
 #define _IRCOMMON_IRSHRAND_H_
 
 #include <ircommon/irrandom.h>
+#include <memory>
 #include <mutex>
 
 namespace ircommon {
@@ -48,7 +49,7 @@ protected:
 	/**
 	 * Inner IRRandom instance.
 	 */
-	ircommon::IRRandom * _random;
+	std::unique_ptr<ircommon::IRRandom> _random;
 
 	/**
 	 * The synchronization mutex.
@@ -66,7 +67,7 @@ public:
 	/**
 	 * Dispose this instance and releases all associated resources.
 	 */
-	virtual ~IRSharedRandom();
+	virtual ~IRSharedRandom() = default;
 
 	virtual void setSeed(std::uint64_t seed);
 

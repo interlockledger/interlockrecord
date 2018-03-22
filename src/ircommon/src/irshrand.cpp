@@ -37,14 +37,6 @@ IRSharedRandom::IRSharedRandom(IRRandom * random): IRRandom(), _random(random),
 }
 
 //------------------------------------------------------------------------------
-IRSharedRandom::~IRSharedRandom() {
-
-	if (this->_random) {
-		delete this->_random;
-	}
-}
-
-//------------------------------------------------------------------------------
 void IRSharedRandom::setSeed(std::uint64_t seed) {
 	std::lock_guard<std::mutex> lock(this->_mutex);
 	this->_random->setSeed(seed);
