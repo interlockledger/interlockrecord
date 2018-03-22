@@ -66,8 +66,8 @@ IRHMAC::IRHMAC(IRHashAlgorithm * hash, std::uint64_t blockSize): IRMAC(),
 
 	this->_blockSize = blockSize;
 
-	this->_ipad = new std::uint8_t[this->_blockSize];
-	this->_opad = new std::uint8_t[this->_blockSize];
+	this->_ipad = std::unique_ptr<std::uint8_t[]>(new std::uint8_t[this->_blockSize]);
+	this->_opad = std::unique_ptr<std::uint8_t[]>(new std::uint8_t[this->_blockSize]);
 	this->setKey(nullptr, 0);
 }
 
@@ -75,15 +75,10 @@ IRHMAC::IRHMAC(IRHashAlgorithm * hash, std::uint64_t blockSize): IRMAC(),
 IRHMAC::~IRHMAC() {
 
 	if (this->_opad) {
-		ircommon::IRUtils::clearMemory(this->_opad, this->_blockSize);
-		delete [] this->_opad;
+		ircommon::IRUtils::clearMemory(this->_opad.get(), this->_blockSize);
 	}
 	if (this->_ipad) {
-		ircommon::IRUtils::clearMemory(this->_ipad, this->_blockSize);
-		delete [] this->_ipad;
-	}
-	if (this->_hash) {
-		delete this->_hash;
+		ircommon::IRUtils::clearMemory(this->_ipad.get(), this->_blockSize);
 	}
 }
 
@@ -100,17 +95,17 @@ void IRHMAC::mask(std::uint8_t * pad, std::uint8_t mask) {
 //------------------------------------------------------------------------------
 bool IRHMAC::setKey(const void * key, std::uint64_t keySize) {
 
-	std::memset(this->_opad, 0, this->blockSize());
+	std::memset(this->_opad.get(), 0, this->blockSize());
 	if (keySize > this->blockSize()) {
 		this->_hash->reset();
 		this->_hash->update(key, keySize);
-		this->_hash->finalize(this->_opad, this->blockSize());
+		this->_hash->finalize(this->_opad.get(), this->blockSize());
 	} else {
-		std::memcpy(this->_opad, key, keySize);
+		std::memcpy(this->_opad.get(), key, keySize);
 	}
-	std::memcpy(this->_ipad, this->_opad, this->_blockSize);
-	this->mask(this->_opad, 0x5c);
-	this->mask(this->_ipad, 0x36);
+	std::memcpy(this->_ipad.get(), this->_opad.get(), this->_blockSize);
+	this->mask(this->_opad.get(), 0x5c);
+	this->mask(this->_ipad.get(), 0x36);
 	this->reset();
 	return true;
 }
@@ -142,7 +137,7 @@ bool IRHMAC::setKey(IRSecretKey & key) {
 //------------------------------------------------------------------------------
 void IRHMAC::reset() {
 	this->_hash->reset();
-	this->_hash->update(this->_ipad, this->_blockSize);
+	this->_hash->update(this->_ipad.get(), this->_blockSize);
 }
 
 //------------------------------------------------------------------------------
@@ -170,7 +165,7 @@ bool IRHMAC::finalize(void * out, std::uint64_t size) {
 		return false;
 	}
 	this->_hash->reset();
-	this->_hash->update(this->_opad, this->_blockSize);
+	this->_hash->update(this->_opad.get(), this->_blockSize);
 	this->_hash->update(out, this->sizeInBytes());
 	return this->_hash->finalize(out, size);
 }

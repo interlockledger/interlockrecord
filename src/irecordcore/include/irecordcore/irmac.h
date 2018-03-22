@@ -27,6 +27,7 @@
 #ifndef _IRECORDCORE_IRMAC_H_
 #define _IRECORDCORE_IRMAC_H_
 
+#include <memory>
 #include <irecordcore/irhash.h>
 #include <irecordcore/irkey.h>
 
@@ -79,10 +80,10 @@ public:
  */
 class IRHMAC: IRMAC {
 private:
-	IRHashAlgorithm * _hash;
+	std::unique_ptr<IRHashAlgorithm> _hash;
 	std::uint64_t _blockSize;
-	std::uint8_t * _ipad;
-	std::uint8_t * _opad;
+	std::unique_ptr<std::uint8_t[]> _ipad;
+	std::unique_ptr<std::uint8_t[]> _opad;
 
 	/**
 	 * Masks the specified block using the specified mask.
