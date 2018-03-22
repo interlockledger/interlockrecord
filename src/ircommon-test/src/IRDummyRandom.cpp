@@ -37,12 +37,11 @@ void IRDummyRandom::setSeed(std::uint64_t seed) {
 
 //------------------------------------------------------------------------------
 void  IRDummyRandom::setSeed(const void * seed, std::uint64_t seedSize) {
+	std::uint8_t tmp[8];
 
-	if (seedSize) {
-		this->_seed = (*seed);
-	} else {
-		this->_seed = 0;
-	}
+	std::memset(tmp, 0, sizeof(tmp));
+	std::memcpy(tmp, seed, (seedSize < 8)? seedSize : 8);
+	IRUtils::BE2Int(tmp, this->_seed);
 }
 
 //------------------------------------------------------------------------------

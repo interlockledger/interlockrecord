@@ -63,6 +63,7 @@ TEST_F(IRRandomTest,Constructor) {
 TEST_F(IRRandomTest, seedUInt64) {
 	IRDummyRandom r;
 
+	// Actually testing the IRDummyRandom implementation
 	for (std::uint32_t seed = 0; seed < 16; seed++){
 		r.setSeed(seed);
 		ASSERT_EQ(seed, r.seed());
@@ -72,14 +73,23 @@ TEST_F(IRRandomTest, seedUInt64) {
 //------------------------------------------------------------------------------
 TEST_F(IRRandomTest, seedVoidUInt64) {
 	IRDummyRandom r;
-	std::uint8_t tmp[8];
+	std::uint8_t seed[16];
 
-	for (std::uint32_t seed = 0; seed < 16; seed++){
-		r.setSeed(seed);
-		ASSERT_EQ(seed, r.seed());
+	// Actually testing the IRDummyRandom implementation
+	IRUtils::int2BE(0x0123456789ABCDEFll, seed);
+	IRUtils::int2BE(0xFEDCBA0987654321ll, seed + 8);
+
+	std::uint64_t mask = 0xFFFFFFFFFFFFFFFFll;
+	for (int i = 0; i <= 8; i++) {
+		r.setSeed(seed, i);
+		std::uint64_t exp = 0x0123456789ABCDEFll & ~mask;
+		ASSERT_EQ(exp, r.seed());
+		mask = mask >> 8;
 	}
-}
 
+	r.setSeed(seed, 9);
+	ASSERT_EQ(0x0123456789ABCDEFll, r.seed());
+}
 
 //------------------------------------------------------------------------------
 TEST_F(IRRandomTest, nextBytes) {
@@ -87,6 +97,7 @@ TEST_F(IRRandomTest, nextBytes) {
 	std::uint8_t tmp[16];
 	std::uint8_t exp[16];
 
+	// Actually testing the IRDummyRandom implementation
 	for (std::uint32_t seed = 0; seed < 16; seed++){
 		r.setSeed(seed);
 		for (std::uint32_t i = 0; i < sizeof(exp); i++) {
