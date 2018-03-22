@@ -27,6 +27,7 @@
 #include "IRDummyRandom.h"
 #include <ircommon/irutils.h>
 #include <cstring>
+#include <thread>
 
 //==============================================================================
 // class IRDummyRandom
@@ -53,4 +54,85 @@ void IRDummyRandom::nextBytes(void * out, std::uint64_t outSize) {
 		this->_seed++;
 	}
 }
+
+//==============================================================================
+// class IRDelayedRandom
+//------------------------------------------------------------------------------
+IRDelayedRandom::IRDelayedRandom(IRRandom * random, std::uint64_t delay):
+		IRRandom(), _random(random), _delay(delay) {
+}
+
+//------------------------------------------------------------------------------
+IRDelayedRandom::~IRDelayedRandom() {
+	if (this->_random) {
+		delete this->_random;
+	}
+}
+
+//------------------------------------------------------------------------------
+void IRDelayedRandom::delay(){
+	std::this_thread::sleep_for(std::chrono::milliseconds(this->_delay));
+}
+
+//------------------------------------------------------------------------------
+void IRDelayedRandom::setSeed(std::uint64_t seed){
+	this->delay();
+	this->_random->setSeed(seed);
+}
+
+//------------------------------------------------------------------------------
+void IRDelayedRandom::setSeed(const void * seed, std::uint64_t seedSize){
+	this->delay();
+	this->_random->setSeed(seed, seedSize);
+}
+
+//------------------------------------------------------------------------------
+bool IRDelayedRandom::nextBoolean() {
+	this->delay();
+	return this->_random->nextBoolean();
+}
+
+//------------------------------------------------------------------------------
+std::uint8_t IRDelayedRandom::next() {
+	this->delay();
+	return this->_random->next();
+}
+
+//------------------------------------------------------------------------------
+std::uint16_t IRDelayedRandom::next16() {
+	this->delay();
+	return this->_random->next16();
+}
+
+//------------------------------------------------------------------------------
+std::uint32_t IRDelayedRandom::next32() {
+	this->delay();
+	return this->_random->next32();
+}
+
+//------------------------------------------------------------------------------
+std::uint64_t IRDelayedRandom::next64() {
+	this->delay();
+	return this->_random->next64();
+}
+
+//------------------------------------------------------------------------------
+float IRDelayedRandom::nextFloat() {
+	this->delay();
+	return this->_random->nextFloat();
+}
+
+
+//------------------------------------------------------------------------------
+double IRDelayedRandom::nextDouble() {
+	this->delay();
+	return this->_random->nextDouble();
+}
+
+//------------------------------------------------------------------------------
+void IRDelayedRandom::nextBytes(void * out, std::uint64_t outSize) {
+	this->delay();
+	this->_random->nextBytes(out, outSize);
+}
+
 //------------------------------------------------------------------------------

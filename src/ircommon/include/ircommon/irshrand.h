@@ -37,7 +37,7 @@ namespace threading {
  * This class implements IRRandom that can be shared among multiple threads.
  *
  * <p>This implementation doest not implement an actual PRNG but act as a
- * Decorator that can provide exclusive access to the inner IRRandom instance,
+ * Decorator that ensures the exclusive access to the inner IRRandom instance,
  * thus making it thread-safe.</p>
  *
  * @since 2018.03.21
