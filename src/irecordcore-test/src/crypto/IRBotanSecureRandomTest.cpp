@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2017-2018, Open Communications Security
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of the <organization> nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -24,36 +24,46 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include "IRBotanSecureRandomTest.h"
+#include "CryptoSamples.h"
 #include <irecordcore/irsrand.h>
-#include <botan/auto_rng.h>
+#include <botan/system_rng.h>
+#include <cstring>
 
-using namespace irecordcore;
 using namespace irecordcore::crypto;
 
 //==============================================================================
-// Class IRSecureRandom
+// class IRBotanSecureRandomTest
 //------------------------------------------------------------------------------
-IRSecureRandom::IRSecureRandom(): IRSecureRandom(new Botan::AutoSeeded_RNG()) {
+IRBotanSecureRandomTest::IRBotanSecureRandomTest() {
 }
 
 //------------------------------------------------------------------------------
-IRSecureRandom::IRSecureRandom(Botan::RandomNumberGenerator * rng):
-		_random(rng) {
+IRBotanSecureRandomTest::~IRBotanSecureRandomTest() {
 }
 
 //------------------------------------------------------------------------------
-void IRSecureRandom::setSeed(std::uint64_t seed) {
-	this->setSeed(&seed, sizeof(seed));
+void IRBotanSecureRandomTest::SetUp() {
 }
 
 //------------------------------------------------------------------------------
-void IRSecureRandom::setSeed(const void * seed, std::uint64_t seedSize) {
-	this->_random->add_entropy((const std::uint8_t *)seed, seedSize);
+void IRBotanSecureRandomTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-void IRSecureRandom::nextBytes(void * out, std::uint64_t outSize) {
-	this->_random->randomize((std::uint8_t *) out, outSize);
+TEST_F(IRBotanSecureRandomTest, Constructor) {
+	IRBotanSecureRandom * r;
+
+	r = new IRBotanSecureRandom(new Botan::System_RNG());
+	delete r;
 }
 
 //------------------------------------------------------------------------------
+TEST_F(IRBotanSecureRandomTest, backend) {
+	IRBotanSecureRandom r(new Botan::System_RNG());
+
+	ASSERT_EQ(typeid(Botan::System_RNG&), typeid(r.backend()));
+}
+
+//------------------------------------------------------------------------------
+

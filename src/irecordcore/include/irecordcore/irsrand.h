@@ -29,6 +29,7 @@
 
 #include <ircommon/irrandom.h>
 #include <botan/rng.h>
+#include <memory>
 
 namespace irecordcore {
 namespace crypto {
@@ -41,7 +42,7 @@ namespace crypto {
  */
 class IRSecureRandom : public ircommon::IRRandom {
 protected:
-	Botan::RandomNumberGenerator * _random;
+	std::unique_ptr<Botan::RandomNumberGenerator> _random;
 
 	/**
 	 * Creates a new instance of this class.
@@ -59,7 +60,7 @@ public:
 	/**
 	 * Disposes this instance and releases all associated resources.
 	 */
-	virtual ~IRSecureRandom();
+	virtual ~IRSecureRandom() = default;
 
 	virtual void setSeed(std::uint64_t seed);
 

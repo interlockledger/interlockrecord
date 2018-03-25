@@ -28,69 +28,74 @@ project (irecordcore-test
 
 enable_testing()
 add_executable(irecordcore-test
-	src/block/IRBlockHeaderTest.cpp
 	src/block/IRBlockHeaderTest.h
-	src/block/IRClosingPayloadTest.cpp
 	src/block/IRClosingPayloadTest.h
-	src/block/IRRecordTypeTest.cpp
 	src/block/IRRecordTypeTest.h
-	src/block/IRRootBlockPayloadTest.cpp
 	src/block/IRRootBlockPayloadTest.h
-	src/crypto/CryptoSamples.cpp
 	src/crypto/CryptoSamples.h
-	src/crypto/IRBotanHashTest.cpp
 	src/crypto/IRBotanHashTest.h
-	src/crypto/IRBotanKeccakHashTest.cpp
 	src/crypto/IRBotanKeccakHashTest.h
-	src/crypto/IRCopyHashTest.cpp
+	src/crypto/IRBotanSecureRandomTest.h
 	src/crypto/IRCopyHashTest.h
-	src/crypto/IRCryptoTest.cpp
 	src/crypto/IRCryptoTest.h
-	src/crypto/IRHashAlgorithmTest.cpp
 	src/crypto/IRHashAlgorithmTest.h
-	src/crypto/IRHashTest.cpp
 	src/crypto/IRHashTest.h
-	src/crypto/IRHMACTest.cpp
 	src/crypto/IRHMACTest.h
-	src/crypto/IRKeyTest.cpp
 	src/crypto/IRKeyTest.h
-	src/crypto/IRSecretKeyImplTest.cpp
 	src/crypto/IRSecretKeyImplTest.h
-	src/crypto/IRSHA1HashTest.cpp
+	src/crypto/IRSecureRandomTest.h
 	src/crypto/IRSHA1HashTest.h
-	src/crypto/IRSHA256HashTest.cpp
 	src/crypto/IRSHA256HashTest.h
-	src/crypto/IRSHA3_256HashTest.cpp
 	src/crypto/IRSHA3_256HashTest.h
-	src/crypto/IRSHA3_512HashTest.cpp
 	src/crypto/IRSHA3_512HashTest.h
-	src/crypto/IRSHA512HashTest.cpp
 	src/crypto/IRSHA512HashTest.h
-	src/IRTypedRawTest.cpp
 	src/IRTypedRawTest.h
+	src/tags/IRBaseType16RawTagTest.h
+	src/tags/IRBlockSigTagTest.h
+	src/tags/IRBlockTagTest.h
+	src/tags/IRHashTagTest.h
+	src/tags/IRHeaderTagTest.h
+	src/tags/IRPayloadTagTest.h
+	src/tags/IRPubTagTest.h
+	src/tags/IRSignedTagTest.h
+	src/tags/IRSigTagTest.h
+	src/tags/IRTagFactoryTest.h
+	src/tags/IRTagTypeTest.h
+	src/block/IRBlockHeaderTest.cpp
+	src/block/IRClosingPayloadTest.cpp
+	src/block/IRRecordTypeTest.cpp
+	src/block/IRRootBlockPayloadTest.cpp
+	src/crypto/CryptoSamples.cpp
+	src/crypto/IRBotanHashTest.cpp
+	src/crypto/IRBotanKeccakHashTest.cpp
+	src/crypto/IRBotanSecureRandomTest.cpp
+	src/crypto/IRCopyHashTest.cpp
+	src/crypto/IRCryptoTest.cpp
+	src/crypto/IRHashAlgorithmTest.cpp
+	src/crypto/IRHashTest.cpp
+	src/crypto/IRHMACTest.cpp
+	src/crypto/IRKeyTest.cpp
+	src/crypto/IRSecretKeyImplTest.cpp
+	src/crypto/IRSecureRandomTest.cpp
+	src/crypto/IRSHA1HashTest.cpp
+	src/crypto/IRSHA256HashTest.cpp
+	src/crypto/IRSHA3_256HashTest.cpp
+	src/crypto/IRSHA3_512HashTest.cpp
+	src/crypto/IRSHA512HashTest.cpp
+	src/IRTypedRawTest.cpp
 	src/main.cpp
 	src/tags/IRBaseType16RawTagTest.cpp
-	src/tags/IRBaseType16RawTagTest.h
 	src/tags/IRBlockSigTagTest.cpp
-	src/tags/IRBlockSigTagTest.h
 	src/tags/IRBlockTagTest.cpp
-	src/tags/IRBlockTagTest.h
 	src/tags/IRHashTagTest.cpp
-	src/tags/IRHashTagTest.h
 	src/tags/IRHeaderTagTest.cpp
-	src/tags/IRHeaderTagTest.h
 	src/tags/IRPayloadTagTest.cpp
-	src/tags/IRPayloadTagTest.h
 	src/tags/IRPubTagTest.cpp
-	src/tags/IRPubTagTest.h
 	src/tags/IRSignedTagTest.cpp
-	src/tags/IRSignedTagTest.h
 	src/tags/IRSigTagTest.cpp
-	src/tags/IRSigTagTest.h
 	src/tags/IRTagFactoryTest.cpp
-	src/tags/IRTagFactoryTest.h
 	src/tags/IRTagTypeTest.cpp
-	src/tags/IRTagTypeTest.h)
+)
 
 target_link_libraries(irecordcore-test
 	irecordcore
