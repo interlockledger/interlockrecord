@@ -164,6 +164,121 @@ bool lockMemory(void * addr, std::uint64_t size);
  */
 bool unlockMemory(void * addr, std::uint64_t size);
 
+/**
+ * This helper class implements a memory cleaner. It can be used to register a
+ * buffer that will be cleaned when this class is disposed. It is important to
+ * notice that the registered buffer will bel zeroed but not disposed by this
+ * class.
+ *
+ * @since 2018.03.25
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @see IRSecureTemp
+ */
+class IRAutoMemoryCleaner {
+private:
+	std::uint64_t _buffSize;
+	void * _buff;
+public:
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] buff The buffer that should be cleaned on the disposal of this
+	 * instance.
+	 * @param[in] size The size of the buffer.
+	 */
+	IRAutoMemoryCleaner(void * buff, std::uint64_t size): _buffSize(size),
+			_buff(buff) {
+	}
+
+	// Copy constructor is forbidden
+	IRAutoMemoryCleaner(const IRAutoMemoryCleaner &) = delete;
+
+	/**
+	 * Disposes ths instance and cleans the buffer registered inside it. The
+	 * buffer itself will not be disposed.
+	 */
+	~IRAutoMemoryCleaner() {
+		this->clear();
+	}
+
+	/**
+	 * Cleans the buffer.
+	 */
+	void clear() {
+		clearMemory(this->_buff, this->_buffSize);
+	}
+};
+
+/**
+ * This helper class implements a temporary byte buffer that will clean itself
+ * when disposed.
+ *
+ * @since 2018.03.25
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @see IRAutoMemoryCleaner
+ */
+class IRSecureTemp {
+private:
+	std::uint64_t _buffSize;
+	std::uint8_t * _buff;
+public:
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] size The size of the temporary buffer in bytes.
+	 */
+	IRSecureTemp(std::uint64_t size): _buffSize(size),
+			_buff(new std::uint8_t [size]) {
+	}
+
+	// Copy constructor is forbidden
+	IRSecureTemp(const IRSecureTemp &) = delete;
+
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
+	~IRSecureTemp() {
+		if (this->_buff) {
+			this->clear();
+			delete [] this->_buff;
+		}
+	}
+
+	/**
+	 * Cleans the buffer.
+	 */
+	void clear() {
+		clearMemory(this->_buff, this->_buffSize);
+	}
+
+	/**
+	 * Returns the temporary buffer size.
+	 *
+	 * @return The buffer size.
+	 */
+	std::uint64_t size() const {
+		return this->_buffSize;
+	}
+
+	/**
+	 * Returns a read/write pointer to the temporary buffer.
+	 *
+	 * @return The buffer.
+	 */
+	std::uint8_t * buff() {
+		return this->_buff;
+	}
+
+	/**
+	 * Returns a read-only pointer to the temporary buffer.
+	 *
+	 * @return The buffer.
+	 */
+	const std::uint8_t * buff() const {
+		return this->_buff;
+	}
+};
+
 } // namespace IRUtils
 
 } //namespace ircommon
