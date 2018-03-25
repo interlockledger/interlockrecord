@@ -42,6 +42,9 @@ add_executable(irecordcore-test
 	src/crypto/IRHashTest.h
 	src/crypto/IRHMACTest.h
 	src/crypto/IRKeyTest.h
+	src/crypto/IRPBKDF2KeyGeneratorTest.h
+	src/crypto/IRRandomKeyGeneratorTest.h
+	src/crypto/IRSecretKeyGeneratorTest.h
 	src/crypto/IRSecretKeyImplTest.h
 	src/crypto/IRSecureRandomTest.h
 	src/crypto/IRSHA1HashTest.h
@@ -49,6 +52,7 @@ add_executable(irecordcore-test
 	src/crypto/IRSHA3_256HashTest.h
 	src/crypto/IRSHA3_512HashTest.h
 	src/crypto/IRSHA512HashTest.h
+	src/crypto/IRSoftwareKeyGeneratorTest.h
 	src/IRTypedRawTest.h
 	src/tags/IRBaseType16RawTagTest.h
 	src/tags/IRBlockSigTagTest.h
@@ -75,6 +79,9 @@ add_executable(irecordcore-test
 	src/crypto/IRHashTest.cpp
 	src/crypto/IRHMACTest.cpp
 	src/crypto/IRKeyTest.cpp
+	src/crypto/IRPBKDF2KeyGeneratorTest.cpp
+	src/crypto/IRRandomKeyGeneratorTest.cpp
+	src/crypto/IRSecretKeyGeneratorTest.cpp
 	src/crypto/IRSecretKeyImplTest.cpp
 	src/crypto/IRSecureRandomTest.cpp
 	src/crypto/IRSHA1HashTest.cpp
@@ -82,6 +89,7 @@ add_executable(irecordcore-test
 	src/crypto/IRSHA3_256HashTest.cpp
 	src/crypto/IRSHA3_512HashTest.cpp
 	src/crypto/IRSHA512HashTest.cpp
+	src/crypto/IRSoftwareKeyGeneratorTest.cpp
 	src/IRTypedRawTest.cpp
 	src/main.cpp
 	src/tags/IRBaseType16RawTagTest.cpp
