@@ -67,12 +67,10 @@ IRSecretKey * IRSoftwareKeyGenerator::generate() {
 
 	keySize = this->keySizeInBytes();
 	if (keySize != 0) {
-		std::uint8_t * tmp = new std::uint8_t[keySize];
-		if (this->generateRaw(tmp, keySize)) {
-			key = new IRSecretKeyImpl(tmp, keySize);
-			IRUtils::clearMemory(tmp, keySize);
+		IRUtils::IRSecureTemp tmp(keySize);
+		if (this->generateRaw(tmp.buff(), keySize)) {
+			key = new IRSecretKeyImpl(tmp.buff(), keySize);
 		}
-		delete [] tmp;
 	}
 	return key;
 }
@@ -91,9 +89,15 @@ IRRandomKeyGenerator::IRRandomKeyGenerator(
 }
 
 //------------------------------------------------------------------------------
-bool IRRandomKeyGenerator::generateRaw(void * key, int keySize) {
+bool IRRandomKeyGenerator::generateRaw(void * key, unsigned int keySize) {
 
-	this->_random->nextBytes(key, keySize);
+	if (this->keySize() == 0) {
+		return false;
+	}
+	if (keySize < this->keySizeInBytes()) {
+		return false;
+	}
+	this->_random->nextBytes(key, this->keySizeInBytes());
 	return true;
 }
 //------------------------------------------------------------------------------

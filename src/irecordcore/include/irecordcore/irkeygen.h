@@ -40,15 +40,32 @@ namespace crypto {
  *
  * @since 2018.03.14
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @note Instances of this class are not thread safe unless stated otherwise.
  */
 class IRKeyGenerator {
 public:
+	/**
+	 * Creates a new instance of this class.
+	 */
 	IRKeyGenerator() = default;
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRKeyGenerator() = default;
 
+	/**
+	 * Returns the key size in bits.
+	 *
+	 * @return The key size.
+	 */
 	virtual unsigned int keySize() const = 0;
 
+	/**
+	 * Returns the key size in bytes.
+	 *
+	 * @return The key size.
+	 */
 	virtual bool setKeySize(unsigned int keySize) = 0;
 };
 
@@ -62,18 +79,44 @@ class IRSecretKeyGenerator : public IRKeyGenerator {
 private:
 	unsigned int _keySize;
 public:
+	/**
+	 * Creates a new instance of this class.
+	 */
 	IRSecretKeyGenerator();
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRSecretKeyGenerator() = default;
 
 	virtual unsigned int keySize() const;
 
 	virtual unsigned int keySizeInBytes() const;
 
+	/**
+	 * Sets the key size. This class restricts the key size to multiple of 8, so
+	 * it will fail if keySize is not dividible by 8.
+	 *
+	 * @param[in] keySize in bits.
+	 * @return true for success or false otherwise.
+	 */
 	virtual bool setKeySize(unsigned int keySize);
 
-	virtual bool generateRaw(void * key, int keySize) = 0;
+	/**
+	 * Generates the raw key value.
+	 *
+	 * @param[out] key The buffer that will receive the key.
+	 * @param[int] keySize The size of key in bytes.
+	 * @return true for success or false otherwise.
+	 * @note This method may not be supported by all subclasses of this class.
+	 */
+	virtual bool generateRaw(void * key, unsigned int keySize) = 0;
 
+	/**
+	 * Generates the key.
+	 *
+	 * @return The gerated key or NULL in case of error.
+	 */
 	virtual IRSecretKey * generate() = 0;
 };
 
@@ -85,16 +128,30 @@ public:
  */
 class IRSoftwareKeyGenerator : public IRSecretKeyGenerator {
 public:
+	/**
+	 * Creates a new instance of this class.
+	 */
 	IRSoftwareKeyGenerator() = default;
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRSoftwareKeyGenerator() = default;
 
+	/**
+	 * Generates the key. This method uses calls
+	 * IRSoftwareKeyGenerator::generateRaw(void *, unsigned int) in order to
+	 * generate the actual key.
+	 *
+	 * @return The gerated key or NULL in case of error.
+	 * @note This method will fail if the key size is set to 0.
+	 */
 	virtual IRSecretKey * generate();
 };
 
 /**
- * This class implements a key generator based on the PBKDF2 algorithm defined
- * by RFC2898.
+ * This class implements a key generator based on a given random number
+ * generator.
  *
  * @since 2018.03.14
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
@@ -103,13 +160,36 @@ class IRRandomKeyGenerator : public IRSoftwareKeyGenerator {
 private:
 	std::shared_ptr<ircommon::IRRandom> _random;
 public:
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] random The random generator. This class will take ownership
+	 * of this instance.
+	 */
 	IRRandomKeyGenerator(ircommon::IRRandom * random);
 
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] random The random generator.
+	 * @note Do not use this constructor unless it is possible to guarantee
+	 * that the instance of random can be shared with other instances.
+	 */
 	IRRandomKeyGenerator(std::shared_ptr<ircommon::IRRandom> random);
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRRandomKeyGenerator() = default;
 
-	virtual bool generateRaw(void * key, int keySize);
+	/**
+	 * Returns the inner random generator.
+	 */
+	ircommon::IRRandom & random(){
+		return *(this->_random);
+	}
+
+	virtual bool generateRaw(void * key, unsigned int keySize);
 };
 
 /**
@@ -131,6 +211,9 @@ private:
 
 	void f(unsigned int rounds, std::uint8_t * out);
 public:
+	/**
+	 * Creates a new instance of this class.
+	 */
 	IRPBKDF2KeyGenerator(IRMAC * prf, unsigned int rounds);
 
 	virtual ~IRPBKDF2KeyGenerator();
@@ -147,7 +230,7 @@ public:
 
 	void setSalt(const void * salt, std::uint64_t saltSize);
 
-	virtual bool generateRaw(void * key, int keySize);
+	virtual bool generateRaw(void * key, unsigned int keySize);
 };
 
 } // namespace crypto
