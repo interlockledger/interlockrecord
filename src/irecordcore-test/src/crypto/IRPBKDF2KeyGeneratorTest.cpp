@@ -38,12 +38,20 @@ static const std::uint8_t IRPBKDF2KeyGenerator_SALT[20] = {
 		0x10, 0x11, 0x12, 0x13};
 
 static const std::uint8_t IRPBKDF2KeyGenerator_PASSWD[10] = {
-		0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
-		0x38, 0x39};
+		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+		0x08, 0x09};
 
-static const std::uint8_t IRPBKDF2KeyGenerator_KEY[16] = {
-		0x3d, 0xc1, 0xd3, 0x0f, 0xc0, 0xfc, 0xe6, 0xbb,
-		0xe2, 0x3a,	0xa5, 0x85, 0x00, 0x40, 0x4e, 0x1b};
+static const std::uint8_t IRPBKDF2KeyGenerator_KEY[80] = {
+		0x5F, 0x42, 0xF1, 0x77, 0x5F, 0x5F, 0x39, 0x35,
+		0xA7, 0x88, 0xCB, 0x89, 0x7F, 0x51, 0xDC, 0x93,
+		0xDB, 0x92, 0xFD, 0xDC, 0x57, 0xD5, 0xD9, 0xA7,
+		0x31, 0x82, 0x26, 0x90, 0x52, 0xDF, 0xF2, 0x3B,
+		0x52, 0x44, 0xD8, 0x18, 0xA1, 0x13, 0x8F, 0xCE,
+		0xCD, 0x47, 0xE8, 0x5A, 0xDF, 0x11, 0x02, 0xA4,
+		0xCB, 0xE3, 0x0F, 0x99, 0x9F, 0x74, 0xFA, 0x11,
+		0xB9, 0xC0, 0xC6, 0x86, 0x1E, 0x7C, 0x54, 0x34,
+		0x5F, 0x7B, 0xA6, 0x32, 0xCE, 0x9E, 0x86, 0xF9,
+		0xBE, 0xC4, 0x2E, 0xB4, 0x0F, 0xA1, 0x83, 0xE1};
 
 //==============================================================================
 // class IRPBKDF2KeyGeneratorTest
@@ -159,53 +167,27 @@ TEST_F(IRPBKDF2KeyGeneratorTest, generateRawInvaldSalt) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRPBKDF2KeyGeneratorTest, prf) {
-	IRPBKDF2KeyGenerator kg(new IRHMAC(new IRSHA1Hash()));
-
-	IRHMAC hmac(new IRSHA1Hash());
-	std::uint8_t key[32];
-
-	// Setup
-	key[0] = 0;
-	key[1] = 0;
-	key[2] = 0;
-	key[3] = 1;
-	kg.prf().setKey(IRPBKDF2KeyGenerator_PASSWD, sizeof(IRPBKDF2KeyGenerator_PASSWD));
-	kg.prf().update(IRPBKDF2KeyGenerator_SALT, sizeof(IRPBKDF2KeyGenerator_SALT));
-	kg.prf().update(key, 4);
-	kg.prf().finalize(key, sizeof(key));
-	key[31] = 0;
-
-	// Setup
-	key[0] = 0;
-	key[1] = 0;
-	key[2] = 0;
-	key[3] = 1;
-	hmac.setKey(IRPBKDF2KeyGenerator_PASSWD, sizeof(IRPBKDF2KeyGenerator_PASSWD));
-	hmac.update(IRPBKDF2KeyGenerator_SALT, sizeof(IRPBKDF2KeyGenerator_SALT));
-	hmac.update(key, 4);
-	hmac.finalize(key, sizeof(key));
-	key[31] = 0;
-}
-
-
-//------------------------------------------------------------------------------
 TEST_F(IRPBKDF2KeyGeneratorTest, generateRaw) {
 	IRPBKDF2KeyGenerator kg(new IRHMAC(new IRSHA1Hash()));
-	std::uint8_t key[32];
+	std::uint8_t key[81];
 
 	// Setup
 	kg.setRounds(IRPBKDF2KeyGenerator_ROUNDS);
-	kg.setKeySize(128);
 	kg.setPassword(IRPBKDF2KeyGenerator_PASSWD,
 			sizeof(IRPBKDF2KeyGenerator_PASSWD));
 	kg.setSalt(IRPBKDF2KeyGenerator_SALT,
 			sizeof(IRPBKDF2KeyGenerator_SALT));
-
-	ASSERT_TRUE(kg.generateRaw(key, sizeof(key)));
-
-	ASSERT_EQ(0, std::memcmp(key, IRPBKDF2KeyGenerator_KEY,
-			sizeof(IRPBKDF2KeyGenerator_KEY)));
+	for (unsigned int size = 1; size <= 80; size++) {
+		kg.setKeySize(size * 8);
+		std::memset(key, 0, sizeof(key));
+		for (unsigned int candidateSize = 0; candidateSize < size; candidateSize++) {
+			ASSERT_FALSE(kg.generateRaw(key, candidateSize));
+			ASSERT_EQ(0, key[0]);
+		}
+		ASSERT_TRUE(kg.generateRaw(key, sizeof(key)));
+		ASSERT_EQ(0, std::memcmp(key, IRPBKDF2KeyGenerator_KEY,	size));
+		ASSERT_EQ(0, key[size]);
+	}
 }
 
 //------------------------------------------------------------------------------

@@ -72,7 +72,7 @@ void IRPBKDF2KeyGenerator::generateBlock(std::uint32_t index,
 		this->_prf->finalize(tmp, this->blockSize());
 		// Combine output with U_i
 		for (unsigned int j = 0; j < this->blockSize(); j++) {
-			*out = (out[j] ^ tmp[j]);
+			out[j] = (out[j] ^ tmp[j]);
 		}
 	}
 }
