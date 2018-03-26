@@ -124,6 +124,10 @@ TEST_F(IRHMACTest, setKey) {
 	ASSERT_TRUE(m.finalize(out, sizeof(out)));
 	ASSERT_EQ(0, std::memcmp(CRYPTOSAMPLES_HMAC_SHA256_KEY128_EMPTY, out, sizeof(out)));
 
+	m.reset();
+	ASSERT_TRUE(m.finalize(out, sizeof(out)));
+	ASSERT_EQ(0, std::memcmp(CRYPTOSAMPLES_HMAC_SHA256_KEY128_EMPTY, out, sizeof(out)));
+
 	// Long key
 	ASSERT_TRUE(m.setKey(CRYPTOSAMPLES_SAMPLE, sizeof(CRYPTOSAMPLES_SAMPLE)));
 	ASSERT_TRUE(m.finalize(out, sizeof(out)));

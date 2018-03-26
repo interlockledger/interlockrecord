@@ -192,47 +192,6 @@ public:
 	virtual bool generateRaw(void * key, unsigned int keySize);
 };
 
-/**
- * This class implements a key generator based on the PBKDF2 algorithm defined
- * by RFC2898.
- *
- * @since 2018.03.14
- * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
- */
-class IRPBKDF2KeyGenerator: public IRSoftwareKeyGenerator {
-private:
-	std::unique_ptr<IRMAC> _prf;
-
-	unsigned int _rounds;
-
-	ircommon::IRBuffer _salt;
-
-	std::uint8_t * _tmp;
-
-	void f(unsigned int rounds, std::uint8_t * out);
-public:
-	/**
-	 * Creates a new instance of this class.
-	 */
-	IRPBKDF2KeyGenerator(IRMAC * prf, unsigned int rounds);
-
-	virtual ~IRPBKDF2KeyGenerator();
-
-	unsigned int rounds() const {
-		return this->_rounds;
-	}
-
-	void setRounds(unsigned int rounds) {
-		this->_rounds = rounds;
-	}
-
-	void setPassword(const void * password, std::uint64_t passwordSize);
-
-	void setSalt(const void * salt, std::uint64_t saltSize);
-
-	virtual bool generateRaw(void * key, unsigned int keySize);
-};
-
 } // namespace crypto
 } // namespace irecordcore
 

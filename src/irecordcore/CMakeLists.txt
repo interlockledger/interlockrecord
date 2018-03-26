@@ -38,29 +38,31 @@ configure_file (
 
 # Sources
 add_library(irecordcore STATIC
-include/irecordcore/irblock.h
-include/irecordcore/IRCHandle.h
-include/irecordcore/ircipher.h
-include/irecordcore/ircrypto.h
-include/irecordcore/irhash.h
-include/irecordcore/irkeygen.h
-include/irecordcore/irkey.h
-include/irecordcore/irmac.h
-include/irecordcore/irpayload.h
-include/irecordcore/irsrand.h
-include/irecordcore/irtags.h
-include/irecordcore/irtypes.h
-include/irecordcore/version.h
-src/irblock.cpp
-src/IRCHandle.cpp
-src/irhash.cpp
-src/irkey.cpp
-src/irkeygen.cpp
-src/irmac.cpp
-src/irsrand.cpp
-src/irtags.cpp
-src/irtypes.cpp
-	)
+	include/irecordcore/irblock.h
+	include/irecordcore/IRCHandle.h
+	include/irecordcore/ircipher.h
+	include/irecordcore/ircrypto.h
+	include/irecordcore/irhash.h
+	include/irecordcore/irkeygen.h
+	include/irecordcore/irkey.h
+	include/irecordcore/irmac.h
+	include/irecordcore/irpayload.h
+	include/irecordcore/irpbkdf2.h
+	include/irecordcore/irsrand.h
+	include/irecordcore/irtags.h
+	include/irecordcore/irtypes.h
+	include/irecordcore/version.h
+	src/irblock.cpp
+	src/IRCHandle.cpp
+	src/irhash.cpp
+	src/irkey.cpp
+	src/irkeygen.cpp
+	src/irmac.cpp
+	src/irpbkdf2.cpp
+	src/irsrand.cpp
+	src/irtags.cpp
+	src/irtypes.cpp
+)
 	
 target_include_directories(irecordcore PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include)
