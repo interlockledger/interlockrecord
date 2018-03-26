@@ -203,6 +203,16 @@ TEST_F(IRHMACTest, finalize) {
 	}
 }
 
+//------------------------------------------------------------------------------
+TEST_F(IRHMACTest, CryptoSamplesSHA1) {
+	IRHMAC m(new IRSHA1Hash());
+	std::uint8_t out[20];
+
+	// EMPTY_EMPTY
+	ASSERT_TRUE(m.finalize(out, sizeof(out)));
+	ASSERT_EQ(0, std::memcmp(CRYPTOSAMPLES_HMAC_SHA1_EMPTY_EMPTY, out, sizeof(out)));
+
+}
 
 //------------------------------------------------------------------------------
 TEST_F(IRHMACTest, CryptoSamplesSHA256) {

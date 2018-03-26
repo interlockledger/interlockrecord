@@ -102,6 +102,11 @@ extern const std::uint8_t CRYPTOSAMPLES_SHA3_512_EMPTY[64];
 extern const std::uint8_t CRYPTOSAMPLES_SHA3_512_SAMPLE[64];
 
 /**
+ * HMAC-SHA1("", "")
+ */
+extern const std::uint8_t CRYPTOSAMPLES_HMAC_SHA1_EMPTY_EMPTY[20];
+
+/**
  * HMAC-SHA256("", "")
  */
 extern const std::uint8_t CRYPTOSAMPLES_HMAC_SHA256_EMPTY_EMPTY[32];
