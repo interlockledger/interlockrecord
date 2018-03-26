@@ -78,7 +78,7 @@ public:
  * @since 2018.03.11
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
-class IRHMAC: IRMAC {
+class IRHMAC: public IRMAC {
 private:
 	std::unique_ptr<IRHashAlgorithm> _hash;
 	std::uint64_t _blockSize;
