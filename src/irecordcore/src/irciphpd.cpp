@@ -24,62 +24,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _IRECORDCORE_IRCIPHPD_H_
-#define _IRECORDCORE_IRCIPHPD_H_
+#include <irecordcore/irciphpd.h>
 
-#include <ircommon/irrandom.h>
-#include <memory>
-#include <cstdint>
-
-namespace irecordcore {
-namespace crypto {
-
-class IRPadding {
-public:
-	IRPadding() = default;
-
-	virtual ~IRPadding() = default;
-
-	virtual void addPadding(unsigned int blockSize, const void * src,
-			unsigned int srcSize, void * dst, unsigned int dstSize) const = 0;
-
-	virtual unsigned int getPaddingSize(unsigned int blockSize,
-			const void * src, unsigned int srcSize) const  = 0;
-};
-
-class IRPKCS7Padding : public IRPadding {
-public:
-	IRPKCS7Padding() = default;
-
-	virtual ~IRPKCS7Padding() = default;
-
-	virtual void addPadding(unsigned int blockSize, const void * src,
-			unsigned int srcSize, void * dst, unsigned int dstSize) const = 0;
-
-	virtual unsigned int getPaddingSize(unsigned int blockSize,
-			const void * src, unsigned int srcSize) const  = 0;
-};
-
-/**
- * This class implements the OpenCS random padding.
- */
-class IROCSRandomPadding : public IRPadding {
-private:
-	std::unique_ptr<ircommon::IRRandom> _random;
-public:
-	IROCSRandomPadding(ircommon::IRRandom * random);
-
-	virtual ~IROCSRandomPadding() = default;
-
-	virtual void addPadding(unsigned int blockSize, const void * src,
-			unsigned int srcSize, void * dst, unsigned int dstSize) const = 0;
-
-	virtual unsigned int getPaddingSize(unsigned int blockSize,
-			const void * src, unsigned int srcSize) const  = 0;
-};
-
-
-} // namespace crypto
-} // namespace irecordcore
-
-#endif /* _IRECORDCORE_IRCIPHPD_H_ */
+using namespace irecordcore::crypto;
