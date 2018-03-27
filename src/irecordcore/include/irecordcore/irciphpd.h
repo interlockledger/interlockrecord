@@ -24,72 +24,62 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _IRECORDCORE_IRCIPHER_H_
-#define _IRECORDCORE_IRCIPHER_H_
+#ifndef _IRECORDCORE_IRCIPHPD_H_
+#define _IRECORDCORE_IRCIPHPD_H_
 
-#include <irecordcore/irkey.h>
+#include <ircommon/irrandom.h>
+#include <memory>
+#include <cstdint>
 
 namespace irecordcore {
 namespace crypto {
 
-class IRCipherAlgorithm {
+class IRPadding {
+public:
+	IRPadding() = default;
+
+	virtual ~IRPadding() = default;
+
+	virtual void addPadding(const void * src, void * dst,
+			unsigned int size) const = 0;
+
+	virtual unsigned int getPaddingSize(const void * src,
+			unsigned int size) const  = 0;
+};
+
+class IRPKCS5Padding {
+public:
+	IRPKCS5Padding() = default;
+
+	virtual ~IRPKCS5Padding() = default;
+
+	virtual void addPadding(const void * src, void * dst,
+			unsigned int size) const;
+
+	virtual unsigned int getPaddingSize(const void * src,
+			unsigned int size) const;
+};
+
+/**
+ * This class implements the OpenCS random padding.
+ */
+class IROCSRandomPadding {
 private:
-	bool _cipherMode;
+	std::unique_ptr<ircommon::IRRandom> _random;
 public:
+	IROCSRandomPadding(ircommon::IRRandom * random);
 
-	void setCipherMode(bool )
+	virtual ~IROCSRandomPadding() = default;
 
-	bool isCipher() const {
-		return this->_cipherMode;
-	}
+	virtual void addPadding(const void * src, void * dst,
+			unsigned int size) const;
+
+	virtual unsigned int getPaddingSize(const void * src,
+			unsigned int size) const;
 };
 
-class IRBlockCipherAlgorithm : public IRCipherAlgorithm {
-public:
-	IRBlockCipherAlgorithm() = default;
 
-	virtual ~IRBlockCipherAlgorithm() = default;
+} // namespace crypto
+} // namespace irecordcore
 
-	/**
-	 * Sets the key.
-	 *
-	 * @param[in] key The key.
-	 * @param[in] keySize The key size in bytes.
-	 */
-	virtual void setKey(const void * key, std::uint64_t keySize) = 0;
-
-	/**
-	 * Sets the key.
-	 *
-	 * @param[in] key The key.
-	 */
-	virtual void setKey(IRSecretKey * key) = 0;
-
-	/**
-	 * Returns the block size.
-	 *
-	 * @return The block size in bits.
-	 */
-	virtual unsigned int blockSize() = 0;
-
-	/**
-	 * Returns the block size in bytes.
-	 *
-	 * @return The block size in bytes.
-	 */
-	virtual unsigned int blockSizeInBytes() = 0;
-
-	/**
-	 * Process a single block. Both src and dst must have
-	 * IRBlockCipherAlgorithm::blockSizeInBytes() bytes.
-	 *
-	 * @param[in] src The source block.
-	 * @param[out] dst The destination block.
-	 */
-	virtual void process(const void * src, void * dst) = 0;
-};
-
-} //namespace crypto
-} //namespace irecordcore
-
-#endif /* _IRECORDCORE_IRCIPHER_H_ */
+#endif /* _IRECORDCORE_IRCIPHPD_H_ */
