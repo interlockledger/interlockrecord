@@ -128,10 +128,6 @@ public:
 	void setSalt(const void * salt, std::uint64_t saltSize);
 
 	virtual bool generateRaw(void * key, unsigned int keySize);
-
-	IRMAC & prf() {
-		return *this->_prf;
-	}
 };
 
 } // namespace crypto
