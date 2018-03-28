@@ -25,5 +25,46 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <irecordcore/irciphpd.h>
+#include <cstring>
 
 using namespace irecordcore::crypto;
+
+//==============================================================================
+// Class IRPadding
+//------------------------------------------------------------------------------
+std::uint64_t IRPadding::getPaddingSize(unsigned int blockSize,
+			std::uint64_t dataSize) {
+	return blockSize - (dataSize % blockSize);
+}
+
+//==============================================================================
+// Class IRZeroPadding
+//------------------------------------------------------------------------------
+bool IRZeroPadding::addPadding(unsigned int blockSize, const void * src,
+		std::uint64_t srcSize, void * dst, std::uint64_t dstSize) const {
+	unsigned int paddingSize;
+
+	paddingSize = IRPadding::getPaddingSize(blockSize, srcSize);
+	if (dstSize < srcSize + paddingSize) {
+		return false;
+	}
+	if (src != dst) {
+		std::memcpy(dst, src, srcSize);
+	}
+	std::memset(dst + srcSize, 0, paddingSize);
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool IRZeroPadding::removePadding(unsigned int blockSize,
+		const void * src, std::uint64_t & srcSize) const {
+
+	if (srcSize < blockSize) {
+		return false;
+	}
+
+
+
+}
+
+//------------------------------------------------------------------------------
