@@ -42,42 +42,94 @@ namespace crypto {
  */
 class IRPadding {
 public:
+	/**
+	 * Creates a new instance of this class.
+	 */
 	IRPadding() = default;
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRPadding() = default;
 
-	virtual bool addPadding(unsigned int blockSize, const void * src,
-			std::uint64_t srcSize, void * dst, std::uint64_t dstSize) const = 0;
-
-	virtual bool removePadding(unsigned int blockSize,
-			const void * src, std::uint64_t & srcSize) const = 0;
-
 	/**
-	 * Returns the size of the padding. It will return blockSize if dataSize is
-	 * a multiple of blockSize.
+	 * Returns the size of the padding based on the block size and the data
+	 * size.
+	 *
+	 * <p>The default implementation will always return a value between 1 and
+	 * blockSize.</p>
 	 *
 	 * @param[in] blockSize The size of the block.
-	 * @param[in] dataSize The size of the data.
+	 * @param[in] srcSize The size of the data.
 	 * @return The size of the padding.
 	 */
-	static std::uint64_t getPaddingSize(unsigned int blockSize,
-			std::uint64_t dataSize);
+	virtual std::uint64_t getPaddingSize(unsigned int blockSize,
+			std::uint64_t srcSize) const;
+
+	/**
+	 * Returns the size of the padded data based on the block size and the
+	 * data size.
+	 *
+	 * <p>The default implementation returns the largest multiple of the block
+	 * size that can hold the data size plus at least 1 byte of padding.</p>
+	 *
+	 * @param[in] blockSize The size of the block.
+	 * @param[in] srcSize The size of the data to be padded.
+	 * @return The size of the padded data.
+	 */
+	std::uint64_t getPaddedSize(unsigned int blockSize,
+			std::uint64_t srcSize) const {
+		return srcSize + this->getPaddingSize(blockSize, srcSize);
+	}
+
+	/**
+	 * Adds the padding.
+	 *
+	 * @param[in] blockSize The size of the block.
+	 * @param[in] src The source buffer.
+	 * @param[in] srcSize The size of src in bytes.
+	 * @param[out] dst The destination buffer. This buffer must have at least
+	 * getPaddedSize(unsigned int,std::uint64_t) bytes.
+	 * @param[in,out] dstSize On input, it is the size of dst. On output, it is
+	 * the size of the padded data.
+	 * @return true for success or false otherwise.
+	 * @note This method can work in locus if src and dst points to exact the
+	 * same buffer. If src and dst does not point to the same buffer but they
+	 * overlap, the behavior of this method is undefined.
+	 */
+	virtual bool addPadding(unsigned int blockSize, const void * src,
+			std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const = 0;
+
+	/**
+	 * Removes the padding. It is important to notice that this method may fail
+	 * if the padding is not valid.
+	 *
+	 * @param[in] blockSize The size of the block.
+	 * @param[in] src The source buffer.
+	 * @param[in,out] srcSize On input, it is the size of src. On output, it is
+	 * the size of src without the padding.
+	 * @return true for success or false otherwise.
+	 */
+	virtual bool removePadding(unsigned int blockSize,
+			const void * src, std::uint64_t & srcSize) const = 0;
 };
 
 /**
- * This class implements the PKCS #7 (RFC 5652) padding scheme.
+ * This class implements the zero padding scheme. In this padding scheme, 1 to
+ * blockSize bytes with value zero are added to the end of the data in order to
+ * make the data a multiple of blockSize.
  *
  * @since 2018.03.28
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
-class IRZeroPadding {
+class IRZeroPadding : public IRPadding {
 public:
 	IRZeroPadding() = default;
 
 	virtual ~IRZeroPadding() = default;
 
 	virtual bool addPadding(unsigned int blockSize, const void * src,
-			std::uint64_t srcSize, void * dst, std::uint64_t dstSize) const;
+			std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const;
 
 	virtual bool removePadding(unsigned int blockSize,
 			const void * src, std::uint64_t & srcSize) const;
@@ -97,7 +149,7 @@ public:
 	virtual ~IRPKCS7Padding() = default;
 
 	virtual bool addPadding(unsigned int blockSize, const void * src,
-			std::uint64_t srcSize, void * dst, std::uint64_t dstSize) const;
+			std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const;
 
 	virtual bool removePadding(unsigned int blockSize,
 			const void * src, std::uint64_t & srcSize) const;
@@ -116,7 +168,7 @@ public:
 	virtual ~IRANSIX923Padding() = default;
 
 	virtual bool addPadding(unsigned int blockSize, const void * src,
-			std::uint64_t srcSize, void * dst, std::uint64_t dstSize) const;
+			std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const;
 
 	virtual bool removePadding(unsigned int blockSize,
 			const void * src, std::uint64_t & srcSize) const;
@@ -146,7 +198,7 @@ public:
 	}
 
 	virtual bool addPadding(unsigned int blockSize, const void * src,
-			std::uint64_t srcSize, void * dst, std::uint64_t dstSize) const;
+			std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const;
 
 	virtual bool removePadding(unsigned int blockSize,
 			const void * src, std::uint64_t & srcSize) const;

@@ -33,38 +33,227 @@ using namespace irecordcore::crypto;
 // Class IRPadding
 //------------------------------------------------------------------------------
 std::uint64_t IRPadding::getPaddingSize(unsigned int blockSize,
-			std::uint64_t dataSize) {
-	return blockSize - (dataSize % blockSize);
+			std::uint64_t srcSize) const {
+	return blockSize - (srcSize % blockSize);
 }
 
 //==============================================================================
 // Class IRZeroPadding
 //------------------------------------------------------------------------------
 bool IRZeroPadding::addPadding(unsigned int blockSize, const void * src,
-		std::uint64_t srcSize, void * dst, std::uint64_t dstSize) const {
+		std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const {
 	unsigned int paddingSize;
+	std::uint8_t * p;
+	std::uint8_t * pEnd;
 
-	paddingSize = IRPadding::getPaddingSize(blockSize, srcSize);
+	paddingSize = this->getPaddingSize(blockSize, srcSize);
 	if (dstSize < srcSize + paddingSize) {
 		return false;
 	}
 	if (src != dst) {
 		std::memcpy(dst, src, srcSize);
 	}
-	std::memset(dst + srcSize, 0, paddingSize);
+	p = (std::uint8_t *)dst;
+	pEnd = p + srcSize + paddingSize;
+	for (p = p + srcSize; p != pEnd; p++) {
+		*p = 0;
+	}
+	dstSize = srcSize + paddingSize;
 	return true;
 }
 
 //------------------------------------------------------------------------------
 bool IRZeroPadding::removePadding(unsigned int blockSize,
 		const void * src, std::uint64_t & srcSize) const {
+	const std::uint8_t * p;
+	std::uint64_t paddingSize;
 
-	if (srcSize < blockSize) {
+	if ((srcSize == 0) || (srcSize % blockSize)) {
 		return false;
 	}
 
-
-
+	p = (const std::uint8_t *)src;
+	paddingSize = 0;
+	while ((p[srcSize - paddingSize - 1] == 0) && (paddingSize < blockSize)) {
+		paddingSize++;
+	}
+	srcSize = srcSize - paddingSize;
+	return (paddingSize > 0);
 }
 
+//==============================================================================
+// Class IRPKCS7Padding
+//------------------------------------------------------------------------------
+bool IRPKCS7Padding::addPadding(unsigned int blockSize, const void * src,
+		std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const {
+	unsigned int paddingSize;
+	std::uint8_t * p;
+	std::uint8_t * pEnd;
+
+	paddingSize = this->getPaddingSize(blockSize, srcSize);
+	if (dstSize < srcSize + paddingSize) {
+		return false;
+	}
+	if (src != dst) {
+		std::memcpy(dst, src, srcSize);
+	}
+	p = (std::uint8_t *)dst;
+	pEnd = p + srcSize + paddingSize;
+	for (p = p + srcSize; p != pEnd; p++) {
+		*p = paddingSize;
+	}
+
+	dstSize = srcSize + paddingSize;
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool IRPKCS7Padding::removePadding(unsigned int blockSize,
+		const void * src, std::uint64_t & srcSize) const {
+	unsigned int paddingSize;
+	const std::uint8_t * p;
+	const std::uint8_t * pEnd;
+
+	if ((srcSize == 0) || (srcSize % blockSize)) {
+		return false;
+	}
+	p = (const std::uint8_t *)src;
+	paddingSize = p[srcSize - 1];
+	if ((paddingSize == 0) || (paddingSize > blockSize)) {
+		return false;
+	}
+
+	pEnd = p + srcSize;
+	p = p + srcSize - paddingSize;
+	for (; p != pEnd; p++) {
+		if (*p != paddingSize) {
+			return false;
+		}
+	}
+	srcSize = srcSize - paddingSize;
+	return true;
+}
+
+//==============================================================================
+// Class IRANSIX923Padding
+//------------------------------------------------------------------------------
+bool IRANSIX923Padding::addPadding(unsigned int blockSize, const void * src,
+		std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const {
+	unsigned int paddingSize;
+	std::uint8_t * p;
+	std::uint8_t * pEnd;
+
+	paddingSize = this->getPaddingSize(blockSize, srcSize);
+	if (dstSize < srcSize + paddingSize) {
+		return false;
+	}
+	if (src != dst) {
+		std::memcpy(dst, src, srcSize);
+	}
+	p = (std::uint8_t *)dst;
+	pEnd = p + srcSize + paddingSize - 1;
+	for (p = p + srcSize; p != pEnd; p++) {
+		*p = 0;
+	}
+	*p = paddingSize;
+
+	dstSize = srcSize + paddingSize;
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool IRANSIX923Padding::removePadding(unsigned int blockSize,
+		const void * src, std::uint64_t & srcSize) const {
+	unsigned int paddingSize;
+	const std::uint8_t * p;
+	const std::uint8_t * pEnd;
+
+	if ((srcSize == 0) || (srcSize % blockSize)) {
+		return false;
+	}
+	p = (const std::uint8_t *)src;
+	paddingSize = p[srcSize - 1];
+	if ((paddingSize == 0) || (paddingSize > blockSize)) {
+		return false;
+	}
+
+	pEnd = p + srcSize - 1;
+	p = p + srcSize - paddingSize;
+	for (; p != pEnd; p++) {
+		if (*p != 0) {
+			return false;
+		}
+	}
+	if (*p != paddingSize) {
+		return false;
+	} else {
+		srcSize = srcSize - paddingSize;
+		return true;
+	}
+}
+
+//==============================================================================
+// Class IROCSRandomPadding
+//------------------------------------------------------------------------------
+IROCSRandomPadding::IROCSRandomPadding(ircommon::IRRandom * random,
+		bool iso10126): _random(random), _iso10126(iso10126) {
+}
+
+//------------------------------------------------------------------------------
+bool IROCSRandomPadding::addPadding(unsigned int blockSize, const void * src,
+		std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const {
+	unsigned int paddingSize;
+	std::uint8_t * p;
+	std::uint8_t pad;
+
+	paddingSize = this->getPaddingSize(blockSize, srcSize);
+	if (dstSize < srcSize + paddingSize) {
+		return false;
+	}
+	if (src != dst) {
+		std::memcpy(dst, src, srcSize);
+	}
+
+	p = (std::uint8_t *)dst;
+	this->_random->nextBytes(p + srcSize, paddingSize);
+	p = p + srcSize + paddingSize - 1;
+	if (this->iso10126()) {
+		*p = paddingSize;
+	} else {
+		*p = (*p) - ((*p) % blockSize) + paddingSize;
+	}
+	dstSize = srcSize + paddingSize;
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool IROCSRandomPadding::removePadding(unsigned int blockSize,
+		const void * src, std::uint64_t & srcSize) const {
+	unsigned int paddingSize;
+	const std::uint8_t * p;
+	const std::uint8_t * pEnd;
+
+	if ((srcSize == 0) || (srcSize % blockSize)) {
+		return false;
+	}
+	p = (const std::uint8_t *)src;
+	paddingSize = p[srcSize - 1];
+	if ((paddingSize == 0) || (paddingSize > blockSize)) {
+		return false;
+	}
+
+	pEnd = p + srcSize - 1;
+	p = p + srcSize - paddingSize;
+	for (; p != pEnd; p++) {
+		if (*p != 0) {
+			return false;
+		}
+	}
+	if (*p != paddingSize) {
+		return false;
+	} else {
+		srcSize = srcSize - paddingSize;
+		return true;
+	}
+}
 //------------------------------------------------------------------------------
