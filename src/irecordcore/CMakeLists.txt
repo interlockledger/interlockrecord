@@ -41,6 +41,7 @@ add_library(irecordcore STATIC
 	include/irecordcore/irblock.h
 	include/irecordcore/IRCHandle.h
 	include/irecordcore/ircipher.h
+	include/irecordcore/irciphpd.h
 	include/irecordcore/ircrypto.h
 	include/irecordcore/irhash.h
 	include/irecordcore/irkeygen.h
@@ -54,6 +55,7 @@ add_library(irecordcore STATIC
 	include/irecordcore/version.h
 	src/irblock.cpp
 	src/IRCHandle.cpp
+	src/irciphpd.cpp
 	src/irhash.cpp
 	src/irkey.cpp
 	src/irkeygen.cpp

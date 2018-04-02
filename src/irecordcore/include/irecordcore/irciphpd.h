@@ -64,7 +64,7 @@ public:
 	 * @return The size of the padding.
 	 */
 	virtual std::uint64_t getPaddingSize(unsigned int blockSize,
-			std::uint64_t srcSize) const;
+			std::uint64_t srcSize) const = 0;
 
 	/**
 	 * Returns the size of the padded data based on the block size and the
@@ -115,6 +115,45 @@ public:
 };
 
 /**
+ * This is the base class for all padding schemes.
+ *
+ * @since 2018.04.02
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ */
+class IRBasicPadding : public IRPadding {
+protected:
+	virtual void createPadding(unsigned int paddingSize,
+			std::uint8_t * dst) const = 0;
+
+	virtual bool checkPadding(unsigned int paddingSize,
+			const std::uint8_t * padding) const = 0;
+public:
+	IRBasicPadding() = default;
+
+	virtual ~IRBasicPadding() = default;
+
+	/**
+	 * Returns the size of the padding based on the block size and the data
+	 * size.
+	 *
+	 * <p>The default implementation will always return a value between 1 and
+	 * blockSize.</p>
+	 *
+	 * @param[in] blockSize The size of the block.
+	 * @param[in] srcSize The size of the data.
+	 * @return The size of the padding.
+	 */
+	virtual std::uint64_t getPaddingSize(unsigned int blockSize,
+			std::uint64_t srcSize) const;
+
+	virtual bool addPadding(unsigned int blockSize, const void * src,
+			std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const = 0;
+
+	virtual bool removePadding(unsigned int blockSize,
+			const void * src, std::uint64_t & srcSize) const = 0;
+};
+
+/**
  * This class implements the zero padding scheme. In this padding scheme, 1 to
  * blockSize bytes with value zero are added to the end of the data in order to
  * make the data a multiple of blockSize.
@@ -122,7 +161,7 @@ public:
  * @since 2018.03.28
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
-class IRZeroPadding : public IRPadding {
+class IRZeroPadding : public IRBasicPadding {
 public:
 	IRZeroPadding() = default;
 

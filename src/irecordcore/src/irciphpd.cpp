@@ -30,9 +30,9 @@
 using namespace irecordcore::crypto;
 
 //==============================================================================
-// Class IRPadding
+// Class IRBasicPadding
 //------------------------------------------------------------------------------
-std::uint64_t IRPadding::getPaddingSize(unsigned int blockSize,
+std::uint64_t IRBasicPadding::getPaddingSize(unsigned int blockSize,
 			std::uint64_t srcSize) const {
 	return blockSize - (srcSize % blockSize);
 }
@@ -204,7 +204,6 @@ bool IROCSRandomPadding::addPadding(unsigned int blockSize, const void * src,
 		std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const {
 	unsigned int paddingSize;
 	std::uint8_t * p;
-	std::uint8_t pad;
 
 	paddingSize = this->getPaddingSize(blockSize, srcSize);
 	if (dstSize < srcSize + paddingSize) {
@@ -231,29 +230,24 @@ bool IROCSRandomPadding::removePadding(unsigned int blockSize,
 		const void * src, std::uint64_t & srcSize) const {
 	unsigned int paddingSize;
 	const std::uint8_t * p;
-	const std::uint8_t * pEnd;
 
 	if ((srcSize == 0) || (srcSize % blockSize)) {
 		return false;
 	}
 	p = (const std::uint8_t *)src;
 	paddingSize = p[srcSize - 1];
-	if ((paddingSize == 0) || (paddingSize > blockSize)) {
-		return false;
-	}
 
-	pEnd = p + srcSize - 1;
-	p = p + srcSize - paddingSize;
-	for (; p != pEnd; p++) {
-		if (*p != 0) {
+	if (this->iso10126()) {
+		if ((paddingSize == 0) || (paddingSize > blockSize)) {
 			return false;
 		}
-	}
-	if (*p != paddingSize) {
-		return false;
 	} else {
-		srcSize = srcSize - paddingSize;
-		return true;
+		paddingSize = paddingSize % blockSize;
+		if (paddingSize == 0) {
+			paddingSize = blockSize;
+		}
 	}
+	srcSize = srcSize - blockSize;
+	return true;
 }
 //------------------------------------------------------------------------------
