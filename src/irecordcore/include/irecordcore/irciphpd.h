@@ -56,9 +56,6 @@ public:
 	 * Returns the size of the padding based on the block size and the data
 	 * size.
 	 *
-	 * <p>The default implementation will always return a value between 1 and
-	 * blockSize.</p>
-	 *
 	 * @param[in] blockSize The size of the block.
 	 * @param[in] srcSize The size of the data.
 	 * @return The size of the padding.
@@ -68,14 +65,13 @@ public:
 
 	/**
 	 * Returns the size of the padded data based on the block size and the
-	 * data size.
-	 *
-	 * <p>The default implementation returns the largest multiple of the block
-	 * size that can hold the data size plus at least 1 byte of padding.</p>
+	 * data size. This method always returns the sum of srcSize and the
+	 * result of getPaddingSize(unsigned int,std::uint64_t).
 	 *
 	 * @param[in] blockSize The size of the block.
 	 * @param[in] srcSize The size of the data to be padded.
 	 * @return The size of the padded data.
+	 * @see IRPadding::getPaddingSize(unsigned int,std::uint64_t) const
 	 */
 	std::uint64_t getPaddedSize(unsigned int blockSize,
 			std::uint64_t srcSize) const {
@@ -115,18 +111,58 @@ public:
 };
 
 /**
- * This is the base class for all padding schemes.
+ * This abstract class implements some of the basic rules for most of the block
+ * padding schemes.
  *
  * @since 2018.04.02
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
 class IRBasicPadding : public IRPadding {
 protected:
-	virtual void createPadding(unsigned int paddingSize,
-			std::uint8_t * dst) const = 0;
+	/**
+	 * This method is called by addPadding() to create the actual padding value.
+	 *
+	 * @param[in] blockSize The size of the block.
+	 * @param[out] padding The padding data.
+	 * @param[in] paddingSize The size of the padding.
+	 */
+	virtual void createPadding(unsigned int blockSize, std::uint8_t * padding,
+			unsigned int paddingSize) const = 0;
 
-	virtual bool checkPadding(unsigned int paddingSize,
-			const std::uint8_t * padding) const = 0;
+	/**
+	 * This method is called by removePadding() to extracts the size of the
+	 * padding from the message.
+	 *
+	 * <p>It is important to notice that, before this method is called, the
+	 * following preverifications where already performed:</p>
+	 *
+	 *   - The srcSize is a multiple of blockSize and is larger than 0;
+	 *
+	 * <p>The default implementation extracts the size of the padding from the
+	 * last byte of the message. It fails if the last byte is either 0 or assumes
+	 * a value larger than blockSize.</p>
+	 *
+	 * @param[in] blockSize The size of the block.
+	 * @param[in] src The source.
+	 * @param[in] srcSize The size of the source.
+	 * @returns The padding size or 0 if the padding size could not be
+	 * determined.
+	 */
+	virtual unsigned int extractPaddingSize(unsigned int blockSize,
+			const std::uint8_t * src,
+			std::uint64_t srcSize) const;
+
+	/**
+	 * This method is called by removePadding() to verify the integrty of the
+	 * padding data. The default implementation always return true and must be
+	 * overridden whenever necessary.
+	 *
+	 * @param[in] padding The padding value.
+	 * @param[in] paddingSize The size of the padding.
+	 * @return true if the padding data is correct or false otherwise.
+	 */
+	virtual bool checkPadding(const std::uint8_t * padding,
+			unsigned int paddingSize) const;
 public:
 	IRBasicPadding() = default;
 
@@ -136,7 +172,7 @@ public:
 	 * Returns the size of the padding based on the block size and the data
 	 * size.
 	 *
-	 * <p>The default implementation will always return a value between 1 and
+	 * <p>This implementation will always return a value between 1 and
 	 * blockSize.</p>
 	 *
 	 * @param[in] blockSize The size of the block.
@@ -147,10 +183,10 @@ public:
 			std::uint64_t srcSize) const;
 
 	virtual bool addPadding(unsigned int blockSize, const void * src,
-			std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const = 0;
+			std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const;
 
 	virtual bool removePadding(unsigned int blockSize,
-			const void * src, std::uint64_t & srcSize) const = 0;
+			const void * src, std::uint64_t & srcSize) const;
 };
 
 /**
@@ -162,16 +198,17 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
 class IRZeroPadding : public IRBasicPadding {
+protected:
+	virtual void createPadding(unsigned int blockSize, std::uint8_t * padding,
+			unsigned int paddingSize) const;
+
+	virtual unsigned int extractPaddingSize(unsigned int blockSize,
+			const std::uint8_t * src,
+			std::uint64_t srcSize) const;
 public:
 	IRZeroPadding() = default;
 
 	virtual ~IRZeroPadding() = default;
-
-	virtual bool addPadding(unsigned int blockSize, const void * src,
-			std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const;
-
-	virtual bool removePadding(unsigned int blockSize,
-			const void * src, std::uint64_t & srcSize) const;
 };
 
 
@@ -181,17 +218,17 @@ public:
  * @since 2018.03.28
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
-class IRPKCS7Padding : public IRPadding {
+class IRPKCS7Padding : public IRBasicPadding {
+protected:
+	virtual void createPadding(unsigned int blockSize, std::uint8_t * padding,
+			unsigned int paddingSize) const;
+
+	virtual bool checkPadding(const std::uint8_t * padding,
+			unsigned int paddingSize) const;
 public:
 	IRPKCS7Padding() = default;
 
 	virtual ~IRPKCS7Padding() = default;
-
-	virtual bool addPadding(unsigned int blockSize, const void * src,
-			std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const;
-
-	virtual bool removePadding(unsigned int blockSize,
-			const void * src, std::uint64_t & srcSize) const;
 };
 
 /**
@@ -200,47 +237,56 @@ public:
  * @since 2018.03.28
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
-class IRANSIX923Padding : public IRPadding {
+class IRANSIX923Padding : public IRBasicPadding {
+protected:
+	virtual void createPadding(unsigned int blockSize, std::uint8_t * padding,
+			unsigned int paddingSize) const;
+
+	virtual bool checkPadding(const std::uint8_t * padding,
+			unsigned int paddingSize) const;
 public:
 	IRANSIX923Padding() = default;
 
 	virtual ~IRANSIX923Padding() = default;
-
-	virtual bool addPadding(unsigned int blockSize, const void * src,
-			std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const;
-
-	virtual bool removePadding(unsigned int blockSize,
-			const void * src, std::uint64_t & srcSize) const;
 };
 
-
 /**
- * This class implements the OpenCS random padding
- * (https://github.com/interlockledger/specification/blob/master/crypto/ocs-random-padding.md)
- * and the ISO 10126 padding as well.
+ * This class implements the ISO 10126 padding.
  *
  * @since 2018.03.28
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
-class IROCSRandomPadding : public IRPadding {
-private:
+class IRISO10126Padding : public IRBasicPadding {
+protected:
 	std::unique_ptr<ircommon::IRRandom> _random;
 
-	bool _iso10126;
+	virtual void createPadding(unsigned int blockSize, std::uint8_t * padding,
+			unsigned int paddingSize) const;
 public:
-	IROCSRandomPadding(ircommon::IRRandom * random, bool iso10126 = false);
+	IRISO10126Padding(ircommon::IRRandom * random);
+
+	virtual ~IRISO10126Padding() = default;
+};
+
+/**
+ * This class implements the OpenCS random padding
+ * (https://github.com/interlockledger/specification/blob/master/crypto/ocs-random-padding.md).
+ *
+ * @since 2018.03.28
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ */
+class IROCSRandomPadding : public IRISO10126Padding {
+protected:
+	virtual void createPadding(unsigned int blockSize, std::uint8_t * padding,
+			unsigned int paddingSize) const;
+
+	virtual unsigned int extractPaddingSize(unsigned int blockSize,
+			const std::uint8_t * src,
+			std::uint64_t srcSize) const;
+public:
+	IROCSRandomPadding(ircommon::IRRandom * random);
 
 	virtual ~IROCSRandomPadding() = default;
-
-	bool iso10126() const {
-		return this->_iso10126;
-	}
-
-	virtual bool addPadding(unsigned int blockSize, const void * src,
-			std::uint64_t srcSize, void * dst, std::uint64_t & dstSize) const;
-
-	virtual bool removePadding(unsigned int blockSize,
-			const void * src, std::uint64_t & srcSize) const;
 };
 
 } // namespace crypto

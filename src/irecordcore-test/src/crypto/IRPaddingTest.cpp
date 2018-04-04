@@ -100,18 +100,18 @@ TEST_F(IRPaddingTest, Constructor) {
 	IRDummyPadding * p;
 
 	p = new IRDummyPadding();
+	ASSERT_EQ(0, p->paddingSize());
 	delete p;
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRPaddingTest, getPaddingSize) {
+TEST_F(IRPaddingTest, paddingSize) {
 	IRDummyPadding p;
 
-	for (unsigned int blockSize = 1; blockSize <= 8; blockSize++) {
-		for (std::uint64_t srcSize = 0; srcSize <= 16; srcSize++) {
-			ASSERT_EQ(blockSize - (srcSize % blockSize),
-					p.getPaddingSize(blockSize, srcSize));
-		}
+	ASSERT_EQ(0, p.paddingSize());
+	for (unsigned int paddingSize = 1; paddingSize <= 8; paddingSize++) {
+		p.setPaddingSize(paddingSize);
+		ASSERT_EQ(paddingSize, p.paddingSize());
 	}
 }
 
@@ -120,9 +120,12 @@ TEST_F(IRPaddingTest, getPaddedSize) {
 	IRDummyPadding p;
 
 	for (unsigned int blockSize = 1; blockSize <= 8; blockSize++) {
-		for (std::uint64_t srcSize = 0; srcSize <= 16; srcSize++) {
-			ASSERT_EQ(blockSize - (srcSize % blockSize) + srcSize,
-					p.getPaddedSize(blockSize, srcSize));
+		for (unsigned int paddingSize = 0; paddingSize <= 8; paddingSize++) {
+			p.setPaddingSize(paddingSize);
+			for (std::uint64_t srcSize = 0; srcSize <= 16; srcSize++) {
+				ASSERT_EQ(p.getPaddingSize(blockSize, srcSize) + srcSize,
+						p.getPaddedSize(blockSize, srcSize));
+			}
 		}
 	}
 }
