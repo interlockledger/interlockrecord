@@ -120,7 +120,7 @@ unsigned int IRZeroPadding::extractPaddingSize(unsigned int blockSize,
 	unsigned int paddingSize;
 
 	srcEnd = src + (srcSize - 1);
-	src = src + (srcSize - blockSize);
+	src = src + (srcSize - blockSize - 1);
 	paddingSize = 0;
 	while ((srcEnd != src) && (*srcEnd == 0)) {
 		paddingSize++;
