@@ -25,6 +25,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRISO10126PaddingTest.h"
+#include <irecordcore/irciphpd.h>
+#include <ircommon/irrandom.h>
+#include <cstring>
+
+using namespace ircommon;
+using namespace irecordcore::crypto;
 
 //==============================================================================
 // class IRISO10126PaddingTest
@@ -46,9 +52,38 @@ void IRISO10126PaddingTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRISO10126PaddingTest,Constructor) {
+	IRISO10126Padding * p;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	p = new IRISO10126Padding(new IRXORShifRandom());
+	delete p;
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRISO10126PaddingTest, addPadding) {
+	IRISO10126Padding p(new IRXORShifRandom(2258));
+	IRXORShifRandom r(2258);
+	std::uint8_t src[33];
+	std::uint8_t dst[33];
+	std::uint8_t exp[33];
+	std::uint64_t srcSize;
+	std::uint64_t dstSize;
+	unsigned int paddingSize;
+
+	for (srcSize = 0; srcSize <= 16; srcSize++) {
+		std::memset(src, 1, sizeof(src));
+		std::memset(dst, 2, sizeof(dst));
+
+		paddingSize = 16 - (srcSize % 16);
+		dstSize = sizeof(dst);
+		ASSERT_TRUE(p.addPadding(16, src, srcSize, dst, dstSize));
+		ASSERT_EQ(srcSize + paddingSize, dstSize);
+		ASSERT_EQ(2, dst[dstSize]);
+
+		std::memset(exp, 1, srcSize);
+		r.nextBytes(exp + srcSize, paddingSize - 1);
+		exp[srcSize + paddingSize - 1] = paddingSize;
+		ASSERT_EQ(0, std::memcmp(exp, dst, dstSize));
+	}
 }
 //------------------------------------------------------------------------------
 

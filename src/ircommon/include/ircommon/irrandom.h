@@ -164,6 +164,16 @@ public:
 	IRXORShifRandom();
 
 	/**
+	 * Creates a new instance of this class. It is a convenience method that
+	 * creates the random value and sets the seed at the same time by calling
+	 * IRXORShifRandom::setSeed(std::uint64_t).
+	 *
+	 * @param[in] seed The initial seed.
+	 * @since 2018.04.05
+	 */
+	IRXORShifRandom(std::uint64_t seed);
+
+	/**
 	 * Disposes this instance and releases all associated resources.
 	 */
 	virtual ~IRXORShifRandom() = default;

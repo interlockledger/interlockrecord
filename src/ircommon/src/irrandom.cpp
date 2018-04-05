@@ -109,6 +109,11 @@ IRXORShifRandom::IRXORShifRandom() {
 }
 
 //------------------------------------------------------------------------------
+IRXORShifRandom::IRXORShifRandom(std::uint64_t seed) {
+	this->setSeed(seed);
+}
+
+//------------------------------------------------------------------------------
 void IRXORShifRandom::setSeed(std::uint64_t seed) {
 
 	this->_state[0] = seed;
