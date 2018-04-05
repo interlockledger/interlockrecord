@@ -65,6 +65,14 @@ TEST_F(IRBaseType16RawTagTest,Constructor) {
 	delete bt16rt;
 }
 //------------------------------------------------------------------------------
+TEST_F(IRBaseType16RawTagTest, Size) {
+	IRBaseType16RawTag * bt16rt;
+
+	bt16rt = new IRBaseType16RawTag(0xFF, false);
+	ASSERT_EQ(0xFF, bt16rt->size);
+	delete bt16rt;
+}
+//------------------------------------------------------------------------------
 
 
 
