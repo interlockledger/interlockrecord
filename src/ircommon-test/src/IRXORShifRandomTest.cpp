@@ -76,6 +76,17 @@ TEST_F(IRXORShifRandomTest,Constructor) {
 }
 
 //------------------------------------------------------------------------------
+TEST_F(IRXORShifRandomTest,ConstructorUInt64) {
+
+	for (unsigned int seed = 1; seed < 15; seed++) {
+		IRXORShifRandom r(seed);
+		IRXORShifRandom exp;
+		exp.setSeed(seed);
+		ASSERT_EQ(exp.next32(), r.next32());
+	}
+}
+
+//------------------------------------------------------------------------------
 TEST_F(IRXORShifRandomTest, setSeedUInt64) {
 	IRXORShifRandom r;
 	IRXORShifRandom exp;
