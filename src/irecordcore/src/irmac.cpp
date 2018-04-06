@@ -113,8 +113,6 @@ bool IRHMAC::setKey(const void * key, std::uint64_t keySize) {
 //------------------------------------------------------------------------------
 bool IRHMAC::setKey(IRSecretKey & key) {
 	std::uint64_t rawKeySize;
-	std::uint8_t * rawKey;
-	bool retval;
 
 	if (!key.exportable()) {
 		return false;
@@ -123,15 +121,13 @@ bool IRHMAC::setKey(IRSecretKey & key) {
 	if (rawKeySize == 0) {
 		return false;
 	}
-	rawKey = new std::uint8_t[rawKeySize];
-	if (key.exportKey(rawKey, rawKeySize)) {
-		retval = this->setKey(rawKey, rawKeySize);
+
+	ircommon::IRUtils::IRSecureTemp rawKey(rawKeySize);
+	if (key.exportKey(rawKey.buff(), rawKeySize)) {
+		return this->setKey(rawKey.buff(), rawKeySize);
 	} else {
-		retval = false;
+		return false;
 	}
-	ircommon::IRUtils::clearMemory(rawKey, rawKeySize);
-	delete [] rawKey;
-	return retval;
 }
 
 //------------------------------------------------------------------------------
