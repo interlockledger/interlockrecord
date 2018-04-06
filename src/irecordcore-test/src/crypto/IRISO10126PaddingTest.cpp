@@ -85,5 +85,51 @@ TEST_F(IRISO10126PaddingTest, addPadding) {
 		ASSERT_EQ(0, std::memcmp(exp, dst, dstSize));
 	}
 }
+
+//------------------------------------------------------------------------------
+TEST_F(IRISO10126PaddingTest, removePadding) {
+	IRISO10126Padding p(new IRXORShifRandom(2258));
+	IRXORShifRandom r(2258);
+	std::uint8_t src[32];
+	std::uint64_t srcSize;
+
+
+	std::memset(src, 0, sizeof(src));
+	srcSize = 0;
+	ASSERT_TRUE(p.removePadding(32, src, srcSize));
+	ASSERT_EQ(0, srcSize);
+
+	for (unsigned int paddingSize = 1; paddingSize <= 16; paddingSize++) {
+		srcSize = 16 - paddingSize;
+		std::memset(src, 0, sizeof(src));
+		r.nextBytes(src + srcSize, paddingSize - 1);
+		src[srcSize + paddingSize - 1] = paddingSize;
+
+		srcSize = 16;
+		ASSERT_TRUE(p.removePadding(16, src, srcSize));
+		ASSERT_EQ(16 - paddingSize, srcSize);
+	}
+
+	for (unsigned int paddingSize = 1; paddingSize <= 16; paddingSize++) {
+		srcSize = 32 - paddingSize;
+		std::memset(src, 0, sizeof(src));
+		r.nextBytes(src + srcSize, paddingSize - 1);
+		src[srcSize + paddingSize - 1] = paddingSize;
+
+		srcSize = 32;
+		ASSERT_TRUE(p.removePadding(16, src, srcSize));
+		ASSERT_EQ(32 - paddingSize, srcSize);
+	}
+
+	for (unsigned int paddingSize = 17; paddingSize < 256; paddingSize++) {
+		std::memset(src, 0, sizeof(src));
+		src[31] = paddingSize;
+
+		srcSize = 32;
+		ASSERT_FALSE(p.removePadding(16, src, srcSize));
+		ASSERT_EQ(32, srcSize);
+	}
+}
+
 //------------------------------------------------------------------------------
 
