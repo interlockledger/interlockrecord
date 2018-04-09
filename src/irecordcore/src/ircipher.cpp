@@ -26,6 +26,7 @@
  */
 #include <irecordcore/ircipher.h>
 #include <ircommon/irutils.h>
+#include <cstring>
 
 using namespace irecordcore;
 using namespace irecordcore::crypto;
@@ -51,6 +52,28 @@ unsigned int IRBlockCipherAlgorithm::blockSizeInBytes() const {
 }
 
 //------------------------------------------------------------------------------
+bool IRBlockCipherAlgorithm::process(const void * src, std::uint64_t srcSize,
+		void * dst, std::uint64_t & dstSize) {
+
+	if (srcSize == 0) {
+		dstSize = srcSize;
+		return true;
+	}
+	if (srcSize % this->blockSizeInBytes()) {
+		return false;
+	}
+	if (dstSize < srcSize) {
+		return false;
+	}
+	if (this->processBlocks(src, dst, srcSize / this->blockSizeInBytes())) {
+		dstSize = srcSize;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//------------------------------------------------------------------------------
 bool IRBlockCipherAlgorithm::setKey(IRSecretKey * key) {
 	std::uint64_t rawKeySize;
 
@@ -67,6 +90,58 @@ bool IRBlockCipherAlgorithm::setKey(IRSecretKey * key) {
 	} else {
 		return false;
 	}
+}
+
+//==============================================================================
+// Class IRNullBlockCipherAlgorithm
+//------------------------------------------------------------------------------
+IRNullBlockCipherAlgorithm::IRNullBlockCipherAlgorithm(bool cipherMode,
+		unsigned int blockSize):IRBlockCipherAlgorithm(cipherMode),
+				_blockSize(blockSize) {
+	if ((this->_blockSize == 0) || (this->_blockSize % 8)) {
+		throw std::invalid_argument(
+				"The block size must multiple of 8 larger than 0.");
+	}
+}
+
+//------------------------------------------------------------------------------
+unsigned int IRNullBlockCipherAlgorithm::minKeySize() const {
+	return 0;
+}
+
+//------------------------------------------------------------------------------
+unsigned int IRNullBlockCipherAlgorithm::maxKeySize() const {
+	return ~((unsigned int)0);
+}
+
+//------------------------------------------------------------------------------
+bool IRNullBlockCipherAlgorithm::isValidKeySize(unsigned int keySize) const {
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool IRNullBlockCipherAlgorithm::setKey(const void * key, std::uint64_t keySize) {
+	return true;
+}
+
+//------------------------------------------------------------------------------
+bool IRNullBlockCipherAlgorithm::setKey(IRSecretKey * key) {
+	return true;
+}
+
+//------------------------------------------------------------------------------
+unsigned int IRNullBlockCipherAlgorithm::blockSize() const {
+	return this->_blockSize;
+}
+
+//------------------------------------------------------------------------------
+bool IRNullBlockCipherAlgorithm::processBlocks(const void * src, void * dst,
+		unsigned int blockCount) {
+	std::uint64_t size;
+
+	size = this->blockSizeInBytes() * blockCount;
+	std::memcpy(dst, src, size);
+	return true;
 }
 
 //------------------------------------------------------------------------------

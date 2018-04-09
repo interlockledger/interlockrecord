@@ -82,6 +82,12 @@ public:
 	virtual bool isValidKeySize(unsigned int keySize) const;
 };
 
+/**
+ * This is the base class for all block ciphers.
+ *
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2018.04.04
+ */
 class IRBlockCipherAlgorithm : public IRCipherAlgorithm {
 public:
 	IRBlockCipherAlgorithm(bool cipherMode);
@@ -116,6 +122,56 @@ public:
 	 * @return The block size in bytes.
 	 */
 	virtual unsigned int blockSizeInBytes() const;
+
+	/**
+	 * Process the data.
+	 *
+	 * @param[in] src The data to be processed.
+	 * @param[in] srcSize The size of the data to be processed. It must be a
+	 * multiple of blockSize.
+	 * @param[out] dst The output.
+	 * @param[in,out] dstSize On input, the size of the dst. On output, it is
+	 * the actual size of the data.
+	 * @return true on success or false otherwise.
+	 */
+	virtual bool process(const void * src, std::uint64_t srcSize,
+			void * dst, std::uint64_t & dstSize);
+
+	/**
+	 * Process the data in blocks.
+	 *
+	 * @param[in] src The data to be processed.
+	 * @param[out] dst The output. It must have the same size of src.
+	 * @param[in] blockCount The number of blocks to be processed.
+	 * @return true on success or false otherwise.
+	 */
+	virtual bool processBlocks(const void * src, void * dst,
+			unsigned int blockCount) = 0;
+};
+
+
+class IRNullBlockCipherAlgorithm : public IRBlockCipherAlgorithm {
+private:
+	unsigned int _blockSize;
+public:
+	IRNullBlockCipherAlgorithm(bool cipherMode, unsigned int blockSize);
+
+	virtual ~IRNullBlockCipherAlgorithm() = default;
+
+	virtual unsigned int minKeySize() const;
+
+	virtual unsigned int maxKeySize() const;
+
+	virtual bool isValidKeySize(unsigned int keySize) const;
+
+	virtual bool setKey(const void * key, std::uint64_t keySize);
+
+	virtual bool setKey(IRSecretKey * key);
+
+	virtual unsigned int blockSize() const;
+
+	virtual bool processBlocks(const void * src, void * dst,
+			unsigned int blockCount);
 };
 
 } //namespace crypto
