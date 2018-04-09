@@ -32,21 +32,59 @@
 namespace irecordcore {
 namespace crypto {
 
+/**
+ * This is the base class for all cipher algorithms.
+ *
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2018.04.04
+ */
 class IRCipherAlgorithm {
 private:
 	bool _cipherMode;
 public:
+	IRCipherAlgorithm(bool cipherMode):_cipherMode(cipherMode){}
 
-	void setCipherMode(bool )
+	virtual ~IRCipherAlgorithm() = default;
 
-	bool isCipher() const {
+	/**
+	 * Returns the cipher mode.
+	 *
+	 * @return true if it is a cipher algorithm or false if it is a decipher
+	 * algorithm.
+	 */
+	bool cipherMode() const {
 		return this->_cipherMode;
 	}
+
+	/**
+	 * Process the data.
+	 *
+	 * @param[in] src The data to be processed.
+	 * @param[in] srcSize The size of the data to be processed.
+	 * @param[out] dst The output.
+	 * @param[in,out] dstSize On input, the size of the dst. On output, it is
+	 * the actual size of the data.
+	 * @return true on success or false otherwise.
+	 */
+	virtual bool process(const void * src, std::uint64_t srcSize,
+			void * dst, std::uint64_t & dstSize);
+
+	virtual unsigned int minKeySize() const = 0;
+
+	virtual unsigned int maxKeySize() const = 0;
+
+	/**
+	 * Verifies if a given key size is valid for this cipher.
+	 *
+	 * @param[in] keySize The size of the key in bits.
+	 * @return true if the key size is valid or false otherwise.
+	 */
+	virtual bool isValidKeySize(unsigned int keySize) const;
 };
 
 class IRBlockCipherAlgorithm : public IRCipherAlgorithm {
 public:
-	IRBlockCipherAlgorithm() = default;
+	IRBlockCipherAlgorithm(bool cipherMode);
 
 	virtual ~IRBlockCipherAlgorithm() = default;
 
@@ -56,37 +94,28 @@ public:
 	 * @param[in] key The key.
 	 * @param[in] keySize The key size in bytes.
 	 */
-	virtual void setKey(const void * key, std::uint64_t keySize) = 0;
+	virtual bool setKey(const void * key, std::uint64_t keySize) = 0;
 
 	/**
-	 * Sets the key.
+	 * Sets the key. By default,
 	 *
 	 * @param[in] key The key.
 	 */
-	virtual void setKey(IRSecretKey * key) = 0;
+	virtual bool setKey(IRSecretKey * key);
 
 	/**
 	 * Returns the block size.
 	 *
 	 * @return The block size in bits.
 	 */
-	virtual unsigned int blockSize() = 0;
+	virtual unsigned int blockSize() const = 0;
 
 	/**
 	 * Returns the block size in bytes.
 	 *
 	 * @return The block size in bytes.
 	 */
-	virtual unsigned int blockSizeInBytes() = 0;
-
-	/**
-	 * Process a single block. Both src and dst must have
-	 * IRBlockCipherAlgorithm::blockSizeInBytes() bytes.
-	 *
-	 * @param[in] src The source block.
-	 * @param[out] dst The destination block.
-	 */
-	virtual void process(const void * src, void * dst) = 0;
+	virtual unsigned int blockSizeInBytes() const;
 };
 
 } //namespace crypto
