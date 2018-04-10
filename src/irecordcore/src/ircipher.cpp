@@ -32,14 +32,6 @@ using namespace irecordcore;
 using namespace irecordcore::crypto;
 
 //==============================================================================
-// Class IRCipherAlgorithm
-//------------------------------------------------------------------------------
-bool IRCipherAlgorithm::process(const void * src, std::uint64_t srcSize,
-		void * dst, std::uint64_t & dstSize) {
-	return false;
-}
-
-//==============================================================================
 // Class IRBlockCipherAlgorithm
 //------------------------------------------------------------------------------
 IRBlockCipherAlgorithm::IRBlockCipherAlgorithm(bool cipherMode):
@@ -77,6 +69,9 @@ bool IRBlockCipherAlgorithm::process(const void * src, std::uint64_t srcSize,
 bool IRBlockCipherAlgorithm::setKey(IRSecretKey * key) {
 	std::uint64_t rawKeySize;
 
+	if (!this->isValidKeySize(key->size())) {
+		return false;
+	}
 	if (!key->exportable()) {
 		return false;
 	}
@@ -84,9 +79,10 @@ bool IRBlockCipherAlgorithm::setKey(IRSecretKey * key) {
 	if (rawKeySize == 0) {
 		return false;
 	}
+
 	ircommon::IRUtils::IRSecureTemp rawKey(rawKeySize);
 	if (key->exportKey(rawKey.buff(), rawKeySize)) {
-		return this->setKey((const void *)rawKey.buff(), rawKeySize);
+		return this->setRawKey((const void *)rawKey.buff(), rawKeySize);
 	} else {
 		return false;
 	}
@@ -120,7 +116,7 @@ bool IRNullBlockCipherAlgorithm::isValidKeySize(unsigned int keySize) const {
 }
 
 //------------------------------------------------------------------------------
-bool IRNullBlockCipherAlgorithm::setKey(const void * key, std::uint64_t keySize) {
+bool IRNullBlockCipherAlgorithm::setRawKey(const void * key, std::uint64_t keySize) {
 	return true;
 }
 

@@ -54,7 +54,7 @@ public:
 	}
 
 	virtual bool processBlocks(const void * src, void * dst,
-			unsigned int blockCount) {
+			unsigned int blockCount) override {
 
 		if (blockCount) {
 			if (this->cipherMode()) {
@@ -68,23 +68,23 @@ public:
 		return true;
 	}
 
-	virtual unsigned int minKeySize() const {
+	virtual unsigned int minKeySize() const override {
 		return this->_cipher.maximum_keylength();
 	}
 
-	virtual unsigned int maxKeySize() const {
+	virtual unsigned int maxKeySize() const override {
 		return this->_cipher.maximum_keylength();
 	}
 
-	virtual bool isValidKeySize(unsigned int keySize) const {
+	virtual bool isValidKeySize(unsigned int keySize) const override {
 		return this->_cipher.valid_keylength (keySize);
 	}
 
-	virtual bool setKey(const void * key, std::uint64_t keySize) {
+	virtual bool setRawKey(const void * key, std::uint64_t keySize) override {
 		return this->_cipher.set_key((const std::uint8_t *)key, keySize);
 	}
 
-	virtual unsigned int blockSize() const {
+	virtual unsigned int blockSize() const override {
 		return this->_cipher.block_size();
 	}
 };

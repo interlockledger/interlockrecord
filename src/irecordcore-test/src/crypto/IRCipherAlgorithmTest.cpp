@@ -25,6 +25,50 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRCipherAlgorithmTest.h"
+#include <irecordcore/ircipher.h>
+
+using namespace irecordcore::crypto;
+
+//==============================================================================
+// class IRDummyCipherAlgorithm
+//------------------------------------------------------------------------------
+class IRDummyCipherAlgorithm: public IRCipherAlgorithm {
+public:
+	IRDummyCipherAlgorithm(bool cipherMode):IRCipherAlgorithm(cipherMode){}
+
+	virtual ~IRDummyCipherAlgorithm() = default;
+
+	virtual bool process(const void * src, std::uint64_t srcSize,
+			void * dst, std::uint64_t & dstSize);
+
+	virtual unsigned int minKeySize() const;
+
+	virtual unsigned int maxKeySize() const;
+
+	virtual bool isValidKeySize(unsigned int keySize) const;
+};
+
+//------------------------------------------------------------------------------
+bool IRDummyCipherAlgorithm::process(const void * src, std::uint64_t srcSize,
+		void * dst, std::uint64_t & dstSize) {
+	return false;
+}
+
+//------------------------------------------------------------------------------
+unsigned int IRDummyCipherAlgorithm::minKeySize() const {
+	return 0;
+}
+
+//------------------------------------------------------------------------------
+unsigned int IRDummyCipherAlgorithm::maxKeySize() const {
+	return 0;
+}
+
+//------------------------------------------------------------------------------
+bool IRDummyCipherAlgorithm::isValidKeySize(unsigned int keySize) const {
+	return false;
+}
+
 
 //==============================================================================
 // class IRCipherAlgorithmTest
@@ -46,9 +90,16 @@ void IRCipherAlgorithmTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRCipherAlgorithmTest,Constructor) {
+	IRDummyCipherAlgorithm * c;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	c = new IRDummyCipherAlgorithm(true);
+	ASSERT_TRUE(c->cipherMode());
+	delete c;
+
+	c = new IRDummyCipherAlgorithm(false);
+	ASSERT_FALSE(c->cipherMode());
+	delete c;
 }
+
 //------------------------------------------------------------------------------
 
