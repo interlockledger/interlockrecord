@@ -26,6 +26,8 @@
  */
 #include "IRBaseType16RawTagTest.h"
 #include <irecordcore/irtags.h>
+#include <cstring>
+#include "../crypto/CryptoSamples.h"
 
 using namespace irecordcore;
 using namespace irecordcore::tags;
@@ -64,14 +66,93 @@ TEST_F(IRBaseType16RawTagTest,Constructor) {
 	ASSERT_TRUE(bt16rt->value().secure());
 	delete bt16rt;
 }
+
 //------------------------------------------------------------------------------
 TEST_F(IRBaseType16RawTagTest, Size) {
-	IRBaseType16RawTag * bt16rt;
+	IRBaseType16RawTag bt16rt(0xFF, false);
 
-	bt16rt = new IRBaseType16RawTag(0xFF, false);
-	ASSERT_EQ(0xFF, bt16rt->size());
-	delete bt16rt;
+	ASSERT_EQ(2, bt16rt.size());
+	ASSERT_TRUE(bt16rt.value().write(0));
+	ASSERT_EQ(2 + 1, bt16rt.size());
+	ASSERT_TRUE(bt16rt.value().setSize(0));
+	ASSERT_EQ(2, bt16rt.size());
+	ASSERT_TRUE(bt16rt.value().setSize(32));
+	ASSERT_EQ(2 + 32, bt16rt.size());
 }
+
+//------------------------------------------------------------------------------
+TEST_F(IRBaseType16RawTagTest, deserializeValue) {
+	IRBaseType16RawTag bt16rt(0xFF, false);
+	IRBuffer serialized;
+	ILStandardTagFactory f;
+
+	// Empty
+	ASSERT_TRUE(serialized.writeInt((std::uint16_t)0xFACA));
+	ASSERT_TRUE(bt16rt.deserializeValue(f, serialized.roBuffer(), serialized.size()));
+	ASSERT_EQ(0xFACA, bt16rt.value().type());
+	ASSERT_EQ(0, bt16rt.value().size());
+
+	// With value
+	serialized.setSize(0);
+	ASSERT_TRUE(serialized.writeInt((std::uint16_t)0xCACA));
+	ASSERT_TRUE(serialized.write(CRYPTOSAMPLES_SAMPLE, sizeof(CRYPTOSAMPLES_SAMPLE)));
+	ASSERT_TRUE(bt16rt.deserializeValue(f, serialized.roBuffer(), serialized.size()));
+	ASSERT_EQ(0xCACA, bt16rt.value().type());
+	ASSERT_EQ(sizeof(CRYPTOSAMPLES_SAMPLE), bt16rt.value().size());
+	ASSERT_EQ(0, 
+		std::memcmp(bt16rt.value().roBuffer(), CRYPTOSAMPLES_SAMPLE, sizeof(CRYPTOSAMPLES_SAMPLE)));
+
+	// Fail
+	serialized.setSize(0);
+	ASSERT_FALSE(bt16rt.deserializeValue(f, serialized.roBuffer(), serialized.size()));
+
+	serialized.setSize(1);
+	ASSERT_FALSE(bt16rt.deserializeValue(f, serialized.roBuffer(), serialized.size()));
+}
+
+/*
+//------------------------------------------------------------------------------
+TEST_F(IRBaseType16RawTagTest, value) {
+
+	IRBaseType16RawTag bt16rt(0xFF, false);
+
+	bt16rt.value.setType(0x1234);
+	ASSERT_EQ(0x1234, bt16rt.value());
+
+
+}
+*/
+
+//------------------------------------------------------------------------------
+TEST_F(IRBaseType16RawTagTest, serialize) {
+	IRBaseType16RawTag bt16rt(0xFF, false);
+	IRBuffer serialized;
+	IRBuffer expected;
+
+	// Empty
+	ASSERT_TRUE(bt16rt.serialize(serialized));
+	ASSERT_TRUE(expected.writeILInt(0xFF));
+	ASSERT_TRUE(expected.writeILInt(2));
+	ASSERT_TRUE(expected.writeInt((std::uint16_t)0));
+	ASSERT_EQ(expected.size(), serialized.size());
+	ASSERT_EQ(0,
+		std::memcmp(expected.roBuffer(), serialized.roBuffer(), expected.size()));
+
+	// With content
+	serialized.setSize(0);
+	expected.setSize(0);
+	bt16rt.value().setType(0x1234);
+	ASSERT_TRUE(bt16rt.value().write(CRYPTOSAMPLES_SAMPLE, sizeof(CRYPTOSAMPLES_SAMPLE)));
+	ASSERT_TRUE(bt16rt.serialize(serialized));
+	ASSERT_TRUE(expected.writeILInt(0xFF));
+	ASSERT_TRUE(expected.writeILInt(2 + sizeof(CRYPTOSAMPLES_SAMPLE)));
+	ASSERT_TRUE(expected.writeInt((std::uint16_t)0x1234));
+	ASSERT_TRUE(expected.write(CRYPTOSAMPLES_SAMPLE, sizeof(CRYPTOSAMPLES_SAMPLE)));
+	ASSERT_EQ(expected.size(), serialized.size());
+	ASSERT_EQ(0,
+		std::memcmp(expected.roBuffer(), serialized.roBuffer(), expected.size()));
+}
+
 //------------------------------------------------------------------------------
 
 
