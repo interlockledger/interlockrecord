@@ -25,6 +25,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRNullBlockCipherAlgorithmTest.h"
+#include <irecordcore/ircipher.h>
+#include <ircommon/irbuffer.h>
+#include <cstring>
+#include "CryptoSamples.h"
+
+using namespace irecordcore::crypto;
 
 //==============================================================================
 // class IRNullBlockCipherAlgorithmTest
@@ -46,9 +52,17 @@ void IRNullBlockCipherAlgorithmTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRNullBlockCipherAlgorithmTest,Constructor) {
+	IRNullBlockCipherAlgorithm * c;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	c = new IRNullBlockCipherAlgorithm(true, 8);
+	ASSERT_TRUE(c->cipherMode());
+	ASSERT_EQ(8, c->blockSize());
+	delete c;
+
+	c = new IRNullBlockCipherAlgorithm(false, 16);
+	ASSERT_FALSE(c->cipherMode());
+	ASSERT_EQ(16, c->blockSize());
+	delete c;
 }
 //------------------------------------------------------------------------------
 

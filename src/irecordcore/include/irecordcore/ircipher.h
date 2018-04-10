@@ -40,10 +40,22 @@ namespace crypto {
  */
 class IRCipherAlgorithm {
 private:
+	/**
+	 * Cipher mode. If true it is a cipher otherwise it is a decipher.
+	 */
 	bool _cipherMode;
 public:
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] cipherMode set to true to create a cipher or false to create a
+	 * decipher.
+	 */
 	IRCipherAlgorithm(bool cipherMode):_cipherMode(cipherMode){}
 
+	/**
+	 * Diposes this instance and releases all associated resources.
+	 */
 	virtual ~IRCipherAlgorithm() = default;
 
 	/**
@@ -100,8 +112,17 @@ public:
  */
 class IRBlockCipherAlgorithm : public IRCipherAlgorithm {
 public:
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] cipherMode set to true to create a cipher or false to create a
+	 * decipher.
+	 */
 	IRBlockCipherAlgorithm(bool cipherMode);
 
+	/**
+	 * Diposes this instance and releases all associated resources.
+	 */
 	virtual ~IRBlockCipherAlgorithm() = default;
 
 	/**
@@ -162,17 +183,31 @@ public:
 
 /**
  * This class implements a null block cipher. It just copies the data from the
- * input into the output.
+ * input into the output using an abritrary block size.
  *
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @since 2018.04.09
  */
 class IRNullBlockCipherAlgorithm : public IRBlockCipherAlgorithm {
 private:
+	/**
+	 * Size of the block in bits.
+	 */
 	unsigned int _blockSize;
 public:
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] cipherMode set to true to create a cipher or false to create a
+	 * decipher.
+	 * @param[in] blockSize in bits. It must be a value multiple of 8 and larger
+	 * than 1.
+	 */
 	IRNullBlockCipherAlgorithm(bool cipherMode, unsigned int blockSize);
 
+	/**
+	 * Diposes this instance and releases all associated resources.
+	 */
 	virtual ~IRNullBlockCipherAlgorithm() = default;
 
 	virtual unsigned int minKeySize() const override;
