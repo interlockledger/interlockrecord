@@ -68,7 +68,7 @@ IRHMAC::IRHMAC(IRHashAlgorithm * hash, std::uint64_t blockSize): IRMAC(),
 
 	this->_ipad = std::unique_ptr<std::uint8_t[]>(new std::uint8_t[this->_blockSize]);
 	this->_opad = std::unique_ptr<std::uint8_t[]>(new std::uint8_t[this->_blockSize]);
-	this->setKey(nullptr, 0);
+	this->setRawKey(nullptr, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ void IRHMAC::mask(std::uint8_t * pad, std::uint8_t mask) {
 }
 
 //------------------------------------------------------------------------------
-bool IRHMAC::setKey(const void * key, std::uint64_t keySize) {
+bool IRHMAC::setRawKey(const void * key, std::uint64_t keySize) {
 
 	std::memset(this->_opad.get(), 0, this->blockSize());
 	if (keySize > this->blockSize()) {
@@ -124,7 +124,7 @@ bool IRHMAC::setKey(IRSecretKey & key) {
 
 	ircommon::IRUtils::IRSecureTemp rawKey(rawKeySize);
 	if (key.exportKey(rawKey.buff(), rawKeySize)) {
-		return this->setKey(rawKey.buff(), rawKeySize);
+		return this->setRawKey(rawKey.buff(), rawKeySize);
 	} else {
 		return false;
 	}

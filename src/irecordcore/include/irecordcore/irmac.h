@@ -61,7 +61,7 @@ public:
 	 * @param[in] key The key.
 	 * @param[in] keySize The size of the key in bytes.
 	 */
-	virtual bool setKey(const void * key, std::uint64_t keySize) = 0;
+	virtual bool setRawKey(const void * key, std::uint64_t keySize) = 0;
 
 	/**
 	 * Sets the key of this MAC algorithm. It is important to notice that
@@ -121,7 +121,7 @@ public:
 		return this->_blockSize;
 	}
 
-	virtual bool setKey(const void * key, std::uint64_t keySize);
+	virtual bool setRawKey(const void * key, std::uint64_t keySize);
 
 	virtual bool setKey(IRSecretKey & key);
 

@@ -44,7 +44,7 @@ IRPBKDF2KeyGenerator::IRPBKDF2KeyGenerator(IRMAC * prf, unsigned int rounds):
 //------------------------------------------------------------------------------
 void IRPBKDF2KeyGenerator::setPassword(const void * password,
 		std::uint64_t passwordSize) {
-	this->_prf->setKey(password, passwordSize);
+	this->_prf->setRawKey(password, passwordSize);
 }
 
 //------------------------------------------------------------------------------
