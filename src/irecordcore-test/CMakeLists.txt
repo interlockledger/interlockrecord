@@ -33,9 +33,12 @@ add_executable(irecordcore-test
 	src/block/IRRecordTypeTest.h
 	src/block/IRRootBlockPayloadTest.h
 	src/crypto/CryptoSamples.h
+	src/crypto/IRAES128BlockCipherAlgorithmTest.h
+	src/crypto/IRAES256BlockCipherAlgorithmTest.h
 	src/crypto/IRANSIX923PaddingTest.h
 	src/crypto/IRBasicPaddingTest.h
 	src/crypto/IRBlockCipherAlgorithmTest.h
+	src/crypto/IRBotanBlockCipherAlgorithmTest.h
 	src/crypto/IRBotanHashTest.h
 	src/crypto/IRBotanKeccakHashTest.h
 	src/crypto/IRBotanSecureRandomTest.h
@@ -80,9 +83,12 @@ add_executable(irecordcore-test
 	src/block/IRRecordTypeTest.cpp
 	src/block/IRRootBlockPayloadTest.cpp
 	src/crypto/CryptoSamples.cpp
+	src/crypto/IRAES128BlockCipherAlgorithmTest.cpp
+	src/crypto/IRAES256BlockCipherAlgorithmTest.cpp
 	src/crypto/IRANSIX923PaddingTest.cpp
 	src/crypto/IRBasicPaddingTest.cpp
 	src/crypto/IRBlockCipherAlgorithmTest.cpp
+	src/crypto/IRBotanBlockCipherAlgorithmTest.cpp
 	src/crypto/IRBotanHashTest.cpp
 	src/crypto/IRBotanKeccakHashTest.cpp
 	src/crypto/IRBotanSecureRandomTest.cpp
