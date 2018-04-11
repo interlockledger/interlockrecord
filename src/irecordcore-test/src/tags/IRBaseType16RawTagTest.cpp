@@ -110,18 +110,19 @@ TEST_F(IRBaseType16RawTagTest, deserializeValue) {
 	ASSERT_FALSE(bt16rt.deserializeValue(f, serialized.roBuffer(), serialized.size()));
 }
 
-/*
+
 //------------------------------------------------------------------------------
 TEST_F(IRBaseType16RawTagTest, value) {
 
 	IRBaseType16RawTag bt16rt(0xFF, false);
+	IRBuffer bfValue;
 
-	bt16rt.value.setType(0x1234);
-	ASSERT_EQ(0x1234, bt16rt.value());
-
-
+	bt16rt.value().setType(0x1234);
+	ASSERT_TRUE(bt16rt.value().write(CRYPTOSAMPLES_KEY128, sizeof(CRYPTOSAMPLES_KEY128)));
+	ASSERT_TRUE(bfValue.write(CRYPTOSAMPLES_KEY128, sizeof(CRYPTOSAMPLES_KEY128)));
+	ASSERT_EQ(bfValue.size(), bt16rt.value().size());
 }
-*/
+
 
 //------------------------------------------------------------------------------
 TEST_F(IRBaseType16RawTagTest, serialize) {
