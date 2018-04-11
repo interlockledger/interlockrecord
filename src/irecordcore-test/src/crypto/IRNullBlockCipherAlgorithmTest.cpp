@@ -63,6 +63,90 @@ TEST_F(IRNullBlockCipherAlgorithmTest,Constructor) {
 	ASSERT_FALSE(c->cipherMode());
 	ASSERT_EQ(16, c->blockSize());
 	delete c;
-}
-//------------------------------------------------------------------------------
 
+	try {
+		c = new IRNullBlockCipherAlgorithm(false, 0);
+		FAIL();
+	} catch (std::invalid_argument & e){}
+
+	try {
+		c = new IRNullBlockCipherAlgorithm(false, 1);
+		FAIL();
+	} catch (std::invalid_argument & e){}
+
+	try {
+		c = new IRNullBlockCipherAlgorithm(false, 7);
+		FAIL();
+	} catch (std::invalid_argument & e){}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRNullBlockCipherAlgorithmTest, keySize) {
+	IRNullBlockCipherAlgorithm c(true, 8);
+
+	ASSERT_EQ(0, c.minKeySize());
+	ASSERT_EQ(~((unsigned int)0), c.maxKeySize());
+
+	for (unsigned int keySize = 0; keySize < 1024; keySize++) {
+		ASSERT_TRUE(c.isValidKeySize(keySize));
+	}
+	ASSERT_TRUE(c.isValidKeySize(~((unsigned int)0)));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRNullBlockCipherAlgorithmTest, setRawKey) {
+	IRNullBlockCipherAlgorithm c(true, 8);
+
+	for (unsigned int keySize = 1; keySize <= sizeof(CRYPTOSAMPLES_SAMPLE2); keySize++) {
+		ASSERT_TRUE(c.setRawKey(CRYPTOSAMPLES_SAMPLE2, keySize));
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRNullBlockCipherAlgorithmTest, setKey) {
+	IRNullBlockCipherAlgorithm c(true, 8);
+
+	for (unsigned int keySize = 1; keySize <= sizeof(CRYPTOSAMPLES_SAMPLE2); keySize++) {
+		IRSecretKeyImpl key(CRYPTOSAMPLES_SAMPLE2, keySize);
+		ASSERT_TRUE(c.setKey(&key));
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRNullBlockCipherAlgorithmTest, blockSize) {
+
+	for (unsigned int blockSize = 1; blockSize <= 64; blockSize++) {
+		IRNullBlockCipherAlgorithm c(true, blockSize * 8);
+		ASSERT_EQ(blockSize * 8, c.blockSize());
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRNullBlockCipherAlgorithmTest, processBlocksCipher) {
+	IRNullBlockCipherAlgorithm c(true, 8 * 4);
+	std::uint8_t dst[4 * 8 + 1];
+
+	for (unsigned int blocks = 0; blocks <= 8 ; blocks++) {
+		std::memset(dst, 0, sizeof(dst));
+		ASSERT_TRUE(c.processBlocks(CRYPTOSAMPLES_SAMPLE2, dst, blocks));
+		std::uint64_t size = 4 * blocks;
+		ASSERT_EQ(0, dst[size]);
+		ASSERT_EQ(0, std::memcmp(dst, CRYPTOSAMPLES_SAMPLE2, size));
+	}
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRNullBlockCipherAlgorithmTest, processBlocksDecipher) {
+	IRNullBlockCipherAlgorithm c(false, 8 * 4);
+	std::uint8_t dst[4 * 8 + 1];
+
+	for (unsigned int blocks = 0; blocks <= 8 ; blocks++) {
+		std::memset(dst, 0, sizeof(dst));
+		ASSERT_TRUE(c.processBlocks(CRYPTOSAMPLES_SAMPLE2, dst, blocks));
+		std::uint64_t size = 4 * blocks;
+		ASSERT_EQ(0, dst[size]);
+		ASSERT_EQ(0, std::memcmp(dst, CRYPTOSAMPLES_SAMPLE2, size));
+	}
+}
+
+//------------------------------------------------------------------------------
