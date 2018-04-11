@@ -17,7 +17,10 @@ generate() {
 	echo "--"
 }
 
+# CRYPTOSAMPLES_KEY256 as CRYPTOSAMPLES_KEY256.dat
 printf "Kosh: You have always been here." > CRYPTOSAMPLES_KEY256.dat
+
+# Generate the samples
 generate aes-128-ecb $CRYPTOSAMPLES_KEY128
 generate aes-256-ecb $CRYPTOSAMPLES_KEY256
 
