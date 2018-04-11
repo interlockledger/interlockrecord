@@ -25,6 +25,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRBotanBlockCipherAlgorithmTest.h"
+#include <irecordcore/irbciphr.h>
+#include "CryptoSamples.h"
+
+using namespace irecordcore::crypto;
+
+typedef IRBotanBlockCipherAlgorithm<Botan::AES_192>
+		IRDummyBotanBlockCipherAlgorithm;
 
 //==============================================================================
 // class IRBotanBlockCipherAlgorithmTest
@@ -46,9 +53,67 @@ void IRBotanBlockCipherAlgorithmTest::TearDown() {
 
 //------------------------------------------------------------------------------
 TEST_F(IRBotanBlockCipherAlgorithmTest,Constructor) {
+	IRDummyBotanBlockCipherAlgorithm * c;
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	c = new IRDummyBotanBlockCipherAlgorithm(true);
+	ASSERT_TRUE(c->cipherMode());
+	delete c;
+
+	c = new IRDummyBotanBlockCipherAlgorithm(false);
+	ASSERT_FALSE(c->cipherMode());
+	delete c;
 }
+
+//------------------------------------------------------------------------------
+TEST_F(IRBotanBlockCipherAlgorithmTest, keySize) {
+	IRDummyBotanBlockCipherAlgorithm ct(true);
+	IRDummyBotanBlockCipherAlgorithm cf(true);
+
+	ASSERT_EQ(192, ct.minKeySize());
+	ASSERT_EQ(192, ct.maxKeySize());
+
+	ASSERT_FALSE(ct.isValidKeySize(0));
+	ASSERT_FALSE(ct.isValidKeySize(191));
+	ASSERT_TRUE(ct.isValidKeySize(192));
+	ASSERT_FALSE(ct.isValidKeySize(193));
+
+	ASSERT_EQ(192, cf.minKeySize());
+	ASSERT_EQ(192, cf.maxKeySize());
+
+	ASSERT_FALSE(cf.isValidKeySize(0));
+	ASSERT_FALSE(cf.isValidKeySize(191));
+	ASSERT_TRUE(cf.isValidKeySize(192));
+	ASSERT_FALSE(cf.isValidKeySize(193));
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBotanBlockCipherAlgorithmTest, blockSize) {
+	IRDummyBotanBlockCipherAlgorithm ct(true);
+	IRDummyBotanBlockCipherAlgorithm cf(true);
+
+	ASSERT_EQ(128, ct.blockSize());
+	ASSERT_EQ(16, ct.blockSizeInBytes());
+
+	ASSERT_EQ(128, cf.blockSize());
+	ASSERT_EQ(16, cf.blockSizeInBytes());
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBotanBlockCipherAlgorithmTest, setRawKey) {
+	IRDummyBotanBlockCipherAlgorithm ct(true);
+	IRDummyBotanBlockCipherAlgorithm cf(true);
+
+	ASSERT_FALSE(ct.setRawKey(CRYPTOSAMPLES_KEY256, 0));
+	ASSERT_FALSE(ct.setRawKey(CRYPTOSAMPLES_KEY256, 23));
+	ASSERT_TRUE(ct.setRawKey(CRYPTOSAMPLES_KEY256, 24));
+	ASSERT_FALSE(ct.setRawKey(CRYPTOSAMPLES_KEY256, 25));
+
+	ASSERT_FALSE(cf.setRawKey(CRYPTOSAMPLES_KEY256, 0));
+	ASSERT_FALSE(cf.setRawKey(CRYPTOSAMPLES_KEY256, 23));
+	ASSERT_TRUE(cf.setRawKey(CRYPTOSAMPLES_KEY256, 24));
+	ASSERT_FALSE(cf.setRawKey(CRYPTOSAMPLES_KEY256, 25));
+}
+
+
 //------------------------------------------------------------------------------
 

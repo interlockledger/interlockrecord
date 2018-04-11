@@ -69,23 +69,36 @@ public:
 	}
 
 	virtual unsigned int minKeySize() const override {
-		return this->_cipher.maximum_keylength();
+		return this->_cipher.maximum_keylength() * 8;
 	}
 
 	virtual unsigned int maxKeySize() const override {
-		return this->_cipher.maximum_keylength();
+		return this->_cipher.maximum_keylength() * 8;
 	}
 
 	virtual bool isValidKeySize(unsigned int keySize) const override {
-		return this->_cipher.valid_keylength (keySize);
+		if (keySize % 8) {
+			return false;
+		} else {
+			return this->_cipher.valid_keylength (keySize / 8);
+		}
 	}
 
 	virtual bool setRawKey(const void * key, std::uint64_t keySize) override {
-		return this->_cipher.set_key((const std::uint8_t *)key, keySize);
+		if (this->isValidKeySize(keySize * 8)) {
+			this->_cipher.set_key((const std::uint8_t *)key, keySize);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	virtual unsigned int blockSizeInBytes() const override {
+		return this->_cipher.block_size();
 	}
 
 	virtual unsigned int blockSize() const override {
-		return this->_cipher.block_size();
+		return this->blockSizeInBytes() * 8;
 	}
 };
 
