@@ -28,6 +28,7 @@
 #define INCLUDE_IRUTILS_IRBUFFER_H_
 
 #include <cstdint>
+#include <stdexcept>
 
 namespace ircommon {
 
@@ -183,7 +184,7 @@ public:
 	 * Creates a new instance of this class.
 	 *
 	 * @param[in] buff The buffer that should be cleaned on the disposal of this
-	 * instance.
+	 * instance. This buffer will not be disposed alongsize with this class.
 	 * @param[in] size The size of the buffer.
 	 */
 	IRAutoMemoryCleaner(void * buff, std::uint64_t size): _buffSize(size),
@@ -210,34 +211,36 @@ public:
 };
 
 /**
- * This helper class implements a temporary byte buffer that will clean itself
- * when disposed.
+ * This helper class implements a temporary basic type buffer that will clean
+ * itself when disposed.
  *
- * @since 2018.03.25
+ * @since 2018.04.12
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @see IRAutoMemoryCleaner
  */
-class IRSecureTemp {
+template <class BaseType>
+class IRBaseSecureTemp {
 private:
 	std::uint64_t _buffSize;
-	std::uint8_t * _buff;
+	BaseType * _buff;
+	std::uint64_t _position;
 public:
 	/**
 	 * Creates a new instance of this class.
 	 *
 	 * @param[in] size The size of the temporary buffer in bytes.
 	 */
-	IRSecureTemp(std::uint64_t size): _buffSize(size),
-			_buff(new std::uint8_t [size]) {
+	IRBaseSecureTemp(std::uint64_t size): _buffSize(size),
+			_buff(new BaseType[size]), _position(0) {
 	}
 
 	// Copy constructor is forbidden
-	IRSecureTemp(const IRSecureTemp &) = delete;
+	IRBaseSecureTemp(const IRBaseSecureTemp &) = delete;
 
 	/**
 	 * Disposes this instance and releases all associated resources.
 	 */
-	~IRSecureTemp() {
+	~IRBaseSecureTemp() {
 		if (this->_buff) {
 			this->clear();
 			delete [] this->_buff;
@@ -247,8 +250,8 @@ public:
 	/**
 	 * Cleans the buffer.
 	 */
-	void clear() {
-		clearMemory(this->_buff, this->_buffSize);
+	inline void clear() {
+		clearMemory(this->_buff, this->_buffSize * sizeof(BaseType));
 	}
 
 	/**
@@ -256,7 +259,7 @@ public:
 	 *
 	 * @return The buffer size.
 	 */
-	std::uint64_t size() const {
+	inline std::uint64_t size() const {
 		return this->_buffSize;
 	}
 
@@ -265,7 +268,7 @@ public:
 	 *
 	 * @return The buffer.
 	 */
-	std::uint8_t * buff() {
+	inline BaseType * buff() {
 		return this->_buff;
 	}
 
@@ -274,10 +277,76 @@ public:
 	 *
 	 * @return The buffer.
 	 */
-	const std::uint8_t * buff() const {
+	inline const BaseType * buff() const {
 		return this->_buff;
 	}
+
+	/**
+	 * Returns a read-write pointer to the temporary buffer at the current
+	 * position.
+	 *
+	 * @return The buffer.
+	 */
+	inline const BaseType * posBuff() {
+		return this->_buff + this->_position;
+	}
+
+	/**
+	 * Returns a read-only pointer to the temporary buffer at the current
+	 * position.
+	 *
+	 * @return The buffer.
+	 */
+	inline const BaseType * posBuff() const {
+		return this->_buff + this->_position;
+	}
+
+	/**
+	 * Returns the current position.
+	 *
+	 * @return The current position.
+	 */
+	inline std::uint64_t position() const {
+		return this->_position;
+	}
+
+	/**
+	 * Sets the current position.
+	 *
+	 * @param[in] position The new position. It cannot be a value larger than
+	 * IRSecureTemp::size().
+	 * @note As a safeguard, this method will throw an std::invalid_argument in
+	 * case of error.
+	 */
+	inline void setPosition(std::uint64_t position) {
+		if (position > this->size()) {
+			throw std::invalid_argument("");
+		}
+		this->_position = position;
+	}
+
+	/**
+	 * Returns the remaing bytes based on the current position.
+	 *
+	 * @return The current position.
+	 */
+	inline std::uint64_t remaining() const {
+		return this->_buffSize - this->_position;
+	}
 };
+
+/**
+ * This helper class implements a temporary byte buffer that will clean itself
+ * when disposed.
+ *
+ * <p>Starting on version 2018.04.12, IRSecureTemp is now a specialization of
+ * the class template IRBaseSecureTemp with BaseType as std::uint8_t.</p>
+ *
+ * @since 2018.03.25
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @see IRAutoMemoryCleaner
+ */
+typedef IRBaseSecureTemp<std::uint8_t> IRSecureTemp;
 
 } // namespace IRUtils
 

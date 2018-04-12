@@ -72,6 +72,8 @@ add_executable(ircommon-test
 	src/iltags/ILUInt32TagTest.h
 	src/iltags/ILUInt64TagTest.h
 	src/iltags/ILUInt8TagTest.h
+	src/IRAutoMemoryCleanerTest.h
+	src/IRBaseSecureTempTest.h
 	src/IRBufferTest.h
 	src/IRCodecTest.h
 	src/IRDummyRandom.h
@@ -79,6 +81,7 @@ add_executable(ircommon-test
 	src/IRHandleListTest.h
 	src/IRIDGeneratorTest.h
 	src/IRRandomTest.h
+	src/IRSecureTempTest.h
 	src/IRSharedPtrHandleListTest.h
 	src/IRUtilsTest.h
 	src/IRXORShifRandomTest.h
@@ -142,6 +145,8 @@ add_executable(ircommon-test
 	src/iltags/ILUInt32TagTest.cpp
 	src/iltags/ILUInt64TagTest.cpp
 	src/iltags/ILUInt8TagTest.cpp
+	src/IRAutoMemoryCleanerTest.cpp
+	src/IRBaseSecureTempTest.cpp
 	src/IRBufferTest.cpp
 	src/IRCodecTest.cpp
 	src/IRDummyRandom.cpp
@@ -149,6 +154,7 @@ add_executable(ircommon-test
 	src/IRHandleListTest.cpp
 	src/IRIDGeneratorTest.cpp
 	src/IRRandomTest.cpp
+	src/IRSecureTempTest.cpp
 	src/IRSharedPtrHandleListTest.cpp
 	src/IRUtilsTest.cpp
 	src/IRXORShifRandomTest.cpp

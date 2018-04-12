@@ -278,44 +278,6 @@ TEST_F(IRUtilsTest, lockUnlockMemory) {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRUtilsTest, IRAutoMemoryCleaner) {
-	std::uint8_t buff[65];
-	std::uint8_t exp[64];
-
-	std::memset(exp, 0x0, sizeof(exp));
-	for (unsigned int size = 0; size <= 64; size++) {
-		std::memset(buff, 0xFA, sizeof(buff));
-		{
-			IRUtils::IRAutoMemoryCleaner c(buff, size);
-			c.clear();
-			ASSERT_EQ(0xFA, buff[size]);
-			ASSERT_EQ(0, std::memcmp(exp, buff, size));
-			std::memset(buff, 0xFA, sizeof(buff));
-		}
-		ASSERT_EQ(0xFA, buff[size]);
-		ASSERT_EQ(0, std::memcmp(exp, buff, size));
-	}
-}
-
-//------------------------------------------------------------------------------
-TEST_F(IRUtilsTest, IRSecureTemp) {
-
-	for (unsigned int size = 1; size <= 64; size++) {
-		IRUtils::IRSecureTemp tmp(size);
-		IRUtils::IRSecureTemp & rTmp = tmp;
-
-		ASSERT_EQ(size, tmp.size());
-		ASSERT_TRUE(tmp.buff() != nullptr);
-		ASSERT_TRUE(tmp.buff() == rTmp.buff());
-
-		std::uint8_t exp[size];
-		std::memset(exp, 0, sizeof(exp));
-		std::memset(tmp.buff(), 0xFA, tmp.size());
-		tmp.clear();
-		ASSERT_EQ(0, std::memcmp(exp, tmp.buff(), size));
-	}
-}
-//------------------------------------------------------------------------------
 
 
 
