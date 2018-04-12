@@ -66,54 +66,80 @@ TEST_F(IRBotanBlockCipherAlgorithmTest,Constructor) {
 
 //------------------------------------------------------------------------------
 TEST_F(IRBotanBlockCipherAlgorithmTest, keySize) {
-	IRDummyBotanBlockCipherAlgorithm ct(true);
-	IRDummyBotanBlockCipherAlgorithm cf(true);
+	IRDummyBotanBlockCipherAlgorithm ce(true);
+	IRDummyBotanBlockCipherAlgorithm cd(false);
 
-	ASSERT_EQ(192, ct.minKeySize());
-	ASSERT_EQ(192, ct.maxKeySize());
+	ASSERT_EQ(192, ce.minKeySize());
+	ASSERT_EQ(192, ce.maxKeySize());
 
-	ASSERT_FALSE(ct.isValidKeySize(0));
-	ASSERT_FALSE(ct.isValidKeySize(191));
-	ASSERT_TRUE(ct.isValidKeySize(192));
-	ASSERT_FALSE(ct.isValidKeySize(193));
+	ASSERT_FALSE(ce.isValidKeySize(0));
+	ASSERT_FALSE(ce.isValidKeySize(191));
+	ASSERT_TRUE(ce.isValidKeySize(192));
+	ASSERT_FALSE(ce.isValidKeySize(193));
 
-	ASSERT_EQ(192, cf.minKeySize());
-	ASSERT_EQ(192, cf.maxKeySize());
+	ASSERT_EQ(192, cd.minKeySize());
+	ASSERT_EQ(192, cd.maxKeySize());
 
-	ASSERT_FALSE(cf.isValidKeySize(0));
-	ASSERT_FALSE(cf.isValidKeySize(191));
-	ASSERT_TRUE(cf.isValidKeySize(192));
-	ASSERT_FALSE(cf.isValidKeySize(193));
+	ASSERT_FALSE(cd.isValidKeySize(0));
+	ASSERT_FALSE(cd.isValidKeySize(191));
+	ASSERT_TRUE(cd.isValidKeySize(192));
+	ASSERT_FALSE(cd.isValidKeySize(193));
 }
 
 //------------------------------------------------------------------------------
 TEST_F(IRBotanBlockCipherAlgorithmTest, blockSize) {
-	IRDummyBotanBlockCipherAlgorithm ct(true);
-	IRDummyBotanBlockCipherAlgorithm cf(true);
+	IRDummyBotanBlockCipherAlgorithm ce(true);
+	IRDummyBotanBlockCipherAlgorithm cd(false);
 
-	ASSERT_EQ(128, ct.blockSize());
-	ASSERT_EQ(16, ct.blockSizeInBytes());
+	ASSERT_EQ(128, ce.blockSize());
+	ASSERT_EQ(16, ce.blockSizeInBytes());
 
-	ASSERT_EQ(128, cf.blockSize());
-	ASSERT_EQ(16, cf.blockSizeInBytes());
+	ASSERT_EQ(128, cd.blockSize());
+	ASSERT_EQ(16, cd.blockSizeInBytes());
 }
 
 //------------------------------------------------------------------------------
 TEST_F(IRBotanBlockCipherAlgorithmTest, setRawKey) {
-	IRDummyBotanBlockCipherAlgorithm ct(true);
-	IRDummyBotanBlockCipherAlgorithm cf(true);
+	IRDummyBotanBlockCipherAlgorithm ce(true);
+	IRDummyBotanBlockCipherAlgorithm cd(false);
 
-	ASSERT_FALSE(ct.setRawKey(CRYPTOSAMPLES_KEY256, 0));
-	ASSERT_FALSE(ct.setRawKey(CRYPTOSAMPLES_KEY256, 23));
-	ASSERT_TRUE(ct.setRawKey(CRYPTOSAMPLES_KEY256, 24));
-	ASSERT_FALSE(ct.setRawKey(CRYPTOSAMPLES_KEY256, 25));
+	ASSERT_FALSE(ce.setRawKey(CRYPTOSAMPLES_KEY256, 0));
+	ASSERT_FALSE(ce.setRawKey(CRYPTOSAMPLES_KEY256, 23));
+	ASSERT_TRUE(ce.setRawKey(CRYPTOSAMPLES_KEY256, 24));
+	ASSERT_FALSE(ce.setRawKey(CRYPTOSAMPLES_KEY256, 25));
 
-	ASSERT_FALSE(cf.setRawKey(CRYPTOSAMPLES_KEY256, 0));
-	ASSERT_FALSE(cf.setRawKey(CRYPTOSAMPLES_KEY256, 23));
-	ASSERT_TRUE(cf.setRawKey(CRYPTOSAMPLES_KEY256, 24));
-	ASSERT_FALSE(cf.setRawKey(CRYPTOSAMPLES_KEY256, 25));
+	ASSERT_FALSE(cd.setRawKey(CRYPTOSAMPLES_KEY256, 0));
+	ASSERT_FALSE(cd.setRawKey(CRYPTOSAMPLES_KEY256, 23));
+	ASSERT_TRUE(cd.setRawKey(CRYPTOSAMPLES_KEY256, 24));
+	ASSERT_FALSE(cd.setRawKey(CRYPTOSAMPLES_KEY256, 25));
 }
 
+//------------------------------------------------------------------------------
+TEST_F(IRBotanBlockCipherAlgorithmTest, processBlocks) {
+	IRDummyBotanBlockCipherAlgorithm ce(true);
+	IRDummyBotanBlockCipherAlgorithm cd(false);
+	std::uint8_t enc[33];
+	std::uint8_t dec[33];
+
+	ASSERT_TRUE(ce.setRawKey(CRYPTOSAMPLES_KEY256, 24));
+	ASSERT_TRUE(cd.setRawKey(CRYPTOSAMPLES_KEY256, 24));
+
+	std::memset(enc, 0, sizeof(enc));
+	ASSERT_TRUE(ce.processBlocks(CRYPTOSAMPLES_KEY256, enc, 1));
+	ASSERT_EQ(0, enc[16]);
+	std::memset(dec, 0, sizeof(dec));
+	ASSERT_TRUE(cd.processBlocks(enc, dec, 1));
+	ASSERT_EQ(0, dec[16]);
+	ASSERT_EQ(0, std::memcmp(CRYPTOSAMPLES_KEY256, dec, 16));
+
+	std::memset(enc, 0, sizeof(enc));
+	ASSERT_TRUE(ce.processBlocks(CRYPTOSAMPLES_KEY256, enc, 2));
+	ASSERT_EQ(0, enc[32]);
+	std::memset(dec, 0, sizeof(dec));
+	ASSERT_TRUE(cd.processBlocks(enc, dec, 2));
+	ASSERT_EQ(0, dec[32]);
+	ASSERT_EQ(0, std::memcmp(CRYPTOSAMPLES_KEY256, dec, 32));
+}
 
 //------------------------------------------------------------------------------
 
