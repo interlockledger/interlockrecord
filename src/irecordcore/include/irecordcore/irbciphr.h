@@ -35,8 +35,8 @@ namespace irecordcore {
 namespace crypto {
 
 /**
- * This class template implements a IRBlockCipherAlgorithm using the Botan2 as
- * its backend.
+ * This class template implements a IRBlockCipherAlgorithm using the
+ * Botan::BlockCipher instances as its backend.
  *
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @since 2018.04.09
@@ -44,12 +44,24 @@ namespace crypto {
 template <class BotanBlockCipherType>
 class IRBotanBlockCipherAlgorithm: public IRBlockCipherAlgorithm {
 private:
+	/**
+	 * The inner Botan::BlockCipher instance.
+	 */
 	BotanBlockCipherType _cipher;
 public:
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] cipherMode set to true to create a cipher or false to create a
+	 * decipher.
+	 */
 	IRBotanBlockCipherAlgorithm(bool cipherMode) :
 			IRBlockCipherAlgorithm(cipherMode), _cipher() {
 	}
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRBotanBlockCipherAlgorithm() {
 	}
 
@@ -102,9 +114,23 @@ public:
 	}
 };
 
-typedef IRBotanBlockCipherAlgorithm<Botan::AES_128> IRAES128BlockCipherAlgorithm;
+/**
+ * This class implements the software based AES128 (FIPS 197) algorithm.
+ *
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2018.04.09
+ */
+typedef IRBotanBlockCipherAlgorithm<Botan::AES_128>
+		IRAES128BlockCipherAlgorithm;
 
-typedef IRBotanBlockCipherAlgorithm<Botan::AES_256> IRAES256BlockCipherAlgorithm;
+/**
+ * This class implements the software based AES256 (FIPS 197) algorithm.
+ *
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2018.04.09
+ */
+typedef IRBotanBlockCipherAlgorithm<Botan::AES_256>
+		IRAES256BlockCipherAlgorithm;
 
 } // namespace crypto
 } // namespace irecordcore
