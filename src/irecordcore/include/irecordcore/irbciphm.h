@@ -37,15 +37,30 @@ namespace crypto {
 
 class IRBlockCipherMode {
 protected:
+	/**
+	 * The inner padding.
+	 */
 	std::unique_ptr<IRPadding> _padding;
-
+	/**
+	 * The inner cipher.
+	 */
 	std::unique_ptr<IRBlockCipherAlgorithm> _cipher;
-
-	unsigned int _blockSize;
-
-	ircommon::IRUtils::IRSecureTemp _block;
-
-	bool processBlock(const void * src, void * dst) = 0;
+	/**
+	 * The size of the temporary block.
+	 */
+	unsigned int _tmpBlockSize;
+	/**
+	 * The value for the temporary block.
+	 */
+	ircommon::IRUtils::IRSecureTemp _tmpBlock;
+	/**
+	 * Prepare the block. The default implementation does nothing.
+	 */
+	bool prepareBlock(void * plain) = 0;
+	/**
+	 * Prepare the block.
+	 */
+	bool postBlock(const void * block) = 0;
 public:
 	IRBlockCipherMode(IRPadding * padding, IRBlockCipherAlgorithm * cipher);
 
