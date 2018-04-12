@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2017-2018, Open Communications Security
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of the <organization> nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -24,68 +24,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _IRECORDCORE_IRBCIPHM_H_
-#define _IRECORDCORE_IRBCIPHM_H_
+#ifndef __IRAUTOMEMORYCLEANERTEST_H__
+#define __IRAUTOMEMORYCLEANERTEST_H__
 
-#include <memory>
-#include <ircommon/irutils.h>
-#include <irecordcore/ircipher.h>
-#include <irecordcore/irciphpd.h>
+#include <gtest/gtest.h>
 
-namespace irecordcore {
-namespace crypto {
-
-class IRBlockCipherMode {
-protected:
-	/**
-	 * The inner padding.
-	 */
-	std::unique_ptr<IRPadding> _padding;
-	/**
-	 * The inner cipher.
-	 */
-	std::unique_ptr<IRBlockCipherAlgorithm> _cipher;
-	/**
-	 * The size of the temporary block.
-	 */
-	unsigned int _tmpBlockSize;
-	/**
-	 * The value for the temporary block.
-	 */
-	ircommon::IRUtils::IRSecureTemp _tmpBlock;
-	/**
-	 * Prepare the block. The default implementation does nothing.
-	 */
-	bool prepareBlock(void * plain) = 0;
-	/**
-	 * Prepare the block.
-	 */
-	bool postBlock(const void * block) = 0;
+class IRAutoMemoryCleanerTest : public testing::Test {
 public:
-	IRBlockCipherMode(IRPadding * padding, IRBlockCipherAlgorithm * cipher);
-
-	virtual ~IRBlockCipherMode() = default;
-
-	std::uint64_t getOutputSize(std::uint64_t srcSize) const;
-
-	/**
-	 * Process a chunk of data.
-	 *
-	 * @param[in] src The data to be processed.
-	 * @param[in] srcSize The size of src in bytes.
-	 * @param[out] dst The output.
-	 * @param[in,out] dstSrc On input, it is the size of dst. On output, it is
-	 * the actual size of the output.
-	 * @return true on success or false otherwise.
-	 */
-	bool process(const void * src, std::uint64_t srcSize, void * dst,
-			std::uint64_t & dstSize);
-
-	bool finalize(const void * src, std::uint64_t srcSize, void * dst,
-			std::uint64_t & dstSize);
+	IRAutoMemoryCleanerTest();
+	virtual ~IRAutoMemoryCleanerTest();
+	virtual void SetUp();
+	virtual void TearDown();
 };
+#endif //__IRAUTOMEMORYCLEANERTEST_H__
 
-} // namespace crypto
-} // namespace irecordcore
-
-#endif /* _IRECORDCORE_IRBCIPHM_H_ */
