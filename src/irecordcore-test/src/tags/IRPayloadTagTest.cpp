@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRPayloadTagTest.h"
+#include <irecordcore/irtags.h>
+
+using namespace irecordcore;
+using namespace irecordcore::tags;
 
 //==============================================================================
 // class IRPayloadTagTest
@@ -47,8 +51,14 @@ void IRPayloadTagTest::TearDown() {
 //------------------------------------------------------------------------------
 TEST_F(IRPayloadTagTest,Constructor) {
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	IRPayloadTag * ptag;
+
+	ptag = new IRPayloadTag();
+	ASSERT_NE(TAG_HASH, ptag->id());
+	ASSERT_EQ(TAG_PAYLOAD, ptag->id());
+
+	delete ptag;
+
 }
 //------------------------------------------------------------------------------
 

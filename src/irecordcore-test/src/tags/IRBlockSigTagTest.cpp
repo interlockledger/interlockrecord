@@ -25,6 +25,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRBlockSigTagTest.h"
+#include <irecordcore/irtags.h>
+
+
+using namespace irecordcore;
+using namespace irecordcore::tags;
+
 
 //==============================================================================
 // class IRBlockSigTagTest
@@ -47,8 +53,13 @@ void IRBlockSigTagTest::TearDown() {
 //------------------------------------------------------------------------------
 TEST_F(IRBlockSigTagTest,Constructor) {
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	IRBlockSigTag * bstag;
+
+	bstag = new IRBlockSigTag();
+	
+	
+
+	delete bstag;
 }
 //------------------------------------------------------------------------------
 

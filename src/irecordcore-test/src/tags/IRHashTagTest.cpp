@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRHashTagTest.h"
+#include <irecordcore/irtags.h>
+
+using namespace irecordcore;
+using namespace irecordcore::tags;
 
 //==============================================================================
 // class IRHashTagTest
@@ -45,10 +49,14 @@ void IRHashTagTest::TearDown() {
 }
 
 //------------------------------------------------------------------------------
-TEST_F(IRHashTagTest,Constructor) {
+TEST_F(IRHashTagTest, Constructor) {
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	IRHashTag * htag;
+
+	htag = new IRHashTag();
+	ASSERT_NE(TAG_SIG, htag->id());
+	ASSERT_EQ(TAG_HASH, htag->id());
+
+	delete htag;
 }
 //------------------------------------------------------------------------------
-
