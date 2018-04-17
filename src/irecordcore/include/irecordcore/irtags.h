@@ -192,7 +192,7 @@ public:
  * @since 2018.02.01
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
-class IRBlockSigTag: ircommon::iltags::ILTag {
+class IRBlockSigTag: public ircommon::iltags::ILTag {
 protected:
 	ircommon::iltags::ILUInt16Tag _parentHashType;
 	IRSigTag _signature;

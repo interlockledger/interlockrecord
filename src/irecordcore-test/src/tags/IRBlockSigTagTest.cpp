@@ -56,10 +56,35 @@ TEST_F(IRBlockSigTagTest,Constructor) {
 	IRBlockSigTag * bstag;
 
 	bstag = new IRBlockSigTag();
-	
-	
-
+	ASSERT_NE(TAG_HASH, bstag->id());
+	ASSERT_EQ(TAG_BLOCK_SIG, bstag->id());
+	ASSERT_EQ((1 + 2) + (1 + 1 + 2), bstag->size());
 	delete bstag;
 }
+
 //------------------------------------------------------------------------------
+TEST_F(IRBlockSigTagTest, Size) {
+	IRBlockSigTag bstag;
+
+	ASSERT_EQ((1 + 2) + (1 + 1 + 2), bstag.size());
+
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBlockSigTagTest, deserializeValue) {
+
+
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBlockSigTagTest, parentHashType) {
+
+
+}
+
+//------------------------------------------------------------------------------
+TEST_F(IRBlockSigTagTest, signature) {
+
+
+}
 
