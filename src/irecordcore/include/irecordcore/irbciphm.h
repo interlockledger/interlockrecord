@@ -35,6 +35,10 @@
 namespace irecordcore {
 namespace crypto {
 
+/**
+ * This class is the base class for all block cipher modes.
+ *
+ */
 class IRBlockCipherMode {
 protected:
 	/**
@@ -46,43 +50,82 @@ protected:
 	 */
 	std::unique_ptr<IRBlockCipherAlgorithm> _cipher;
 	/**
-	 * The size of the temporary block.
-	 */
-	unsigned int _tmpBlockSize;
-	/**
 	 * The value for the temporary block.
 	 */
 	ircommon::IRUtils::IRSecureTemp _tmpBlock;
+
+	/**
+	 * Process a single block. The default implementation does the following:
+	 *
+	 * 	* Call prepareBlock(plain);
+	 * 	* Ciphers/decipher the plain into enc;
+	 * 	* Call postBlock(enc);
+	 *
+	 */
+	virtual bool processBlock(void * plain, void * enc);
+
 	/**
 	 * Prepare the block. The default implementation does nothing.
 	 */
-	bool prepareBlock(void * plain) = 0;
+	virtual bool prepareBlock(void * plain);
+
 	/**
 	 * Prepare the block.
 	 */
-	bool postBlock(const void * block) = 0;
+	virtual bool postBlock(const void * block);
 public:
 	IRBlockCipherMode(IRPadding * padding, IRBlockCipherAlgorithm * cipher);
 
 	virtual ~IRBlockCipherMode() = default;
 
+	const IRPadding & padding() const {
+		return *(this->_padding);
+	}
+
+	const IRBlockCipherAlgorithm & cipher() const {
+		return *(this->_cipher);
+	}
+
+	inline std::uint64_t blockSizeInBytes() const {
+		return this->_tmpBlock.size();
+	}
+
+	virtual void reset();
+
+	/**
+	 * Returns the required output size for a given input size. The returned
+	 * value will be the largest multiple of a block larger than srcSize.
+	 *
+	 * @param[in] srcSize The size of the sorce.
+	 * @return The required size of the output.
+	 */
 	std::uint64_t getOutputSize(std::uint64_t srcSize) const;
 
 	/**
-	 * Process a chunk of data.
+	 * Returns the number of bytes that remains to be processed alongside with
+	 * the next chunck.
+	 *
+	 * @return The number of bytes inside the internal buffer.
+	 */
+	std::uint64_t remaining() const {
+		return this->_tmpBlock.position();
+	}
+
+	/**
+	 * Process a chunk of data. All bytes from source will be consumed but some
+	 * bytes may remain inside this instance to be processed in the next chunck.
 	 *
 	 * @param[in] src The data to be processed.
 	 * @param[in] srcSize The size of src in bytes.
 	 * @param[out] dst The output.
 	 * @param[in,out] dstSrc On input, it is the size of dst. On output, it is
 	 * the actual size of the output.
+	 * @param[in] last Flag that indicates if it is the last chunk of data or
+	 * not.
 	 * @return true on success or false otherwise.
 	 */
 	bool process(const void * src, std::uint64_t srcSize, void * dst,
-			std::uint64_t & dstSize);
-
-	bool finalize(const void * src, std::uint64_t srcSize, void * dst,
-			std::uint64_t & dstSize);
+			std::uint64_t & dstSize, bool last = false);
 };
 
 } // namespace crypto
