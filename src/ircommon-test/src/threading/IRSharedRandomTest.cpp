@@ -128,26 +128,27 @@ TEST_F(IRSharedRandomTest, nextBytes) {
 	r.setSeed(0);
 	std::thread t1([&r,  &last, &v1]() {
 		r.nextBytes(v1, sizeof(v1));
-		last = 1;
+		last++;
 	});
 	std::thread t2([&r,  &last, &v2]() {
 		r.nextBytes(v2, sizeof(v2));
-		last = 2;
+		last++;
 	});
 	t1.join();
 	t2.join();
 	ASSERT_NE(-1, last);
 
-	if (last == 1){
+	if (v1[0] == 0x00){
 		exp1 = 0x0001020304050607ll;
 		exp2 = 0x08090a0b0c0d0e0fll;
 	} else {
-		exp2 = 0x08090a0b0c0d0e0fll;
-		exp1 = 0x0001020304050607ll;
+		exp2 = 0x0001020304050607ll;
+		exp1 = 0x08090a0b0c0d0e0fll;
 	}
 
 	IRUtils::int2BE(exp1, exp);
 	ASSERT_EQ(0, std::memcmp(v1, exp, sizeof(exp)));
+
 	IRUtils::int2BE(exp2, exp);
 	ASSERT_EQ(0, std::memcmp(v2, exp, sizeof(exp)));
 }
