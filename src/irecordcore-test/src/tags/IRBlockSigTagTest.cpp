@@ -30,6 +30,8 @@
 
 using namespace irecordcore;
 using namespace irecordcore::tags;
+using namespace ircommon;
+using namespace ircommon::iltags;
 
 
 //==============================================================================
@@ -56,7 +58,6 @@ TEST_F(IRBlockSigTagTest,Constructor) {
 	IRBlockSigTag * bstag;
 
 	bstag = new IRBlockSigTag();
-	ASSERT_NE(TAG_HASH, bstag->id());
 	ASSERT_EQ(TAG_BLOCK_SIG, bstag->id());
 	ASSERT_EQ((1 + 2) + (1 + 1 + 2), bstag->size());
 	delete bstag;
@@ -67,14 +68,76 @@ TEST_F(IRBlockSigTagTest, Size) {
 	IRBlockSigTag bstag;
 
 	ASSERT_EQ((1 + 2) + (1 + 1 + 2), bstag.size());
-
+	bstag.signature().value().set("SIGNATURE",9);
+	ASSERT_EQ((1 + 2) + (1 + 1 + 2) + 9, bstag.size());
 }
 
 //------------------------------------------------------------------------------
+TEST_F(IRBlockSigTagTest, serialize) {
+	IRBlockSigTag bstag;
+	IRBuffer serialized;
+	IRBuffer expected;
+	ILStandardTagFactory f;
+
+	// Empty
+	ASSERT_TRUE(bstag.serialize(serialized));
+
+	ASSERT_TRUE(expected.writeILInt(TAG_BLOCK_SIG));
+	ASSERT_TRUE(expected.writeILInt((1 + 2) + (1 + 1 + 2)));
+	
+	ASSERT_TRUE(expected.writeILInt(ircommon::iltags::ILTag::TAG_UINT16));
+	ASSERT_TRUE(expected.writeInt((std::uint16_t)0));
+
+	ASSERT_TRUE(expected.writeILInt(TAG_SIG));
+	ASSERT_TRUE(expected.writeILInt(2));
+	ASSERT_TRUE(expected.writeInt((std::uint16_t)0));
+
+	ASSERT_EQ(serialized.size(), expected.size());
+	ASSERT_EQ(0, std::memcmp(serialized.roBuffer(), expected.roBuffer(), expected.size()));
+	
+	// Non empty
+	serialized.setSize(0);
+	expected.setSize(0);
+
+	bstag.parentHashType().setValue(0xCACA);
+	bstag.signature().value().setType(0xfaca);
+	bstag.signature().value().set("SIGNATURE", 9);
+
+	ASSERT_TRUE(bstag.serialize(serialized));
+
+	ASSERT_TRUE(expected.writeILInt(TAG_BLOCK_SIG));
+	ASSERT_TRUE(expected.writeILInt((1 + 2) + (1 + 1 + 2 + 9)));
+
+	ASSERT_TRUE(expected.writeILInt(ircommon::iltags::ILTag::TAG_UINT16));
+	ASSERT_TRUE(expected.writeInt((std::uint16_t)0xCACA));
+
+	ASSERT_TRUE(expected.writeILInt(TAG_SIG));
+	ASSERT_TRUE(expected.writeILInt(2 + 9));
+	ASSERT_TRUE(expected.writeInt((std::uint16_t)0xFACA));
+	ASSERT_TRUE(expected.write("SIGNATURE", 9));
+
+	ASSERT_EQ(serialized.size(), expected.size());
+	ASSERT_EQ(0, std::memcmp(serialized.roBuffer(), expected.roBuffer(), expected.size()));
+
+}
+
+/*
+//------------------------------------------------------------------------------
 TEST_F(IRBlockSigTagTest, deserializeValue) {
+	IRBlockSigTag bstag;
+	IRBuffer serialized;
+	ILStandardTagFactory f;
+
+	// Empty
+	ASSERT_TRUE(serialized.writeInt((std::uint16_t)0xFACA));
+	ASSERT_TRUE(bstag.deserializeValue(f, serialized.roBuffer(), serialized.size()));
+	//ASSERT_EQ(0xFACA, bstag.value().type());
+	ASSERT_EQ(0, bstag.size());
 
 
 }
+*/
+
 
 //------------------------------------------------------------------------------
 TEST_F(IRBlockSigTagTest, parentHashType) {
