@@ -333,6 +333,39 @@ public:
 	inline std::uint64_t remaining() const {
 		return this->_buffSize - this->_position;
 	}
+
+	/**
+	 * Resets the current position to 0.
+	 *
+	 * @since 2018.04.18
+	 */
+	inline void reset() {
+		this->_position = 0;
+	}
+
+	/**
+	 * Grants read/write access to a given position inside the buffer.
+	 *
+	 * @param[in] i The position.
+	 * @return A reference to the given position in the buffer.
+	 * @note This method does not perform any boundary checks.
+	 * @since 2018.04.18
+	 */
+	inline BaseType & operator[](unsigned int i) {
+		return this->_buff[i];
+	}
+
+	/**
+	 * Grants read-only access to a given position inside the buffer.
+	 *
+	 * @param[in] i The position.
+	 * @return A reference to the given position in the buffer.
+	 * @note This method does not perform any boundary checks.
+	 * @since 2018.04.18
+	 */
+	inline BaseType operator[](unsigned int i) const{
+		return this->_buff[i];
+	}
 };
 
 /**
