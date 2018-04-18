@@ -287,7 +287,7 @@ public:
 	 *
 	 * @return The buffer.
 	 */
-	inline const BaseType * posBuff() {
+	inline BaseType * posBuff() {
 		return this->_buff + this->_position;
 	}
 
