@@ -62,17 +62,17 @@ protected:
 	 * 	* Call postBlock(enc);
 	 *
 	 */
-	virtual bool processBlock(void * plain, void * enc);
+	virtual bool processBlock(std::uint8_t * plain, std::uint8_t * enc);
 
 	/**
 	 * Prepare the block. The default implementation does nothing.
 	 */
-	virtual bool prepareBlock(void * plain);
+	virtual bool prepareBlock(std::uint8_t * plain);
 
 	/**
 	 * Prepare the block.
 	 */
-	virtual bool postBlock(const void * block);
+	virtual bool postBlock(std::uint8_t * block);
 public:
 	IRBlockCipherMode(IRPadding * padding, IRBlockCipherAlgorithm * cipher);
 
@@ -126,6 +126,22 @@ public:
 	 */
 	bool process(const void * src, std::uint64_t srcSize, void * dst,
 			std::uint64_t & dstSize, bool last = false);
+};
+
+class IRCBCBlockCipherMode : public IRBlockCipherMode {
+protected:
+	ircommon::IRUtils::IRSecureTemp _iv;
+	ircommon::IRUtils::IRSecureTemp _lastBlock;
+	virtual bool prepareBlock(std::uint8_t * plain) override;
+	virtual bool postBlock(std::uint8_t * block) override;
+public:
+	IRCBCBlockCipherMode(IRPadding * padding, IRBlockCipherAlgorithm * cipher);
+
+	virtual ~IRCBCBlockCipherMode() = default;
+
+	bool setIV(const void * iv, std::uint64_t ivSize);
+
+	virtual void reset() override;
 };
 
 } // namespace crypto

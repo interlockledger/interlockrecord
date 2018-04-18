@@ -40,6 +40,7 @@ configure_file (
 add_library(irecordcore STATIC
 	include/irecordcore/irblock.h
 	include/irecordcore/IRCHandle.h
+	include/irecordcore/irbciphm.h
 	include/irecordcore/ircipher.h
 	include/irecordcore/irciphpd.h
 	include/irecordcore/ircrypto.h
@@ -55,6 +56,7 @@ add_library(irecordcore STATIC
 	include/irecordcore/version.h
 	src/irblock.cpp
 	src/IRCHandle.cpp
+	src/irbciphm.cpp
 	src/ircipher.cpp
 	src/irciphpd.cpp
 	src/irhash.cpp
