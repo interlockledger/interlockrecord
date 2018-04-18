@@ -29,19 +29,39 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import sys
 import stcommon
+import argparse
 
-if len(sys.argv) == 1:
-	stcommon.die(1, 'Usage: {0} <file to dump>\n'.format(sys.argv[0]))
-
-inp_file = sys.argv[1]
-ret=[]
-try:
-	with open(inp_file, 'rb') as inp:
+def fromFile(inp):
+"""
+Reads the file and returns its contents as a list of hexadecimal values.
+"""
+	ret=[]
+	try:
 		b = inp.read(1)
 		while b != '':
 			ret.append('{0:#04x}'.format(ord(b)))
 			b = inp.read(1)
-except:
-	stcommon.die(2, 'Unable to open the file {0}\n'.format(inp_file))
+		return ret
+	except:
+		stcommon.die(2, 'Unable to open the file {0}\n'.format(inp_file))
+
+# Parse arguments
+parser = argparse.ArgumentParser(
+	description='Converts binary files into C/C++ hexadecimal constants.')
+parser.add_argument('-c', help='Read input from stdin.', 
+	default=False, action='store_true')
+parser.add_argument('file', nargs='?', help='File to be loaded.')
+if len(sys.argv) == 1:
+	parser.print_help()
+	sys.exit(2)
+else:
+	args = parser.parse_args()
+
+# Execute the process according to the arguments
+if args.c:
+	ret = fromFile(sys.stdin)
+else:
+	with open(args.file, 'rb') as inp:
+		ret = fromFile(inp)
 print(stcommon.list2carray(ret))
 
