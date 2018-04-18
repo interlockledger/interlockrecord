@@ -42,6 +42,13 @@ extern const std::uint8_t CRYPTOSAMPLES_SAMPLE[62];
 extern const std::uint8_t CRYPTOSAMPLES_SAMPLE2[134];
 
 /**
+ * "What is your major malfunction ?"
+ * Gunnery Sgt. Hartman
+ */
+extern const std::uint8_t CRYPTOSAMPLES_SAMPLE3[32];
+
+
+/**
  * "Simple... logic."
  */
 extern const std::uint8_t CRYPTOSAMPLES_KEY128[16];
