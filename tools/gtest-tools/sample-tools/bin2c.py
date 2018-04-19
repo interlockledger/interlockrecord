@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2017, FJTC
+# Copyright (c) 2017-2018, FJTC
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -32,14 +32,14 @@ import stcommon
 import argparse
 
 def fromFile(inp):
-"""
-Reads the file and returns its contents as a list of hexadecimal values.
-"""
+	"""
+	Reads the file and returns its contents as a C/C++ constant.
+	"""
 	ret=[]
 	try:
 		b = inp.read(1)
 		while b != '':
-			ret.append('{0:#04x}'.format(ord(b)))
+			ret.append('{0:02X}'.format(ord(b)))
 			b = inp.read(1)
 		return ret
 	except:
@@ -47,7 +47,7 @@ Reads the file and returns its contents as a list of hexadecimal values.
 
 # Parse arguments
 parser = argparse.ArgumentParser(
-	description='Converts binary files into C/C++ hexadecimal constants.')
+	description='Converts binary files into C/C++ byte array constant.')
 parser.add_argument('-c', help='Read input from stdin.', 
 	default=False, action='store_true')
 parser.add_argument('file', nargs='?', help='File to be loaded.')
