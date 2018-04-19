@@ -30,16 +30,32 @@
 import sys
 import re
 import stcommon
+import argparse
 
+# Parse arguments
+parser = argparse.ArgumentParser(
+	description='Converts hexadecimal strings inst into C/C++ byte array constants.')
+parser.add_argument('-c', help='Read input from stdin.', 
+	default=False, action='store_true')
+parser.add_argument('hex_string', nargs='?', help='A valid hexadecimal string.')
 if len(sys.argv) == 1:
-	stcommon.die(1, 'Usage: {0} <hex string>\n'.format(sys.argv[0]))
+	parser.print_help()
+	sys.exit(2)
+else:
+	args = parser.parse_args()
 
-hex_str = sys.argv[1]
-if re.match('^(?:[0-9a-fA-F]{2})+$', hex_str) == None:
+# Read the input
+if (args.c):
+	hex_str = stcommon.read_all_from_stdin()
+else:
+	hex_str = sys.argv[1]
+# Check integrity
+if stcommon.is_hex_string(hex_str) == False:
 	stcommon.die(2, 'Invalid hexadecimal string.\n')
 
+# Split in parts
 ret=[]
 for i in range(0, len(hex_str), 2):
-	ret.append('0x' + hex_str[i:i+2])
+	ret.append(hex_str[i:i+2])
 print(stcommon.list2carray(ret))
 
