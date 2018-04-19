@@ -33,8 +33,8 @@ using namespace irecordcore::crypto;
 //==============================================================================
 // Class IRBlockCipherMode
 //------------------------------------------------------------------------------
-IRBlockCipherMode::IRBlockCipherMode(IRPadding * padding,
-		IRBlockCipherAlgorithm * cipher) : _padding(padding), _cipher(cipher),
+IRBlockCipherMode::IRBlockCipherMode(IRBlockCipherAlgorithm * cipher,
+		IRPadding * padding) : _padding(padding), _cipher(cipher),
 				_tmpBlock(cipher->blockSizeInBytes()) {
 }
 
@@ -78,8 +78,14 @@ bool IRBlockCipherMode::process(const void * src, std::uint64_t srcSize,
 	std::uint8_t * pDst;
 	std::uint64_t processedSize;
 
-	if (dstSize < this->getOutputSize(srcSize)) {
-		return false;
+	if (this->cipherMode()) {
+		if (dstSize < this->getOutputSize(srcSize)) {
+			return false;
+		}
+	} else {
+		if (dstSize < srcSize) {
+			return false;
+		}
 	}
 
 	processedSize = 0;
@@ -90,6 +96,7 @@ bool IRBlockCipherMode::process(const void * src, std::uint64_t srcSize,
 				this->_tmpBlock.remaining());
 		srcSize -= needed;
 		std::memcpy(this->_tmpBlock.posBuff(), pSrc, needed);
+		this->_tmpBlock.setPosition(this->_tmpBlock.position() + needed);
 		if (this->_tmpBlock.position() == this->blockSizeInBytes()) {
 			if (this->processBlock(this->_tmpBlock.buff(), pDst)) {
 				this->_tmpBlock.reset();
@@ -103,7 +110,7 @@ bool IRBlockCipherMode::process(const void * src, std::uint64_t srcSize,
 	}
 
 	if (last) {
-		if (this->cipher().cipherMode()) {
+		if (this->cipherMode()) {
 			std::uint64_t blockSize = this->blockSizeInBytes();
 			if (!this->padding().addPadding(blockSize,
 					this->_tmpBlock.buff(), this->_tmpBlock.position(),
@@ -115,21 +122,18 @@ bool IRBlockCipherMode::process(const void * src, std::uint64_t srcSize,
 			}
 			processedSize += blockSize;
 		} else {
-			if (this->_tmpBlock.position() == this->_tmpBlock.size()) {
-				if (!this->processBlock(this->_tmpBlock.buff(), pDst)) {
-					return false;
-				}
-				this->_tmpBlock.reset();
-				std::uint64_t blockSize;
-				blockSize = this->blockSizeInBytes();
-				if (!this->padding().removePadding(this->blockSizeInBytes(), pDst,
-						blockSize)){
-					return false;
-				}
-				processedSize += blockSize;
-			} else {
+			if (this->_tmpBlock.position()) {
 				return false;
 			}
+
+			// Remove the padding
+			std::uint64_t blockSize = this->blockSizeInBytes();
+			pDst -= blockSize;
+			if (!this->padding().removePadding(blockSize, pDst,
+					blockSize)){
+				return false;
+			}
+			processedSize -= (this->blockSizeInBytes() - blockSize);
 		}
 	}
 	dstSize = processedSize;
@@ -139,8 +143,8 @@ bool IRBlockCipherMode::process(const void * src, std::uint64_t srcSize,
 //==============================================================================
 // Class IRCBCBlockCipherMode
 //------------------------------------------------------------------------------
-IRCBCBlockCipherMode::IRCBCBlockCipherMode(IRPadding * padding,
-		IRBlockCipherAlgorithm * cipher): IRBlockCipherMode(padding, cipher),
+IRCBCBlockCipherMode::IRCBCBlockCipherMode(IRBlockCipherAlgorithm * cipher,
+		IRPadding * padding): IRBlockCipherMode(cipher, padding),
 				_iv(cipher->blockSizeInBytes()),
 				_lastBlock(cipher->blockSizeInBytes()){
 	this->_iv.clear();

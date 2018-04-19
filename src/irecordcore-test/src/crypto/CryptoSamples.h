@@ -36,7 +36,8 @@
 extern const std::uint8_t CRYPTOSAMPLES_SAMPLE[62];
 
 /**
- * "If aliens visit us, the outcome would be much as when Columbus landed in America, which didn't turn out well for the Native Americans."
+ * "If aliens visit us, the outcome would be much as when Columbus landed in
+ * America, which didn't turn out well for the Native Americans."
  * Stephen Hawking (1942–2018)
  */
 extern const std::uint8_t CRYPTOSAMPLES_SAMPLE2[134];
@@ -47,9 +48,15 @@ extern const std::uint8_t CRYPTOSAMPLES_SAMPLE2[134];
  */
 extern const std::uint8_t CRYPTOSAMPLES_SAMPLE3[32];
 
+/**
+ * "Do or do not. There is no try."
+ * Yoda
+ */
+extern const std::uint8_t CRYPTOSAMPLES_SAMPLE4[30];
 
 /**
  * "Simple... logic."
+ * Spock
  */
 extern const std::uint8_t CRYPTOSAMPLES_KEY128[16];
 
@@ -153,5 +160,9 @@ extern const std::uint8_t CRYPTOSAMPLES_AES128_ECB[32];
  */
 extern const std::uint8_t CRYPTOSAMPLES_AES256_ECB[32];
 
+/**
+ * CRYPTOSAMPLES_SAMPLE4 padded with PKCS7 scheme and block size as 8 bytes.
+ */
+extern const std::uint8_t CRYPTOSAMPLES_SAMPLE4_PADDED_PKCS7[32];
 
 #endif /* _CRYPTO_CRYPTOSAMPLES_H_ */

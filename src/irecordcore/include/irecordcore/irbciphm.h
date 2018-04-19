@@ -74,7 +74,7 @@ protected:
 	 */
 	virtual bool postBlock(std::uint8_t * block);
 public:
-	IRBlockCipherMode(IRPadding * padding, IRBlockCipherAlgorithm * cipher);
+	IRBlockCipherMode(IRBlockCipherAlgorithm * cipher, IRPadding * padding);
 
 	virtual ~IRBlockCipherMode() = default;
 
@@ -88,6 +88,10 @@ public:
 
 	inline std::uint64_t blockSizeInBytes() const {
 		return this->_tmpBlock.size();
+	}
+
+	inline bool cipherMode() const {
+		return this->_cipher->cipherMode();
 	}
 
 	virtual void reset();
@@ -108,7 +112,7 @@ public:
 	 * @return The number of bytes inside the internal buffer.
 	 */
 	std::uint64_t remaining() const {
-		return this->_tmpBlock.position();
+		return this->_tmpBlock.remaining();
 	}
 
 	/**
@@ -135,7 +139,7 @@ protected:
 	virtual bool prepareBlock(std::uint8_t * plain) override;
 	virtual bool postBlock(std::uint8_t * block) override;
 public:
-	IRCBCBlockCipherMode(IRPadding * padding, IRBlockCipherAlgorithm * cipher);
+	IRCBCBlockCipherMode(IRBlockCipherAlgorithm * cipher, IRPadding * padding);
 
 	virtual ~IRCBCBlockCipherMode() = default;
 
