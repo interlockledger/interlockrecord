@@ -1,5 +1,6 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2017, FJTC
+# Copyright (c) 2017-2018, FJTC
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -26,40 +27,35 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-import sys
-import re
+import unittest
+import stcommon
 
-def die(error_code, message = None):
-	"""Exits the program with the specified error code. If message is set,
-	print it before exiting.
-	"""
-	if message != None: 
-		sys.stderr.write(message)
-	sys.exit(error_code)
+class STCommonTest(unittest.TestCase):
+	def test_list2carray(self):
+		s = stcommon.list2carray(['01'])
+		self.assertEquals('0x01', s)
 
-def list2carray(l):
-	"""Converts a list into a C/C++ array constant."""
-	ret=''
-	for i in range(0, len(l)):
-		mod = i % 8
-		if (mod != 0):
-			ret = ret + ' '
-		ret = ret + '0x' + l[i] + ','
-		if (mod == 7):
-			ret = ret + '\n'
-	ret = ret.strip()
-	ret = ret[0:len(ret)-1]
-	return ret
+		s = stcommon.list2carray(['01', '23'])
+		self.assertEquals('0x01, 0x23', s)
 
-def is_hex_string(s):
-	"""Verifies if a given string is a valid hexadecimal value."""
-	return re.match('^(?:[0-9a-fA-F]{2})+$', s) != None
+		s = stcommon.list2carray(['01', '23', '45', '67', '89'])
+		self.assertEquals('0x01, 0x23, 0x45, 0x67, 0x89', s)
 
-def read_all_from_stdin():
-	s = ''
-	b = sys.stdin.read(1)
-	while b != '':
-		s = s + b
-		b = sys.stdin.read(1)
-	return s
+		s = stcommon.list2carray(['01', '23', '45', '67', '89', 'AB', 'CD', 'EF'])
+		self.assertEquals('0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF', s)
+
+		s = stcommon.list2carray(['01', '23', '45', '67', '89', 'AB', 'CD', 'EF', '01'])
+		self.assertEquals('0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,\n0x01', s)
+
+	def test_is_hex_string(self):
+		self.assertTrue(stcommon.is_hex_string('0123456789abcdefABCDEF'))
+		self.assertFalse(stcommon.is_hex_string(''))
+		self.assertFalse(stcommon.is_hex_string('0'))
+		for i in range(len('0123456789abcdefABCDEF')):
+			s = '0123456789abcdefABCDEF'
+			s = s[:i] + 'x' + s[i + 1:]
+			self.assertFalse(stcommon.is_hex_string(s))
+
+if __name__ == '__main__':
+    unittest.main()
 
