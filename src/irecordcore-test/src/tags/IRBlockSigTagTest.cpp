@@ -121,7 +121,7 @@ TEST_F(IRBlockSigTagTest, serialize) {
 
 }
 
-/*
+
 //------------------------------------------------------------------------------
 TEST_F(IRBlockSigTagTest, deserializeValue) {
 	IRBlockSigTag bstag;
@@ -131,12 +131,11 @@ TEST_F(IRBlockSigTagTest, deserializeValue) {
 	// Empty
 	ASSERT_TRUE(serialized.writeInt((std::uint16_t)0xFACA));
 	ASSERT_TRUE(bstag.deserializeValue(f, serialized.roBuffer(), serialized.size()));
-	//ASSERT_EQ(0xFACA, bstag.value().type());
-	ASSERT_EQ(0, bstag.size());
+	ASSERT_EQ(0xFACA, bstag.signature().value().type());
 
 
 }
-*/
+
 
 
 //------------------------------------------------------------------------------
