@@ -38,6 +38,8 @@ namespace crypto {
 /**
  * This class is the base class for all block cipher modes.
  *
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2018.04.18
  */
 class IRBlockCipherMode {
 protected:
@@ -57,48 +59,96 @@ protected:
 	/**
 	 * Process a single block. The default implementation does the following:
 	 *
-	 * 	* Call prepareBlock(plain);
-	 * 	* Ciphers/decipher the plain into enc;
-	 * 	* Call postBlock(enc);
+	 * 	* Call prepareBlock(src);
+	 * 	* Calls cipherDecipherBlock(src, dst);
+	 * 	* Call postBlock(dst);
 	 *
+	 * @param[in,out] src The plaintext. It may be modified on the output.
+	 * @param[out] dst The output.
+	 * @return true for success or false otherwise.
 	 */
-	virtual bool processBlock(std::uint8_t * plain, std::uint8_t * enc);
+	virtual bool processBlock(std::uint8_t * src, std::uint8_t * dst);
 
 	/**
-	 * Prepare the block. The default implementation does nothing.
+	 * Ciphers/decipher the block. It is called by processBlock() in order to
+	 * transform the block using the cipher. The default implementation just
+	 * call the inner cipher's processBlock() method for a single block.
+	 *
+	 * @param[in,out] src The plaintext. It may be modified on the output.
+	 * @param[out] dst The output.
+	 * @return true for success or false otherwise.
 	 */
-	virtual bool prepareBlock(std::uint8_t * plain);
+	virtual bool cipherDecipherBlock(std::uint8_t * src, std::uint8_t * dst);
 
 	/**
-	 * Prepare the block.
+	 * Prepare the block. This method is called by  processBlock() in order to
+	 * change the src block before encryption whenever necessary.
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 *
+	 * @param[in,out] src The plaintext. It may be modified on the output.
+	 * @return true for success or false otherwise.
 	 */
-	virtual bool postBlock(std::uint8_t * block);
+	virtual bool prepareBlock(std::uint8_t * src);
+
+	/**
+	 * Post process the output. The default implementation does nothing.
+	 *
+	 * @param[in,out] dst The output.
+	 * @return true for success or false otherwise.
+	 */
+	virtual bool postBlock(std::uint8_t * dst);
 public:
 	IRBlockCipherMode(IRBlockCipherAlgorithm * cipher, IRPadding * padding);
 
 	virtual ~IRBlockCipherMode() = default;
 
+	/**
+	 * Grants a read-only access to the inner padding.
+	 *
+	 * @return The inner padding.
+	 */
 	const IRPadding & padding() const {
 		return *(this->_padding);
 	}
 
+	/**
+	 * Grants a read-only access to the inner cipher.
+	 *
+	 * @return The inner cipher.
+	 */
 	const IRBlockCipherAlgorithm & cipher() const {
 		return *(this->_cipher);
 	}
 
+	/**
+	 * Returns the current block size in bytes.
+	 *
+	 * @return The block size.
+	 */
 	inline std::uint64_t blockSizeInBytes() const {
 		return this->_tmpBlock.size();
 	}
 
+	/**
+	 * Returns the current cipher mode.
+	 *
+	 * @return true for ciphering or false for deciphering.
+	 */
 	inline bool cipherMode() const {
 		return this->_cipher->cipherMode();
 	}
 
+	/**
+	 * Resets this instance in order to start over. All previous work in
+	 * progress, if any will be disposed.
+	 */
 	virtual void reset();
 
 	/**
 	 * Returns the required output size for a given input size. The returned
-	 * value will be the largest multiple of a block larger than srcSize.
+	 * value will be the largest multiple of a block larger than srcSize when
+	 * ciphering or srcSize on deciphering.
 	 *
 	 * @param[in] srcSize The size of the sorce.
 	 * @return The required size of the output.
@@ -127,17 +177,27 @@ public:
 	 * @param[in] last Flag that indicates if it is the last chunk of data or
 	 * not.
 	 * @return true on success or false otherwise.
+	 * @note It is important to notice that calls to this method with srcSize
+	 * as zero while deciphering data may lead to failures when last is true
+	 * because the padding may already be processed without being removed by
+	 * previous calls.
 	 */
 	bool process(const void * src, std::uint64_t srcSize, void * dst,
 			std::uint64_t & dstSize, bool last = false);
 };
 
+/**
+ * This class implements the CBC block cipher mode.
+ *
+ * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
+ * @since 2018.04.18
+ */
 class IRCBCBlockCipherMode : public IRBlockCipherMode {
 protected:
 	ircommon::IRUtils::IRSecureTemp _iv;
 	ircommon::IRUtils::IRSecureTemp _lastBlock;
-	virtual bool prepareBlock(std::uint8_t * plain) override;
-	virtual bool postBlock(std::uint8_t * block) override;
+	virtual bool prepareBlock(std::uint8_t * src) override;
+	virtual bool postBlock(std::uint8_t * dst) override;
 public:
 	IRCBCBlockCipherMode(IRBlockCipherAlgorithm * cipher, IRPadding * padding);
 

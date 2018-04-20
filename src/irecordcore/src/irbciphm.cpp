@@ -39,31 +39,42 @@ IRBlockCipherMode::IRBlockCipherMode(IRBlockCipherAlgorithm * cipher,
 }
 
 //------------------------------------------------------------------------------
-bool IRBlockCipherMode::processBlock(std::uint8_t * plain, std::uint8_t * enc) {
+bool IRBlockCipherMode::processBlock(std::uint8_t * src, std::uint8_t * dst) {
 
-	if (!this->prepareBlock(plain)) {
+	if (!this->prepareBlock(src)) {
 		return false;
 	}
-	if (!this->_cipher->processBlocks(plain, enc, 1)){
+	if (!this->cipherDecipherBlock(src, dst)){
 		return false;
 	}
-	return this->postBlock(enc);
+	return this->postBlock(dst);
 }
 
 //------------------------------------------------------------------------------
-bool IRBlockCipherMode::prepareBlock(std::uint8_t * plain) {
+bool IRBlockCipherMode::prepareBlock(std::uint8_t * src) {
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool IRBlockCipherMode::postBlock(std::uint8_t * block) {
+bool IRBlockCipherMode::cipherDecipherBlock(std::uint8_t * src,
+		std::uint8_t * dst) {
+	return this->_cipher->processBlocks(src, dst, 1);
+}
+
+//------------------------------------------------------------------------------
+bool IRBlockCipherMode::postBlock(std::uint8_t * dst) {
 	return true;
 }
 
 //------------------------------------------------------------------------------
 std::uint64_t IRBlockCipherMode::getOutputSize(std::uint64_t srcSize) const {
-	return srcSize + (this->cipher().blockSizeInBytes() -
-			(srcSize % this->cipher().blockSizeInBytes()));
+
+	if (this->cipherMode()) {
+		return srcSize + (this->cipher().blockSizeInBytes() -
+				(srcSize % this->cipher().blockSizeInBytes()));
+	} else {
+		return srcSize;
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -122,7 +133,7 @@ bool IRBlockCipherMode::process(const void * src, std::uint64_t srcSize,
 			}
 			processedSize += blockSize;
 		} else {
-			if (this->_tmpBlock.position()) {
+			if (this->_tmpBlock.position() == this->blockSizeInBytes()) {
 				return false;
 			}
 
