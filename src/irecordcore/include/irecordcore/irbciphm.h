@@ -99,8 +99,18 @@ protected:
 	 */
 	virtual bool postBlock(std::uint8_t * dst);
 public:
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] cipher The cipher to be used. It must be ready to be used.
+	 * @param[in] padding The padding to be used.
+	 * @note This class will take ownership of both cipher and padding instances.
+	 */
 	IRBlockCipherMode(IRBlockCipherAlgorithm * cipher, IRPadding * padding);
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRBlockCipherMode() = default;
 
 	/**
@@ -194,15 +204,42 @@ public:
  */
 class IRCBCBlockCipherMode : public IRBlockCipherMode {
 protected:
+	/**
+	 * The IV.
+	 */
 	ircommon::IRUtils::IRSecureTemp _iv;
+	/**
+	 * The last ciphered block.
+	 */
 	ircommon::IRUtils::IRSecureTemp _lastBlock;
 	virtual bool prepareBlock(std::uint8_t * src) override;
 	virtual bool postBlock(std::uint8_t * dst) override;
 public:
+	/**
+	 * Creates a new instance of this class.
+	 *
+	 * @param[in] cipher The cipher to be used. It must be ready to be used.
+	 * @param[in] padding The padding to be used.
+	 * @note This class will take ownership of both cipher and padding instances.
+	 */
 	IRCBCBlockCipherMode(IRBlockCipherAlgorithm * cipher, IRPadding * padding);
 
+	/**
+	 * Disposes this instance and releases all associated resources.
+	 */
 	virtual ~IRCBCBlockCipherMode() = default;
 
+	/**
+	 * Sets the IV value. The IV must have at least blockSizeInBytes(). If
+	 * ivSize is larger than the size of the block only the first
+	 * blockSizeInBytes() bytes will be used.
+	 *
+	 * <p>The default IV will set all bytes to zero.</p>
+	 *
+	 * @param[in] iv The IV value.
+	 * @param[in] ivSize The size of the IV.
+	 * @return true for success or false otherwise.
+	 */
 	bool setIV(const void * iv, std::uint64_t ivSize);
 
 	virtual void reset() override;
