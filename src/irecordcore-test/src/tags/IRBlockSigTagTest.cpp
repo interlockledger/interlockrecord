@@ -128,11 +128,26 @@ TEST_F(IRBlockSigTagTest, deserializeValue) {
 	IRBuffer serialized;
 	ILStandardTagFactory f;
 
-	// Empty
+	//ILUInt16Tag:
+	ASSERT_TRUE(serialized.writeILInt(ILTag::TAG_UINT16));
+	ASSERT_TRUE(serialized.writeInt((std::uint16_t)0xCACA));
+	
+	//IRSigTag:
+	//Tag
+	ASSERT_TRUE(serialized.writeILInt(IRTagType::TAG_SIG));
+	//Size (ULInt)
+	ASSERT_TRUE(serialized.writeILInt(2 + 9));
+	//Payload (2 bytes) 
 	ASSERT_TRUE(serialized.writeInt((std::uint16_t)0xFACA));
-	ASSERT_TRUE(bstag.deserializeValue(f, serialized.roBuffer(), serialized.size()));
-	ASSERT_EQ(0xFACA, bstag.signature().value().type());
+	ASSERT_TRUE(serialized.write("SIGNATURE", 9));
 
+	ASSERT_TRUE(bstag.deserializeValue(f, serialized.roBuffer(), serialized.size()));
+
+	ASSERT_EQ(0xCACA, bstag.parentHashType().value());
+	ASSERT_EQ(0xFACA, bstag.signature().value().type());
+	ASSERT_EQ(9, bstag.signature().value().size());
+	ASSERT_EQ(0, std::memcmp(
+		bstag.signature().value().roBuffer(), "SIGNATURE", 9));
 
 }
 
