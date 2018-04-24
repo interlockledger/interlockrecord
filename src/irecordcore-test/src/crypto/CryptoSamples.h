@@ -55,6 +55,12 @@ extern const std::uint8_t CRYPTOSAMPLES_SAMPLE3[32];
 extern const std::uint8_t CRYPTOSAMPLES_SAMPLE4[30];
 
 /**
+ * "I am serious. And don't call me Shirley."
+ * Dr. Rumack
+ */
+extern const std::uint8_t CRYPTOSAMPLES_SAMPLE5[40];
+
+/**
  * "Simple... logic."
  * Spock
  */
@@ -164,5 +170,16 @@ extern const std::uint8_t CRYPTOSAMPLES_AES256_ECB[32];
  * CRYPTOSAMPLES_SAMPLE4 padded with PKCS7 scheme and block size as 8 bytes.
  */
 extern const std::uint8_t CRYPTOSAMPLES_SAMPLE4_PADDED_PKCS7[32];
+
+/**
+ * 8-byte IV sample (0123456789ABCDEF).
+ */
+extern const std::uint8_t CRYPTOSAMPLES_IV_8[8];
+
+/**
+ * CRYPTOSAMPLES_SAMPLE4 padded with PKCS7 scheme with block size as 8 bytes
+ * encoded with a null cipher using CBC mode and CRYPTOSAMPLES_IV_8 as IV.
+ */
+extern const std::uint8_t CRYPTOSAMPLES_SAMPLE4_PADDED_PKCS7_CBC[32];
 
 #endif /* _CRYPTO_CRYPTOSAMPLES_H_ */

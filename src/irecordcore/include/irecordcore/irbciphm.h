@@ -74,7 +74,7 @@ protected:
 	 * transform the block using the cipher. The default implementation just
 	 * call the inner cipher's processBlock() method for a single block.
 	 *
-	 * @param[in,out] src The plaintext. It may be modified on the output.
+	 * @param[in] src It may be modified on the output.
 	 * @param[out] dst The output.
 	 * @return true for success or false otherwise.
 	 */
@@ -82,7 +82,7 @@ protected:
 
 	/**
 	 * Prepare the block. This method is called by  processBlock() in order to
-	 * change the src block before encryption whenever necessary.
+	 * change the src block before encryption/decryption whenever necessary.
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 *
@@ -94,10 +94,11 @@ protected:
 	/**
 	 * Post process the output. The default implementation does nothing.
 	 *
+	 * @param[in] src The plaintext. It may be modified on the output.
 	 * @param[in,out] dst The output.
 	 * @return true for success or false otherwise.
 	 */
-	virtual bool postBlock(std::uint8_t * dst);
+	virtual bool postBlock(const std::uint8_t * src, std::uint8_t * dst);
 public:
 	/**
 	 * Creates a new instance of this class.
@@ -213,7 +214,9 @@ protected:
 	 */
 	ircommon::IRUtils::IRSecureTemp _lastBlock;
 	virtual bool prepareBlock(std::uint8_t * src) override;
-	virtual bool postBlock(std::uint8_t * dst) override;
+	virtual bool postBlock(const std::uint8_t * src, std::uint8_t * dst) override;
+
+	void xorBlock(const std::uint8_t * src, std::uint8_t * dst);
 public:
 	/**
 	 * Creates a new instance of this class.
@@ -241,6 +244,15 @@ public:
 	 * @return true for success or false otherwise.
 	 */
 	bool setIV(const void * iv, std::uint64_t ivSize);
+
+	/**
+	 * Returns the current IV. It has always blockSizeInBytes() bytes.
+	 *
+	 * @return A pointer to the current IV.
+	 */
+	const void * iv() const {
+		return _iv.buff();
+	}
 
 	virtual void reset() override;
 };

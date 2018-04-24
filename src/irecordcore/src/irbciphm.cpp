@@ -47,7 +47,7 @@ bool IRBlockCipherMode::processBlock(std::uint8_t * src, std::uint8_t * dst) {
 	if (!this->cipherDecipherBlock(src, dst)){
 		return false;
 	}
-	return this->postBlock(dst);
+	return this->postBlock(src, dst);
 }
 
 //------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ bool IRBlockCipherMode::cipherDecipherBlock(std::uint8_t * src,
 }
 
 //------------------------------------------------------------------------------
-bool IRBlockCipherMode::postBlock(std::uint8_t * dst) {
+bool IRBlockCipherMode::postBlock(const std::uint8_t * src, std::uint8_t * dst) {
 	return true;
 }
 
@@ -163,32 +163,46 @@ IRCBCBlockCipherMode::IRCBCBlockCipherMode(IRBlockCipherAlgorithm * cipher,
 }
 
 //------------------------------------------------------------------------------
-bool IRCBCBlockCipherMode::IRCBCBlockCipherMode::prepareBlock(std::uint8_t * plain) {
-	std::uint8_t * plainEnd;
-	const std::uint8_t * last;
+void IRCBCBlockCipherMode::xorBlock(const std::uint8_t * src, std::uint8_t * dst) {
+	const std::uint8_t * srcEnd;
 
-	plainEnd = plain + this->blockSizeInBytes();
-	last = this->_lastBlock.buff();
-	for ( ; plain != plainEnd; plain++, last++) {
-		(*plain) = (*plain) ^ (*last);
+	srcEnd = src + this->blockSizeInBytes();
+	for ( ; src != srcEnd; src++, dst++) {
+		(*dst) = (*dst) ^ (*src);
+	}
+
+}
+
+
+//------------------------------------------------------------------------------
+bool IRCBCBlockCipherMode::IRCBCBlockCipherMode::prepareBlock(std::uint8_t * plain) {
+
+	if (this->cipherMode()) {
+		this->xorBlock(this->_lastBlock.buff(), plain);
 	}
 	return true;
 }
 
 //------------------------------------------------------------------------------
-bool IRCBCBlockCipherMode::IRCBCBlockCipherMode::postBlock(std::uint8_t * block) {
+bool IRCBCBlockCipherMode::IRCBCBlockCipherMode::postBlock(
+		const std::uint8_t * src, std::uint8_t * block) {
 
-	std::memcpy(this->_lastBlock.buff(), block, this->blockSizeInBytes());
+	if (this->cipherMode()) {
+		std::memcpy(this->_lastBlock.buff(), block, this->blockSizeInBytes());
+	} else {
+		this->xorBlock(this->_lastBlock.buff(), block);
+		std::memcpy(this->_lastBlock.buff(), src, this->blockSizeInBytes());
+	}
 	return true;
 }
 
 //------------------------------------------------------------------------------
 bool IRCBCBlockCipherMode::setIV(const void * iv, std::uint64_t ivSize) {
 
-	if (ivSize != this->blockSizeInBytes()) {
+	if (ivSize < this->blockSizeInBytes()) {
 		return false;
 	} else {
-		std::memcpy(this->_iv.buff(), iv, ivSize);
+		std::memcpy(this->_iv.buff(), iv, this->blockSizeInBytes());
 		this->reset();
 		return true;
 	}
@@ -196,7 +210,7 @@ bool IRCBCBlockCipherMode::setIV(const void * iv, std::uint64_t ivSize) {
 
 //------------------------------------------------------------------------------
 void IRCBCBlockCipherMode::reset() {
-	IRCBCBlockCipherMode::reset();
+	IRBlockCipherMode::reset();
 	std::memcpy(this->_lastBlock.buff(), this->_iv.buff(), this->_iv.size());
 }
 
