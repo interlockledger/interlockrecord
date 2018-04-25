@@ -11,15 +11,16 @@ void RSASig() {
 	Botan::RSA_PrivateKey key(rng, 2048);
 	std::cout << "Key generated!\n";
 
+	// Public
 	Botan::RSA_PublicKey pub(key.get_n(), key.get_e());
-
 	std::vector<uint8_t> pubser = pub.public_key_bits();
-	std::cout << "Signature:" << std::endl << Botan::hex_encode(pubser) << std::endl;
+	std::cout << "Public:" << std::endl << Botan::hex_encode(pubser) << std::endl;
+
+	auto n = Botan::BigInt::encode(key.get_n(), Botan::BigInt::Hexadecimal);
 
 
 	std::string text("");
 	std::vector<uint8_t> data(text.data(),text.data()+text.length());
-
 
 
 	Botan::PK_Signer signer(key, rng, "EMSA1(SHA-256)");
@@ -30,6 +31,7 @@ void RSASig() {
 	std::cout << "Signature:" << std::endl << Botan::hex_encode(signature);
 
 	// Decipher
+	
 
 
 
