@@ -149,19 +149,31 @@ TEST_F(IRBlockSigTagTest, deserializeValue) {
 	ASSERT_EQ(0, std::memcmp(
 		bstag.signature().value().roBuffer(), "SIGNATURE", 9));
 
+
 }
-
-
 
 //------------------------------------------------------------------------------
 TEST_F(IRBlockSigTagTest, parentHashType) {
 
+	IRBlockSigTag bstag;
+
+	bstag.parentHashType().setValue(0xCACA);
+	ASSERT_EQ(0xCACA, bstag.parentHashType().value());
 
 }
 
 //------------------------------------------------------------------------------
 TEST_F(IRBlockSigTagTest, signature) {
+	
+	IRBlockSigTag bstag;
 
+	bstag.signature().value().setType(0xfaca);
+	ASSERT_EQ(0xFACA, bstag.signature().value().type());
+
+	bstag.signature().value().set("SIGNATURE", 9);
+	ASSERT_EQ(9, bstag.signature().value().size());
+	ASSERT_EQ(0, std::memcmp(
+		bstag.signature().value().roBuffer(), "SIGNATURE", 9));
 
 }
 
