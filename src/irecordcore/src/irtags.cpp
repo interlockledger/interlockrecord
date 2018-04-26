@@ -99,5 +99,16 @@ bool IRBlockSigTag::deserializeValue(
 	return (inp.available() == 0);
 }
 
+/*
+//==============================================================================
+// Class IRBlockTag
 //------------------------------------------------------------------------------
+bool IRBlockTag::serializeValue(ircommon::IRBuffer & out) const {
 
+	if (!this->_parentHashType.serialize(out)) {
+		return false;
+	}
+	return this->_signature.serialize(out);
+}
+//------------------------------------------------------------------------------
+*/
