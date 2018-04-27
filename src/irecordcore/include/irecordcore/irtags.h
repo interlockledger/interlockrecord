@@ -294,7 +294,7 @@ public:
  * @since 2018.02.01
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
-class IRBlockTag: ircommon::iltags::ILTag {
+class IRBlockTag: public ircommon::iltags::ILTag {
 protected:
 	IRSignedTag _signed;
 
@@ -302,7 +302,7 @@ protected:
 
 	virtual bool serializeValue(ircommon::IRBuffer & out) const;
 public:
-	IRBlockTag();
+	IRBlockTag() : ILTag(TAG_BLOCK) {}
 
 	virtual ~IRBlockTag() = default;
 
