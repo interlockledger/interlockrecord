@@ -25,6 +25,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRBlockTagTest.h"
+#include <irecordcore/irtags.h>
+
+
+using namespace irecordcore;
+using namespace irecordcore::tags;
+using namespace ircommon;
+using namespace ircommon::iltags;
 
 //==============================================================================
 // class IRBlockTagTest
@@ -47,8 +54,18 @@ void IRBlockTagTest::TearDown() {
 //------------------------------------------------------------------------------
 TEST_F(IRBlockTagTest,Constructor) {
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	IRBlockTag * btag;
+
+	btag = new IRBlockTag();
+
+	ASSERT_EQ(TAG_BLOCK, btag->id());
+
+	delete btag;
+
+	/*
+	ASSERT_EQ(TAG_BLOCK_SIG, bstag->id());
+	ASSERT_EQ((1 + 2) + (1 + 1 + 2), bstag->size());
+	*/
 }
 //------------------------------------------------------------------------------
 

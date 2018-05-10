@@ -99,16 +99,112 @@ bool IRBlockSigTag::deserializeValue(
 	return (inp.available() == 0);
 }
 
-/*
+
 //==============================================================================
 // Class IRBlockTag
 //------------------------------------------------------------------------------
 bool IRBlockTag::serializeValue(ircommon::IRBuffer & out) const {
 
-	if (!this->_parentHashType.serialize(out)) {
+	if (!this->_signed.serialize(out)) {
 		return false;
 	}
 	return this->_signature.serialize(out);
 }
 //------------------------------------------------------------------------------
+
+std::uint64_t IRBlockTag::size() const {
+
+	return this->_signature.tagSize() + this->_signed.tagSize();
+}
+
+//------------------------------------------------------------------------------
+bool IRBlockTag::deserializeValue(
+	const ircommon::iltags::ILTagFactory & factory,
+	const void * buff, std::uint64_t size) {
+	IRBuffer inp(buff, size);
+
+	if (!factory.deserialize(inp, this->_signed)) {
+		return false;
+	}
+	if (!factory.deserialize(inp, this->_signature)) {
+		return false;
+	}
+	return (inp.available() == 0);
+}
+
+//==============================================================================
+// Class IRSignedTag
+//------------------------------------------------------------------------------
+bool IRSignedTag::serializeValue(ircommon::IRBuffer & out) const {
+
+	if (!this->_header.serialize(out)) {
+		return false;
+	}
+	if (!this->_payload.serialize(out)) {
+		return false;
+	}
+	return this->_nextPub.serialize(out);
+}
+
+//------------------------------------------------------------------------------
+std::uint64_t IRSignedTag::size() const {
+
+	return this->_header.tagSize() + this->_payload.tagSize() + this->_nextPub.tagSize();
+}
+
+//------------------------------------------------------------------------------
+bool IRSignedTag::deserializeValue(
+	const ircommon::iltags::ILTagFactory & factory,
+	const void * buff, std::uint64_t size) {
+	IRBuffer inp(buff, size);
+
+	if (!factory.deserialize(inp, this->_header)) {
+		return false;
+	}
+	if (!factory.deserialize(inp, this->_payload)) {
+		return false;
+	}
+	if (!factory.deserialize(inp, this->_nextPub)) {
+		return false;
+	}
+	return (inp.available() == 0);
+}
+
+//==============================================================================
+// Class IRHeaderTag
+//------------------------------------------------------------------------------
+
+/**
+* Verifies the header's integrity.
+*
+* @return true if the header is OK or false otherwise.
 */
+bool IRHeaderTag::checkIntegrity()
+{
+	//TODO Implementation required!
+	return false;
+};
+
+/**
+* Sets the fields of the header.
+*
+* @param[in] header The header values.
+* @return true for success or false otherwise.
+*/
+bool IRHeaderTag::setHeader(const irecordcore::block::IRBlockHeader & header) 
+{
+	//TODO Implementation required!
+	return false;
+};
+
+/**
+* Extracts the header values from this tag.
+*
+* @param[out] header The header fields.
+* @return true for success or false otherwise.
+*/
+bool IRHeaderTag::extractHeader(irecordcore::block::IRBlockHeader & header)
+{
+	//TODO Implementation required!
+	return false;
+};

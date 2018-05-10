@@ -232,7 +232,7 @@ public:
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  * @author Cesar Luiz Feraccin Jun Takada Chino (fchino at opencs.com.br)
  */
-class IRHeaderTag: ircommon::iltags::ILBaseTagListTag {
+class IRHeaderTag: public ircommon::iltags::ILBaseTagListTag {
 public:
 	IRHeaderTag();
 
@@ -268,7 +268,7 @@ public:
  * @since 2018.02.01
  * @author Fabio Jun Takada Chino (fchino at opencs.com.br)
  */
-class IRSignedTag: ircommon::iltags::ILTag {
+class IRSignedTag: public ircommon::iltags::ILTag {
 protected:
 	IRHeaderTag _header;
 	IRPayloadTag _payload;

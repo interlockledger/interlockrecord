@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "IRHeaderTagTest.h"
+#include <irecordcore/irtags.h>
+
+using namespace irecordcore;
+using namespace irecordcore::tags;
 
 //==============================================================================
 // class IRHeaderTagTest
@@ -47,8 +51,12 @@ void IRHeaderTagTest::TearDown() {
 //------------------------------------------------------------------------------
 TEST_F(IRHeaderTagTest,Constructor) {
 
-	//TODO Implementation required!
-	std::cout << "Implementation required!";
+	IRHeaderTag * htag;
+
+	htag = new IRHeaderTag();
+
+	delete htag;
+
 }
 //------------------------------------------------------------------------------
 
