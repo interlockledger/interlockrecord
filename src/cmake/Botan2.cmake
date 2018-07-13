@@ -50,6 +50,10 @@ if(__OPENCS_BOTAN2)
 endif()
 set(__OPENCS_BOTAN2 1)
 
+# Botan2 options
+option(BOTAN2_USE_STATIC "Use botan2 static library." 0)
+# option(BOTAN2_VERBOSE "Use botan2 static library." 0)
+
 # Check the dependency on 
 if (NOT __OPENCS_MSVCCRT)
 	message(FATAL_ERROR "OpenCS Botan2 module requires OpenCS MSVCCRT module in order to work properly.")
@@ -101,10 +105,18 @@ if (WIN32)
 	set(BOTAN2_DEPS Ws2_32.lib)
 else()
 	# Linux and other
-	find_library(BOTAN2_LIB
+	find_library(BOTAN2_STATIC_LIB
 		"libbotan-2.a")
 	find_library(BOTAN2_SHARED_LIB
 		"libbotan-2.so")
+
+	#
+	if(BOTAN2_USE_STATIC)
+		set(BOTAN2_LIB ${BOTAN2_STATIC_LIB})
+	else()
+		set(BOTAN2_LIB ${BOTAN2_SHARED_LIB})
+	endif()
+
 	find_path(BOTAN2_INCLUDE_DIR
 		"botan/botan.h"
 		PATH_SUFFIXES "botan-2")

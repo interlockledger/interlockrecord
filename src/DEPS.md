@@ -23,6 +23,13 @@ compiled and installed manually. Download it from https://botan.randombit.net/
 and follow the instructions at https://botan.randombit.net/manual/building.html
 in order to build the library.
 
+#### Ubuntu 18.04
+
+Ubuntu 18.04 comes with Botan 2.4 by default.
+
+./configure.py --without-openssl
+
+
 ### Google Test
 
 This library can be installed directly from most Linux distributions. See your
