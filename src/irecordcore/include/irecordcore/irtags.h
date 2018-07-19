@@ -302,7 +302,7 @@ protected:
 
 	virtual bool serializeValue(ircommon::IRBuffer & out) const;
 public:
-	IRBlockTag() : ILTag(TAG_BLOCK) {}
+	IRBlockTag();
 
 	virtual ~IRBlockTag() = default;
 

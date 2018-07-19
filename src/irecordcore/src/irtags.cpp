@@ -103,6 +103,11 @@ bool IRBlockSigTag::deserializeValue(
 //==============================================================================
 // Class IRBlockTag
 //------------------------------------------------------------------------------
+IRBlockTag::IRBlockTag(): ILTag(TAG_BLOCK) {
+
+}
+
+//------------------------------------------------------------------------------
 bool IRBlockTag::serializeValue(ircommon::IRBuffer & out) const {
 
 	if (!this->_signed.serialize(out)) {
@@ -134,6 +139,11 @@ bool IRBlockTag::deserializeValue(
 
 //==============================================================================
 // Class IRSignedTag
+//------------------------------------------------------------------------------
+IRSignedTag::IRSignedTag() : ILTag(TAG_SIGNED) {
+	// TODO Implementation missing.
+}
+
 //------------------------------------------------------------------------------
 bool IRSignedTag::serializeValue(ircommon::IRBuffer & out) const {
 
@@ -173,38 +183,36 @@ bool IRSignedTag::deserializeValue(
 //==============================================================================
 // Class IRHeaderTag
 //------------------------------------------------------------------------------
+IRHeaderTag::IRHeaderTag(): ILBaseTagListTag(TAG_HEADER) {
+	// TODO Verify the implementation
+}
 
-/**
-* Verifies the header's integrity.
-*
-* @return true if the header is OK or false otherwise.
-*/
+//------------------------------------------------------------------------------
 bool IRHeaderTag::checkIntegrity()
 {
 	//TODO Implementation required!
 	return false;
 };
 
-/**
-* Sets the fields of the header.
-*
-* @param[in] header The header values.
-* @return true for success or false otherwise.
-*/
+//------------------------------------------------------------------------------
 bool IRHeaderTag::setHeader(const irecordcore::block::IRBlockHeader & header) 
 {
 	//TODO Implementation required!
 	return false;
 };
 
-/**
-* Extracts the header values from this tag.
-*
-* @param[out] header The header fields.
-* @return true for success or false otherwise.
-*/
+//------------------------------------------------------------------------------
 bool IRHeaderTag::extractHeader(irecordcore::block::IRBlockHeader & header)
 {
 	//TODO Implementation required!
 	return false;
 };
+
+//==============================================================================
+// Class IRTagFactory
+//------------------------------------------------------------------------------
+ircommon::iltags::ILTag * IRTagFactory::create(std::uint64_t tagId) const {
+	//TODO Implementation required!
+	return nullptr;
+}
+//------------------------------------------------------------------------------
