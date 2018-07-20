@@ -26,6 +26,9 @@ cmake_minimum_required (VERSION 3.9)
 project (interlockrecord
 	VERSION 0.1.0.0)
 
+# Set the requirement to C++11 - Required for old gcc compilers
+set(CXX_STANDARD_REQUIRED 11)
+
 # Including the global modules
 set(MSVC_STATIC_CRT 1)
 include("cmake/MSVCCRT.cmake")
