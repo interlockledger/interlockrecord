@@ -1,5 +1,5 @@
 # InterlockRecord
-Copyright (c) 2017-2018, Open Communications Security
+Copyright (c) 2016-2018, InterlockLedger Network
 
 ## Description
 
@@ -17,4 +17,7 @@ them into the main project;
 
 # License
 
-To be defined later.
+Most of the code for this project is license under the Apache License, Version 2.0.
+Some files and tools are licensed under a 3-Clause BSD license.
+
+See each file for further details.
